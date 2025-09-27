@@ -36,13 +36,15 @@
         .title-text { font-size: clamp(3.5rem, 10vw, 6rem); color: var(--o-color); margin-bottom: 25px; }
         
         .button-container {
-            display: flex; flex-direction: column; align-items: center; gap: 25px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
             width: 100%;
         }
 
         .button {
             font-family: var(--font-family); background-color: #f0f0f0; color: var(--bg-color); border: none;
-            border-radius: 20px; padding: 18px 45px; font-size: clamp(1.2rem, 4vw, 1.6rem); font-weight: 700; cursor: pointer;
+            border-radius: 20px; padding: 15px 30px; 
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem); 
+            font-weight: 700; cursor: pointer;
             transition: all 0.2s ease-in-out;
             box-shadow: 7px 7px 15px rgba(0,0,0,0.2), -7px -7px 15px rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
@@ -90,7 +92,6 @@
             transform: scale(1.1); border-color: var(--o-color); box-shadow: 0 0 15px var(--o-color);
         }
 
-        /* --- Headers & Specific Buttons --- */
         .screen-header {
             position: absolute; top: 15px; left: 15px; right: 15px;
             display: flex; justify-content: space-between; align-items: center;
@@ -108,7 +109,6 @@
         }
         #share-website-button svg { width: 30px; height: 30px; }
 
-        /* --- Game Screen --- */
         .game-layout { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; max-width: 1200px; gap: 20px; }
         .player-panel {
             background-color: var(--panel-bg); border-radius: 20px; padding: 20px; text-align: center;
@@ -129,7 +129,6 @@
         .cell.o { color: var(--o-color); text-shadow: 0 0 20px var(--o-color); }
         .cell:not(.x):not(.o):hover { background-color: rgba(0, 229, 255, 0.2); }
 
-        /* --- Modals --- */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
             backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 15px;
@@ -193,7 +192,7 @@
             <button class="icon-button" id="profile-button" onclick="showProfileEditor()">
                 <img id="online-home-avatar" src="" alt="Profile">
             </button>
-            <button class="icon-button" id="logout-button" onclick="goHome()">
+            <button class="icon-button" id="logout-button" onclick="logout()">
                 <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
             </button>
         </div>
@@ -298,8 +297,9 @@
             gameState.setupPlayer = 1;
             gameState.players = { 1: {}, 2: {} };
             
-            if (gameState.player.name) {
-                gameState.players[1] = { ...gameState.player };
+            const savedPlayer = getSavedPlayer();
+            if (savedPlayer) {
+                gameState.players[1] = { ...savedPlayer };
                 gameState.setupPlayer = 2;
                 createSetupUI('اللاعب 2: أدخل بياناتك', '', '', true);
                 document.getElementById('confirm-setup-button').onclick = handleOfflineSetup;
@@ -317,6 +317,7 @@
             gameState.players[gameState.setupPlayer] = { name, avatar };
 
             if (gameState.setupPlayer === 1) {
+                savePlayer({ name, avatar }); 
                 gameState.setupPlayer = 2;
                 createSetupUI('اللاعب 2: أدخل بياناتك', '', '', true);
                 document.getElementById('confirm-setup-button').onclick = handleOfflineSetup;
@@ -324,8 +325,9 @@
         };
 
         window.switchToOnlineSetup = () => {
-            if (gameState.player.name) {
-                showScreen('online-home');
+            const savedPlayer = getSavedPlayer();
+            if (savedPlayer) {
+                loginOnline(savedPlayer);
             } else {
                 setupOnlineGame();
             }
@@ -333,9 +335,14 @@
         
         window.setupOnlineGame = () => {
             gameState.mode = 'online';
-            createSetupUI('أدخل بياناتك للعب أونلاين');
-            showScreen('player-setup');
-            document.getElementById('confirm-setup-button').onclick = handleOnlineSetup;
+            const savedPlayer = getSavedPlayer();
+            if (savedPlayer) {
+                loginOnline(savedPlayer);
+            } else {
+                createSetupUI('أدخل بياناتك للعب أونلاين');
+                showScreen('player-setup');
+                document.getElementById('confirm-setup-button').onclick = handleOnlineSetup;
+            }
         };
 
         const handleOnlineSetup = async () => {
@@ -347,10 +354,17 @@
             const snapshot = await get(userRef);
             if(snapshot.exists()) return showToast("هذا الاسم مستخدم بالفعل!");
 
-            gameState.player = { name, avatar };
-            await set(userRef, gameState.player);
-            onDisconnect(userRef).remove(); 
-            document.getElementById('online-home-avatar').src = avatar;
+            const playerData = { name, avatar };
+            savePlayer(playerData);
+            loginOnline(playerData);
+        };
+
+        const loginOnline = (playerData) => {
+            gameState.player = playerData;
+            const userRef = ref(db, `users/${gameState.player.name}`);
+            set(userRef, gameState.player); 
+            onDisconnect(userRef).remove();
+            document.getElementById('online-home-avatar').src = gameState.player.avatar;
             showScreen('online-home');
         };
 
@@ -358,6 +372,8 @@
             const roomId = "xo-" + Math.random().toString(36).substr(2, 5);
             gameState.roomId = roomId; 
             const gameRef = ref(db, `games/${roomId}`);
+            const onDisconnectRef = onDisconnect(gameRef);
+            onDisconnectRef.remove();
             await set(gameRef, {
                 players: { [gameState.player.name]: gameState.player },
                 board: Array(9).fill(''), turn: gameState.player.name, p1: gameState.player.name,
@@ -378,13 +394,16 @@
 
             gameData.players[gameState.player.name] = gameState.player;
             gameData.p2 = gameState.player.name;
-            await set(gameRef, gameData);
+            await update(gameRef, gameData);
             listenToGame(roomId);
         };
         
         const listenToGame = (roomId) => {
             gameState.roomId = roomId;
             activeGameRef = ref(db, `games/${roomId}`);
+            const onDisconnectRef = onDisconnect(activeGameRef);
+            onDisconnectRef.update({ leaver: gameState.player.name });
+
             gameValueListener = onValue(activeGameRef, (snap) => {
                 const gameData = snap.val();
                 if(!gameData) {
@@ -402,6 +421,8 @@
                 updateTurnHighlight();
                 showScreen('game');
                 if (gameData.winner || gameData.leaver) {
+                    if (gameValueListener) { gameValueListener(); gameValueListener = null; } 
+                    onDisconnect(activeGameRef).cancel(); 
                     setTimeout(() => endGame(gameData.winner === 'Draw', gameData.leaver), 500);
                 }
             });
@@ -539,17 +560,21 @@
             }
         };
 
-        window.goHome = () => {
-            if (gameState.mode === 'online' && gameState.player && gameState.player.name) {
+        window.logout = () => {
+            if (gameState.player && gameState.player.name) {
                  const userRef = ref(db, `users/${gameState.player.name}`);
                  remove(userRef);
+                 localStorage.removeItem('xo_player_data');
+                 gameState.player = {};
             }
-            location.reload();
+            showScreen('start-screen');
         }
         
         window.goToOnlineHome = () => {
             if (activeGameRef) {
-                if (gameValueListener) gameValueListener(); 
+                if (gameValueListener) { gameValueListener(); gameValueListener = null; }
+                const onDisconnectRef = onDisconnect(activeGameRef);
+                onDisconnectRef.cancel();
                 if (gameState.gameData && gameState.player.name === gameState.gameData.p1 && !gameState.gameData.p2) {
                     remove(activeGameRef);
                 }
@@ -596,6 +621,7 @@
             if (newName === gameState.player.name) {
                 gameState.player.avatar = newAvatar;
                 await update(ref(db, `users/${newName}`), { avatar: newAvatar });
+                savePlayer(gameState.player);
                 document.getElementById('online-home-avatar').src = newAvatar;
                 showToast("تم تحديث الصورة الرمزية!");
                 showScreen('online-home');
@@ -608,6 +634,7 @@
                 await set(newUserRef, updatedPlayer);
                 await remove(oldUserRef);
                 gameState.player = updatedPlayer;
+                savePlayer(updatedPlayer);
                 onDisconnect(newUserRef).remove();
                 document.getElementById('online-home-avatar').src = newAvatar;
                 showToast("تم تحديث الملف الشخصي!");
@@ -662,13 +689,29 @@
             }
         };
 
-        const autoJoinRoom = async () => {
+        const savePlayer = (playerData) => {
+            localStorage.setItem('xo_player_data', JSON.stringify(playerData));
+        };
+        const getSavedPlayer = () => {
+            try {
+                const player = JSON.parse(localStorage.getItem('xo_player_data'));
+                return (player && player.name && player.avatar) ? player : null;
+            } catch (e) {
+                return null;
+            }
+        };
+
+        const initializeAppSession = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const roomId = urlParams.get('room');
-            if (!roomId) return;
 
-            history.replaceState(null, '', WEBSITE_URL);
-            
+            if (roomId) {
+                history.replaceState(null, '', WEBSITE_URL);
+                handleUrlJoin(roomId);
+            }
+        };
+        
+        const handleUrlJoin = async (roomId) => {
             const gameRef = ref(db, `games/${roomId}`);
             const snapshot = await get(gameRef);
             if (!snapshot.exists()) {
@@ -677,24 +720,32 @@
             }
 
             gameState.mode = 'online';
-            createSetupUI('أدخل بياناتك للانضمام للغرفة');
-            showScreen('player-setup');
-            document.getElementById('confirm-setup-button').onclick = async () => {
-                const name = document.getElementById('player-name-input').value.trim();
-                const avatar = document.querySelector('.avatar-selection .selected')?.src;
-                if (!name || !avatar) return showToast('الرجاء إدخال الاسم واختيار الصورة!');
-                
-                const userRef = ref(db, `users/${name}`);
-                const userSnapshot = await get(userRef);
-                if(userSnapshot.exists()) return showToast("هذا الاسم مستخدم بالفعل!");
-
-                gameState.player = { name, avatar };
+            const savedPlayer = getSavedPlayer();
+            if (savedPlayer) {
+                gameState.player = savedPlayer;
                 document.getElementById('join-id-input').value = roomId;
                 await joinRoom();
-            };
+            } else {
+                createSetupUI('أدخل بياناتك للانضمام للغرفة');
+                showScreen('player-setup');
+                document.getElementById('confirm-setup-button').onclick = async () => {
+                    const name = document.getElementById('player-name-input').value.trim();
+                    const avatar = document.querySelector('.avatar-selection .selected')?.src;
+                    if (!name || !avatar) return showToast('الرجاء إدخال الاسم واختيار الصورة!');
+                    
+                    const userRef = ref(db, `users/${name}`);
+                    const userSnapshot = await get(userRef);
+                    if(userSnapshot.exists()) return showToast("هذا الاسم مستخدم بالفعل!");
+
+                    gameState.player = { name, avatar };
+                    savePlayer(gameState.player);
+                    document.getElementById('join-id-input').value = roomId;
+                    await joinRoom();
+                };
+            }
         };
         
-        window.onload = autoJoinRoom;
+        document.addEventListener('DOMContentLoaded', initializeAppSession);
 
     </script>
 </body>
