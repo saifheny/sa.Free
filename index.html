@@ -585,17 +585,29 @@
                 showModal('winner', false);
                 startGame();
             } else if (activeGameRef) {
-                // Simplified Rematch: Only Host can restart
-                if (gameState.player.name === gameState.gameData.p1) {
-                    await update(activeGameRef, { 
-                        board: Array(9).fill(''), winner: null, leaver: null,
-                        turn: gameState.gameData.p1, voiceMessages: {} 
-                    });
-                    showModal('winner', false);
-                } else {
-                    showToast('فقط المضيف يمكنه بدء جولة جديدة.');
-                }
+                const playAgainBtn = document.getElementById('play-again-button');
+                playAgainBtn.disabled = true;
+                playAgainBtn.textContent = 'في انتظار الخصم...';
+                await update(activeGameRef, {
+                    rematch: { requester: gameState.player.name, responder: null }
+                });
             }
+        };
+
+        const showRematchModal = (requesterName) => {
+            document.getElementById('rematch-requester-text').textContent = `${requesterName} يريد اللعب مرة أخرى.`;
+            showModal('rematch', true);
+            document.getElementById('rematch-yes-button').onclick = async () => {
+                showModal('rematch', false);
+                await update(activeGameRef, { 
+                    board: Array(9).fill(''), winner: null, leaver: null,
+                    turn: gameState.gameData.p1, rematch: null, voiceMessages: {} 
+                });
+            };
+            document.getElementById('rematch-no-button').onclick = async () => {
+                showModal('rematch', false);
+                await update(activeGameRef, { rematch: { ...gameState.gameData.rematch, status: 'rejected' } });
+            };
         };
         
         window.showProfileEditor = () => {
