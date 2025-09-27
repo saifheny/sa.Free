@@ -210,6 +210,7 @@
         let mediaRecorder;
         let audioChunks = [];
         let recordedBlob = null;
+        const MAX_VOICE_MESSAGES = 3;
 
         window.showScreen = (screenName) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -326,6 +327,7 @@
             await set(gameRef, {
                 players: { [gameState.player.name]: gameState.player },
                 board: Array(9).fill(''), turn: gameState.player.name, p1: gameState.player.name,
+                voiceMessages: {}
             });
             listenToGame(roomId);
         };
@@ -381,9 +383,8 @@
                     document.getElementById('play-again-button').textContent = 'لعب مرة أخرى';
                 }
 
-                if (gameData.voiceMessage && gameData.voiceMessage.from !== gameState.player.name) {
-                    displayVoiceMessage(gameData.voiceMessage);
-                    update(activeGameRef, { voiceMessage: null }); 
+                if (gameData.voiceMessages) {
+                    displayVoiceMessages(gameData.voiceMessages);
                 }
 
                 if (gameData.winner || gameData.leaver) {
@@ -417,7 +418,7 @@
             const chatArea = document.getElementById(`p${playerNum}-chat-area`);
             
             chatArea.innerHTML = '';
-            if(playerData && gameState.mode === 'online' && playerData.name !== gameState.player.name) {
+            if(playerData && gameState.mode === 'online') {
                 const chatIcon = document.createElement('div');
                 chatIcon.className = 'voice-chat-icon';
                 chatIcon.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>`;
@@ -584,29 +585,17 @@
                 showModal('winner', false);
                 startGame();
             } else if (activeGameRef) {
-                const playAgainBtn = document.getElementById('play-again-button');
-                playAgainBtn.disabled = true;
-                playAgainBtn.textContent = 'في انتظار الخصم...';
-                await update(activeGameRef, {
-                    rematch: { requester: gameState.player.name, responder: null }
-                });
+                // Simplified Rematch: Only Host can restart
+                if (gameState.player.name === gameState.gameData.p1) {
+                    await update(activeGameRef, { 
+                        board: Array(9).fill(''), winner: null, leaver: null,
+                        turn: gameState.gameData.p1, voiceMessages: {} 
+                    });
+                    showModal('winner', false);
+                } else {
+                    showToast('فقط المضيف يمكنه بدء جولة جديدة.');
+                }
             }
-        };
-
-        const showRematchModal = (requesterName) => {
-            document.getElementById('rematch-requester-text').textContent = `${requesterName} يريد اللعب مرة أخرى.`;
-            showModal('rematch', true);
-            document.getElementById('rematch-yes-button').onclick = async () => {
-                showModal('rematch', false);
-                await update(activeGameRef, { 
-                    board: Array(9).fill(''), winner: null, leaver: null,
-                    turn: gameState.gameData.p1, rematch: null 
-                });
-            };
-            document.getElementById('rematch-no-button').onclick = async () => {
-                showModal('rematch', false);
-                await update(activeGameRef, { rematch: { ...gameState.gameData.rematch, status: 'rejected' } });
-            };
         };
         
         window.showProfileEditor = () => {
@@ -766,12 +755,27 @@
         const stopRecording = () => { if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop(); };
 
         const sendVoiceMessage = () => {
+            const unreadMessages = Object.values(gameState.gameData.voiceMessages || {}).filter(msg => !msg.readBy.includes(gameState.player.name === gameState.gameData.p1 ? gameState.gameData.p2 : gameState.gameData.p1)).length;
+            if (unreadMessages >= MAX_VOICE_MESSAGES) {
+                showToast(`لا يمكنك إرسال المزيد من الرسائل حتى يستمع الخصم للرسائل الحالية.`);
+                resetVoiceModal();
+                showModal('voice-chat', false);
+                return;
+            }
+
             const reader = new FileReader();
             reader.readAsDataURL(recordedBlob);
             reader.onloadend = () => {
                 const base64String = reader.result;
                 const timestamp = Date.now();
-                update(activeGameRef, { voiceMessage: { id: timestamp, from: gameState.player.name, data: base64String } });
+                const messageId = `voice_${timestamp}`;
+                const messageData = { 
+                    id: messageId, 
+                    from: gameState.player.name, 
+                    data: base64String,
+                    readBy: [gameState.player.name]
+                };
+                update(ref(db, `games/${gameState.roomId}/voiceMessages/${messageId}`), messageData);
             };
             resetVoiceModal();
             showModal('voice-chat', false);
@@ -785,22 +789,52 @@
         
         recordButton.onclick = startRecording;
 
-        const displayVoiceMessage = (voiceMessage) => {
-            const chatAreaId = voiceMessage.from === gameState.player.name ? (gameState.player.name === gameState.gameData.p1 ? 'p1-chat-area' : 'p2-chat-area') : (gameState.player.name === gameState.gameData.p1 ? 'p2-chat-area' : 'p1-chat-area');
-            const chatArea = document.getElementById(chatAreaId);
+        const displayVoiceMessages = (voiceMessages) => {
+            const p1ChatArea = document.getElementById('p1-chat-area');
+            const p2ChatArea = document.getElementById('p2-chat-area');
             
-            const audio = new Audio(voiceMessage.data);
-            audio.onloadedmetadata = () => {
-                const duration = Math.round(audio.duration);
-                const bubble = document.createElement('div');
-                bubble.className = 'voice-message-bubble';
-                bubble.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> <span>(${duration} ث)</span>`;
-                bubble.onclick = () => audio.play();
-                chatArea.appendChild(bubble);
+            p1ChatArea.innerHTML = '';
+            p2ChatArea.innerHTML = '';
 
-                if(voiceMessage.from !== gameState.player.name) showToast(`رسالة صوتية جديدة`);
-                setTimeout(() => bubble.remove(), 15000); 
-            };
+            const p1Name = gameState.gameData.p1;
+            const p2Name = gameState.gameData.p2;
+
+            if (p1Name && p1Name !== gameState.player.name) {
+                const p1ChatIcon = document.createElement('div');
+                p1ChatIcon.className = 'voice-chat-icon';
+                p1ChatIcon.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>`;
+                p1ChatIcon.onclick = () => showModal('voice-chat', true);
+                p1ChatArea.appendChild(p1ChatIcon);
+            }
+            if (p2Name && p2Name !== gameState.player.name) {
+                 const p2ChatIcon = document.createElement('div');
+                p2ChatIcon.className = 'voice-chat-icon';
+                p2ChatIcon.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>`;
+                p2ChatIcon.onclick = () => showModal('voice-chat', true);
+                p2ChatArea.appendChild(p2ChatIcon);
+            }
+
+            for (const messageId in voiceMessages) {
+                const voiceMessage = voiceMessages[messageId];
+                const chatAreaId = voiceMessage.from === gameState.gameData.p1 ? 'p1-chat-area' : 'p2-chat-area';
+                const chatArea = document.getElementById(chatAreaId);
+
+                const audio = new Audio(voiceMessage.data);
+                audio.onloadedmetadata = () => {
+                    const duration = Math.round(audio.duration);
+                    const bubble = document.createElement('div');
+                    bubble.className = 'voice-message-bubble';
+                    bubble.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> <span>(${duration} ث)</span>`;
+                    bubble.onclick = () => {
+                        audio.play();
+                        if (!voiceMessage.readBy.includes(gameState.player.name)) {
+                            const updatedReadBy = [...voiceMessage.readBy, gameState.player.name];
+                            update(ref(db, `games/${gameState.roomId}/voiceMessages/${messageId}`), { readBy: updatedReadBy });
+                        }
+                    };
+                    chatArea.appendChild(bubble);
+                };
+            }
         };
         
         document.addEventListener('DOMContentLoaded', initializeAppSession);
