@@ -72,11 +72,11 @@
         .player-name { font-size: 1.4rem; font-weight: 700; word-wrap: break-word; }
         .player-symbol { font-size: 2.2rem; font-weight: 900; }
         .follow-button { 
-            /* REMOVED 'display: none;' to fix visibility bug */
             background: rgba(255,255,255,0.1); 
             border-radius: 50%; 
             width: 32px; 
             height: 32px; 
+            padding: 6px; /* Adjust padding to center icon */
         }
         .follow-button svg { width: 20px; height: 20px; fill: white; }
         .follow-button.is-following svg { fill: var(--green-glow); }
@@ -101,8 +101,8 @@
         #room-code-display, #invite-friends-list { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; margin-bottom: 15px; }
         #room-code-display p { margin: 0; font-size: 1.1rem; color: #ccc; margin-bottom: 10px; }
         #code-container { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px 10px; }
-        #room-id-text { margin: 0; font-size: 1.8rem; letter-spacing: 4px; color: var(--o-color); user-select: all; font-weight: 700; }
-        #copy-code-button { padding: 10px 20px; font-size: 1rem; min-width: 80px; width: auto; max-width: 100px; margin: 0; }
+        #room-id-text, #invite-room-id-text { margin: 0; font-size: 1.8rem; letter-spacing: 4px; color: var(--o-color); user-select: all; font-weight: 700; }
+        #copy-code-button, #invite-copy-code-button { padding: 10px 20px; font-size: 1rem; min-width: 80px; width: auto; max-width: 100px; margin: 0; }
         
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: var(--o-color); color: var(--bg-color); padding: 12px 25px; border-radius: 10px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; }
         .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, -10px); }
@@ -153,8 +153,16 @@
         #message-notification .button-container { flex-direction: row; margin-top: 15px; }
 
         @media (max-width: 767px) { 
-            #game-screen { overflow-y: auto; } .game-layout { padding-bottom: 80px; flex-direction: column; } 
-            .game-players-container { order: -1; }
+            #game-screen { overflow-y: auto; } 
+            .game-layout { 
+                padding-top: 50px; /* Add space for absolute header */
+                padding-bottom: 80px; 
+                flex-direction: column; 
+            } 
+            .game-players-container { 
+                order: -1; 
+                margin-bottom: 20px; /* Space between players and board */
+            }
         }
         @media (min-width: 768px) { .game-layout { flex-direction: row; align-items: flex-start; } .game-players-container { order: 0; } }
     </style>
@@ -297,6 +305,7 @@
         import { getDatabase, ref, set, get, update, onValue, remove, push, onDisconnect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
         const firebaseConfig = { 
+            // أدخل إعدادات Firebase الخاصة بك هنا
             apiKey: "AIzaSyBIYAAxckJEflGIMbNRx4wMmRTUMAkG_hw", 
             authDomain: "saif-74e7b.firebaseapp.com", 
             databaseURL: "https://saif-74e7b-default-rtdb.firebaseio.com", 
