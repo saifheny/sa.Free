@@ -913,6 +913,7 @@
 
         // --- FOLLOW LOGIC ---
         const updateFollowButtons = async () => {
+            if (!gameState.player || !gameState.player.name) return;
             const myFollowingRef = ref(db, `users/${gameState.player.name}/following`);
             const snapshot = await get(myFollowingRef);
             const followingList = snapshot.exists() ? snapshot.val() : {};
@@ -931,17 +932,19 @@
             });
         };
 
-        const toggleFollow = async (targetPlayerName) => {
+        window.toggleFollow = async (targetPlayerName) => {
             const amIFollowing = document.querySelector(`.follow-button[data-player-name="${targetPlayerName}"]`).classList.contains('is-following');
             
             const myFollowingRef = ref(db, `users/${gameState.player.name}/following/${targetPlayerName}`);
             const theirFollowersRef = ref(db, `users/${targetPlayerName}/followers/${gameState.player.name}`);
 
             if (amIFollowing) {
+                // Unfollow
                 await remove(myFollowingRef);
                 await remove(theirFollowersRef);
                 showToast(`تم إلغاء متابعة ${targetPlayerName}`);
             } else {
+                // Follow
                 await set(myFollowingRef, true);
                 await set(theirFollowersRef, true);
                 showToast(`أنت تتابع الآن ${targetPlayerName}`);
