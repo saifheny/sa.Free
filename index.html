@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XO - Online Edition</title>
+    <title>XO Ultimate Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -32,6 +32,7 @@
         .screen.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
+        /* --- Common Elements --- */
         h1, h2, h3 { font-weight: 900; text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
         .title-text { font-size: clamp(3.5rem, 10vw, 6rem); color: var(--o-color); margin-bottom: 25px; }
         
@@ -39,91 +40,117 @@
         .button {
             font-family: var(--font-family); background-color: #f0f0f0; color: var(--bg-color); border: none;
             border-radius: 20px; padding: 15px 30px; 
-            font-size: 1.5rem; 
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem); 
             font-weight: 700; cursor: pointer; transition: all 0.2s ease-in-out;
             box-shadow: 7px 7px 15px rgba(0,0,0,0.2), -7px -7px 15px rgba(255,255,255,0.1);
-            width: 350px;
+            border: 1px solid rgba(255,255,255,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transform: translateY(0); width: 90%; max-width: 350px;
         }
-        .button:hover { transform: translateY(-5px); }
-        .button:active { transform: translateY(2px); }
-        .button:disabled { background-color: #aaa; cursor: not-allowed; }
+        .button:hover { transform: translateY(-5px); box-shadow: 10px 10px 20px rgba(0,0,0,0.3), -10px -10px 20px rgba(255,255,255,0.1); }
+        .button:active { transform: translateY(2px); box-shadow: inset 5px 5px 10px rgba(0,0,0,0.2), inset -5px -5px 10px rgba(255,255,255,0.1); }
+        .button:disabled { background-color: #aaa; cursor: not-allowed; transform: translateY(0); box-shadow: 7px 7px 15px rgba(0,0,0,0.2); }
 
         .icon-button { background: transparent; border: none; cursor: pointer; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative; }
         .icon-button svg { width: 32px; height: 32px; fill: var(--text-color); }
-        .icon-button:hover { background-color: rgba(255,255,255,0.1); }
+        .icon-button:hover { background-color: rgba(255,255,255,0.1); transform: scale(1.1); }
         .icon-button img { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--text-color); }
 
-        .input-field { font-family: var(--font-family); width: 350px; padding: 15px; margin-bottom: 20px; border-radius: 10px; border: 2px solid var(--grid-color); background-color: rgba(0,0,0,0.3); color: white; font-size: 1.2rem; text-align: center; }
-        .container { background-color: var(--panel-bg); padding: 2.5rem; border-radius: 20px; width: 500px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .input-field { font-family: var(--font-family); width: 100%; max-width: 350px; padding: 15px; margin-bottom: 20px; border-radius: 10px; border: 2px solid var(--grid-color); background-color: rgba(0,0,0,0.3); color: white; font-size: 1.2rem; text-align: center; }
+        .container { background-color: var(--panel-bg); padding: clamp(1rem, 5vw, 2.5rem); border-radius: 20px; width: 95%; max-width: 500px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); position: relative; }
         .avatar-selection { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 15px; margin: 20px 0; max-height: 250px; overflow-y: auto; padding: 5px; }
         .avatar-option img { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: 4px solid transparent; cursor: pointer; transition: all 0.3s ease; }
         .avatar-option img.selected, .avatar-option img:hover { transform: scale(1.1); border-color: var(--o-color); box-shadow: 0 0 15px var(--o-color); }
 
         .screen-header { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
         
-        #game-screen .game-layout { display: flex; justify-content: center; align-items: center; width: 100%; max-width: 1200px; gap: 20px; }
-        .game-players-container { display: flex; gap: 20px; }
+        #game-screen .game-layout { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 100%; max-width: 1200px; gap: 20px; }
+        .game-players-container { display: flex; justify-content: space-evenly; width: 100%; }
         
-        .player-panel { background-color: var(--panel-bg); border-radius: 20px; padding: 15px; text-align: center; width: 220px; border: 3px solid transparent; backdrop-filter: blur(5px); position: relative; }
-        .player-panel img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; border: 4px solid var(--grid-color); }
+        .player-panel { background-color: var(--panel-bg); border-radius: 20px; padding: 15px; text-align: center; width: clamp(150px, 40vw, 220px); border: 3px solid transparent; transition: all 0.3s ease-in-out; backdrop-filter: blur(5px); position: relative; }
+        .player-panel .player-info { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .player-panel img { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--grid-color); }
         .player-name { font-size: 1.4rem; font-weight: 700; word-wrap: break-word; }
         .player-symbol { font-size: 2.2rem; font-weight: 900; }
+        .follow-button { display: none; background: rgba(255,255,255,0.1); border-radius: 50%; width: 32px; height: 32px; }
+        .follow-button svg { width: 20px; height: 20px; fill: white; }
+        .follow-button.is-following svg { fill: var(--green-glow); }
         
-        .status-indicator { width: 15px; height: 15px; border-radius: 50%; position: absolute; top: 10px; right: 10px; }
+        .status-indicator { width: 15px; height: 15px; border-radius: 50%; position: absolute; top: 10px; right: 10px; transition: all 0.3s ease; }
         .status-indicator.active { background-color: var(--green-glow); box-shadow: 0 0 10px var(--green-glow); }
         .status-indicator.inactive { background-color: var(--red-glow); opacity: 0.5; }
         #player-1 .player-symbol { color: var(--x-color); } #player-2 .player-symbol { color: var(--o-color); }
         
-        #board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 420px; }
-        .cell { aspect-ratio: 1 / 1; background-color: var(--panel-bg); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 5.5rem; font-weight: 900; cursor: pointer; border: 2px solid rgba(0, 229, 255, 0.5); transition: background-color 0.2s ease; }
+        #board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: clamp(280px, 90vw, 420px); }
+        .cell { aspect-ratio: 1 / 1; background-color: var(--panel-bg); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(2.5rem, 12vw, 5.5rem); font-weight: 900; cursor: pointer; border: 2px solid rgba(0, 229, 255, 0.5); transition: background-color 0.2s ease; overflow: hidden; }
         .cell.x { color: var(--x-color); text-shadow: 0 0 20px var(--x-color); }
         .cell.o { color: var(--o-color); text-shadow: 0 0 20px var(--o-color); }
         .cell:not(.x):not(.o):hover { background-color: rgba(0, 229, 255, 0.2); }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 15px; }
         .modal.active { display: flex; }
-        .modal-content { background: var(--gradient-start); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--o-color); box-shadow: 0 0 25px var(--o-color); width: 450px; }
+        .modal-content { background: var(--gradient-start); padding: 30px; border-radius: 20px; text-align: center; border: 2px solid var(--o-color); box-shadow: 0 0 25px var(--o-color); width: 100%; max-width: 450px; }
         .modal-content img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--o-color); margin-bottom: 15px; }
-        #rematch-modal .button-container { flex-direction: row; justify-content: center; }
+        #rematch-modal .button-container, #voice-controls, #invite-notification-modal .button-container { flex-direction: row; justify-content: center; }
         
-        #room-code-display { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+        #room-code-display, #invite-friends-list { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+        #room-code-display p { margin: 0; font-size: 1.1rem; color: #ccc; margin-bottom: 10px; }
         #code-container { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px 10px; }
         #room-id-text { margin: 0; font-size: 1.8rem; letter-spacing: 4px; color: var(--o-color); user-select: all; font-weight: 700; }
-        #copy-code-button { padding: 10px 20px; font-size: 1rem; width: auto; max-width: 100px; margin: 0; }
+        #copy-code-button { padding: 10px 20px; font-size: 1rem; min-width: 80px; width: auto; max-width: 100px; margin: 0; }
         
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: var(--o-color); color: var(--bg-color); padding: 12px 25px; border-radius: 10px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s; }
-        .toast.show { opacity: 1; transform: translate(-50%, -10px); }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: var(--o-color); color: var(--bg-color); padding: 12px 25px; border-radius: 10px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s, transform 0.3s; }
+        .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, -10px); }
         
         .notification-dot { width: 12px; height: 12px; background-color: var(--red-glow); border-radius: 50%; position: absolute; top: 5px; right: 5px; display: none; border: 1px solid white; }
         .notification-dot.visible { display: block; }
 
+        /* Follow & Invite List Styles */
+        #invite-friends-list { max-height: 50vh; overflow-y: auto; text-align: right; }
+        .followed-player-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .followed-player-item:last-child { border-bottom: none; }
+        .followed-player-item .player-info { display: flex; align-items: center; gap: 15px; }
+        .followed-player-item img { width: 50px; height: 50px; border-radius: 50%; }
+        .followed-player-item .button { width: auto; max-width: 100px; padding: 8px 15px; font-size: 0.9rem; margin: 0; }
+
         /* Chat Modal Styles */
-        #chat-modal .modal-content { max-width: 500px; height: 70vh; display: flex; flex-direction: column; padding: 15px; background: #0f1214; border-radius: 12px; }
-        #chat-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
-        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 3px; }
+        #chat-modal .modal-content { max-width: 90vw; width: 500px; height: 70vh; display: flex; flex-direction: column; padding: 15px; background: #0f1214; border-radius: 12px; }
+        #chat-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
         .message-container { display: flex; max-width: 80%; }
         .message-container.sent { align-self: flex-end; }
         .message-container.received { align-self: flex-start; }
         .message-bubble { padding: 8px 12px; border-radius: 8px; position: relative; }
-        .message-bubble p { margin: 0; padding: 0; word-wrap: break-word; font-size: 0.95rem; }
+        .message-bubble p { margin: 0; padding: 0; word-wrap: break-word; }
         .message-container.sent .message-bubble { background-color: var(--sent-bubble-bg); border-top-right-radius: 0; }
         .message-container.received .message-bubble { background-color: var(--received-bubble-bg); border-top-left-radius: 0; }
-        .message-sender { font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; color: var(--o-color); text-align: right; }
-        .voice-message-container { display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 180px; }
+        .message-sender { font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; color: var(--o-color); }
+        .voice-message-container { display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 150px; }
         .voice-play-button svg { width: 24px; height: 24px; fill: var(--o-color); flex-shrink: 0; }
         .voice-waveform { flex-grow: 1; display: flex; align-items: center; height: 30px; }
         .voice-waveform .bar { background-color: rgba(255,255,255,0.6); width: 2px; margin: 0 1px; border-radius: 2px; }
-        #chat-input-area { display: flex; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+        #chat-input-area { display: flex; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2); }
         #chat-text-input { flex-grow: 1; border-radius: 20px; border: none; padding: 10px 15px; background: rgba(0,0,0,0.3); color: white; font-family: var(--font-family); }
         
-        .game-controls { position: fixed; bottom: 15px; right: 15px; z-index: 50; }
+        /* Chat Controls & Notifications */
+        .game-controls { position: fixed; bottom: 15px; right: 15px; display: flex; gap: 20px; z-index: 50; }
         #chat-button { background-color: var(--gradient-start); box-shadow: 0 0 20px rgba(0,0,0,0.5); width: 60px; height: 60px; }
         #chat-button svg { width: 36px; height: 36px; }
 
-        #message-notification { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: var(--panel-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; border: 1px solid var(--o-color); z-index: 3000; text-align: center; display: none; animation: fadeIn 0.3s ease; width: 320px; }
+        #message-notification {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: var(--panel-bg); backdrop-filter: blur(10px);
+            padding: 20px; border-radius: 15px; border: 1px solid var(--o-color);
+            z-index: 3000; text-align: center; display: none;
+            animation: fadeIn 0.3s ease;
+        }
         #message-notification img { width: 50px; height: 50px; border-radius: 50%; margin-bottom: 10px; }
-        #message-notification .button-container { flex-direction: row; margin-top: 15px; gap: 10px; justify-content: center; }
-        #message-notification .button { width: auto; padding: 10px 20px; font-size: 1rem; }
+        #message-notification .button-container { flex-direction: row; margin-top: 15px; }
+
+        @media (max-width: 767px) { 
+            #game-screen { overflow-y: auto; } .game-layout { padding-bottom: 80px; flex-direction: column; } 
+            .game-players-container { order: -1; }
+        }
+        @media (min-width: 768px) { .game-layout { flex-direction: row; align-items: flex-start; } .game-players-container { order: 0; } }
     </style>
 </head>
 <body>
@@ -134,16 +161,21 @@
     <div id="start-screen" class="screen active">
         <h1 class="title-text">إكس أو</h1>
         <div class="button-container">
-            <button class="button" onclick="setupOnlineGame()">ابدأ اللعب أونلاين</button>
+            <button class="button" onclick="showScreen('mode')">ابدأ اللعب</button>
         </div>
     </div>
     
+    <div id="mode-screen" class="screen"><div class="container"><div class="button-container"><h2>اختر وضع اللعب</h2><button class="button" onclick="setupOfflineGame()">لعب أوفلاين</button><button class="button" onclick="setupOnlineGame()">لعب أونلاين</button></div></div></div>
     <div id="player-setup-screen" class="screen"><div class="container" id="setup-container"></div></div>
     
     <div id="online-home-screen" class="screen">
         <div class="screen-header">
-            <button class="icon-button" id="profile-button" onclick="showProfileEditor()"><img id="online-home-avatar" src="" alt=""></button>
-            <button class="icon-button" id="logout-button" onclick="logout()"><svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg></button>
+            <button class="icon-button" id="profile-button" onclick="showProfileEditor()">
+                <img id="online-home-avatar" src="" alt="Profile">
+            </button>
+            <button class="icon-button" id="logout-button" onclick="logout()">
+                <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+            </button>
         </div>
         <div class="container">
             <div class="button-container">
@@ -151,46 +183,112 @@
                 <button class="button" onclick="makeRoom()">إنشاء غرفة جديدة</button>
                 <input type="text" id="join-id-input" class="input-field" placeholder="أو أدخل كود الغرفة">
                 <button class="button" onclick="joinRoom()">انضمام لغرفة</button>
+                <hr style="width:80%; border-color:rgba(255,255,255,0.2); margin: 10px 0;">
+                <button class="button" onclick="setupOfflineGame()">التبديل للعب أوفلاين</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="invite-screen" class="screen">
+        <div class="container">
+            <h3>دعوة أصدقاء</h3>
+            <div id="invite-friends-list">
+                <p>جاري تحميل قائمة الأصدقاء...</p>
+            </div>
+            <div id="room-code-display" style="margin-top: 20px;">
+                <p>أو شارك كود الغرفة مباشرة</p>
+                <div id="code-container">
+                    <h4 id="invite-room-id-text"></h4>
+                    <button id="invite-copy-code-button" class="button">نسخ</button>
+                </div>
+            </div>
+             <div class="button-container" style="margin-top:20px;">
+                <button class="button" onclick="goToGameFromInvite()">اذهب إلى الغرفة</button>
             </div>
         </div>
     </div>
     
     <div id="game-screen" class="screen">
         <div class="screen-header">
-             <button class="icon-button" id="share-game-button" onclick="showModal('share', true)"><svg viewBox="0 0 24 24" fill="white"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"></path></svg></button>
-            <button class="icon-button" id="exit-game-button" onclick="leaveGame()"><svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg></button>
+             <button class="icon-button" id="share-game-button" onclick="showModal('share', true)">
+                <svg viewBox="0 0 24 24" fill="white"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"></path></svg>
+            </button>
+            <button class="icon-button" id="exit-game-button" onclick="leaveGame()">
+                 <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>
+            </button>
         </div>
         <div class="game-layout">
             <div class="game-players-container">
-                <div id="player-1" class="player-panel"><div class="status-indicator"></div><img id="p1-avatar" alt=""><h3 id="p1-name"></h3><div class="player-symbol">X</div></div>
-                <div id="player-2" class="player-panel"><div class="status-indicator"></div><img id="p2-avatar" alt=""><h3 id="p2-name"></h3><div class="player-symbol">O</div></div>
+                <div id="player-1" class="player-panel">
+                    <div class="status-indicator"></div>
+                    <div class="player-info">
+                        <img id="p1-avatar" alt="Player 1 Avatar">
+                        <h3 id="p1-name" class="player-name"></h3>
+                        <button class="icon-button follow-button" id="p1-follow-button"></button>
+                    </div>
+                    <div class="player-symbol">X</div>
+                </div>
+                <div id="player-2" class="player-panel">
+                    <div class="status-indicator"></div>
+                     <div class="player-info">
+                        <img id="p2-avatar" alt="Player 2 Avatar">
+                        <h3 id="p2-name" class="player-name"></h3>
+                        <button class="icon-button follow-button" id="p2-follow-button"></button>
+                    </div>
+                    <div class="player-symbol">O</div>
+                </div>
             </div>
             <div id="board"></div>
         </div>
         <div class="game-controls">
-            <button class="icon-button" id="chat-button" onclick="openChat()"><svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg><div id="chat-notification-dot" class="notification-dot"></div></button>
+            <button class="icon-button" id="chat-button" onclick="openChat()">
+                <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
+                <div id="chat-notification-dot" class="notification-dot"></div>
+            </button>
         </div>
     </div>
 
-    <div id="winner-modal" class="modal"><div class="modal-content"><img id="winner-avatar" alt=""><h2 id="winner-text"></h2><div class="button-container" style="margin-top:20px;"><button class="button" id="play-again-button">لعب مرة أخرى</button><button class="button" id="main-menu-button">القائمة الرئيسية</button></div></div></div>
+    <!-- Modals -->
+    <div id="winner-modal" class="modal"><div class="modal-content"><img id="winner-avatar" alt="Winner Avatar"><h2 id="winner-text"></h2><div class="button-container" style="margin-top:20px;"><button class="button" id="play-again-button">لعب مرة أخرى</button><button class="button" id="main-menu-button">القائمة الرئيسية</button></div></div></div>
     <div id="share-modal" class="modal"><div class="modal-content"><h3>دعوة لاعب للانضمام</h3><div id="room-code-display"><p>شارك كود الغرفة للانضمام</p><div id="code-container"><h4 id="room-id-text"></h4><button id="copy-code-button" class="button">نسخ</button></div></div><div class="button-container" style="margin-top:20px;"><button class="button" onclick="showModal('share', false)">إغلاق</button></div></div></div>
     <div id="rematch-modal" class="modal"><div class="modal-content"><h2>هل تريد اللعب مرة أخرى؟</h2><p id="rematch-requester-text"></p><div class="button-container"><button class="button" id="rematch-yes-button">نعم</button><button class="button" id="rematch-no-button">لا</button></div></div></div>
     
-    <div id="chat-modal" class="modal">
+    <div id="invite-notification-modal" class="modal">
         <div class="modal-content">
-            <div id="chat-header"><h3>الدردشة</h3><button class="icon-button" onclick="showModal('chat', false)"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div>
-            <div id="chat-messages"></div>
-            <div id="chat-input-area">
-                <button id="record-voice-button" class="icon-button"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path></svg></button>
-                <input type="text" id="chat-text-input" placeholder="اكتب رسالتك...">
-                <button id="send-chat-button" class="icon-button"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg></button>
+            <img id="inviter-avatar" alt="Inviter Avatar">
+            <h2 id="invite-notification-text"></h2>
+            <div class="button-container">
+                <button class="button" id="invite-accept-button">قبول</button>
+                <button class="button" id="invite-decline-button">رفض</button>
             </div>
         </div>
     </div>
 
+    <div id="chat-modal" class="modal">
+        <div class="modal-content">
+            <div id="chat-header">
+                <h3>الدردشة</h3>
+                <button class="icon-button" onclick="showModal('chat', false)">
+                     <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+                </button>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-area">
+                <button id="record-voice-button" class="icon-button">
+                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1.2-9.1c0-1.03.83-1.9 1.9-1.9 1.05 0 1.9.87 1.9 1.9l-.01 6.2c0 1.03-.83 1.9-1.9 1.9s-1.9-.87-1.9-1.9V4.9zm6.5 6.1c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></svg>
+                </button>
+                 <input type="text" id="chat-text-input" placeholder="اكتب رسالتك...">
+                <button id="send-chat-button" class="icon-button">
+                     <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getDatabase, ref, set, get, update, onValue, remove, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+        import { getDatabase, ref, set, get, update, onValue, remove, push, onDisconnect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
         const firebaseConfig = { 
             apiKey: "AIzaSyBIYAAxckJEflGIMbNRx4wMmRTUMAkG_hw", 
@@ -208,9 +306,12 @@
         const avatarUrls = ['https://i.postimg.cc/y6RNzP3B/45927-2.jpg', 'https://i.postimg.cc/9fvjx6pf/images.jpg', 'https://i.postimg.cc/7LCknHg5/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f.jpg', 'https://i.postimg.cc/L59QvDrX/pngtree-q-version-cute-girl-chasing-chicken-anime-characters-png-image-7083638.png', 'https://i.postimg.cc/h4mV3VSd/1-5-6.webp', 'https://i.postimg.cc/HW0VyzYZ/1-8-9.webp'];
         let activeGameRef = null;
         let gameValueListener = null;
+        let invitationListener = null;
+        
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
+        let currentlyPlayingAudio = null; // To track the currently playing audio element
 
         window.showScreen = (screenName) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -218,17 +319,22 @@
         };
 
         window.showModal = (modalName, show) => {
+            if (modalName === 'share' && show) updateShareModalContent();
             document.getElementById(`${modalName}-modal`).classList.toggle('active', show);
         };
         
-        const createSetupUI = (prompt, defaultName = '', defaultAvatar = '') => {
+        const createSetupUI = (prompt, defaultName = '', defaultAvatar = '', showSwitchButton = false) => {
             let avatarGrid = avatarUrls.map(url => `<div class="avatar-option"><img src="${url}" alt="avatar" class="${url === defaultAvatar ? 'selected' : ''}"></div>`).join('');
+            const switchButtonHTML = showSwitchButton ? `<hr style="width:80%; border-color:rgba(255,255,255,0.2); margin: 10px 0;"><button class="button" onclick="switchToOnlineSetup()">التبديل للعب أونلاين</button>` : '';
             document.getElementById('setup-container').innerHTML = `
                 <h2>${prompt}</h2>
                 <input type="text" id="player-name-input" class="input-field" placeholder="اكتب اسمك هنا" value="${defaultName}">
                 <h3>اختر صورتك الرمزية</h3>
                 <div class="avatar-selection">${avatarGrid}</div>
-                <div class="button-container"><button id="confirm-setup-button" class="button">تأكيد</button></div>`;
+                <div class="button-container">
+                    <button id="confirm-setup-button" class="button">تأكيد</button>
+                    ${switchButtonHTML}
+                </div>`;
             document.querySelectorAll('.avatar-option img').forEach(img => {
                 img.onclick = () => {
                     document.querySelector('.avatar-option img.selected')?.classList.remove('selected');
@@ -237,10 +343,53 @@
             });
         };
 
-        window.setupOnlineGame = () => {
+        window.setupOfflineGame = () => {
+            gameState.mode = 'offline';
+            gameState.setupPlayer = 1;
+            gameState.players = { 1: {}, 2: {} };
+            
             const savedPlayer = getSavedPlayer();
-            if (savedPlayer) loginOnline(savedPlayer);
-            else {
+            if (savedPlayer) {
+                gameState.players[1] = { ...savedPlayer };
+                gameState.setupPlayer = 2;
+                createSetupUI('اللاعب 2: أدخل بياناتك', '', '', true);
+                document.getElementById('confirm-setup-button').onclick = handleOfflineSetup;
+            } else {
+                createSetupUI('اللاعب 1: أدخل بياناتك', '', '', true);
+                document.getElementById('confirm-setup-button').onclick = handleOfflineSetup;
+            }
+            showScreen('player-setup');
+        };
+        
+        const handleOfflineSetup = () => {
+            const name = document.getElementById('player-name-input').value.trim();
+            const avatar = document.querySelector('.avatar-selection .selected')?.src;
+            if (!name || !avatar) return showToast('الرجاء إدخال الاسم واختيار الصورة!');
+            gameState.players[gameState.setupPlayer] = { name, avatar };
+
+            if (gameState.setupPlayer === 1) {
+                savePlayer({ name, avatar }); 
+                gameState.setupPlayer = 2;
+                createSetupUI('اللاعب 2: أدخل بياناتك', '', '', true);
+                document.getElementById('confirm-setup-button').onclick = handleOfflineSetup;
+            } else startGame();
+        };
+
+        window.switchToOnlineSetup = () => {
+            const savedPlayer = getSavedPlayer();
+            if (savedPlayer) {
+                loginOnline(savedPlayer);
+            } else {
+                setupOnlineGame();
+            }
+        };
+        
+        window.setupOnlineGame = () => {
+            gameState.mode = 'online';
+            const savedPlayer = getSavedPlayer();
+            if (savedPlayer) {
+                loginOnline(savedPlayer);
+            } else {
                 createSetupUI('أدخل بياناتك للعب أونلاين');
                 showScreen('player-setup');
                 document.getElementById('confirm-setup-button').onclick = handleOnlineSetup;
@@ -251,7 +400,18 @@
             const name = document.getElementById('player-name-input').value.trim();
             const avatar = document.querySelector('.avatar-selection .selected')?.src;
             if (!name || !avatar) return showToast('الرجاء إدخال الاسم واختيار الصورة!');
+            
+            // Prevent using names with characters Firebase doesn't like in keys
+            if (/[.$#[\]/]/.test(name)) {
+                return showToast('لا يمكن أن يحتوي الاسم على ., #, $, [, ], أو /');
+            }
+
             const playerData = { name, avatar };
+            
+            // Save user profile information
+            const userRef = ref(db, `users/${name}`);
+            await set(userRef, playerData);
+
             savePlayer(playerData);
             loginOnline(playerData);
         };
@@ -259,6 +419,17 @@
         const loginOnline = (playerData) => {
             gameState.player = playerData;
             document.getElementById('online-home-avatar').src = gameState.player.avatar;
+
+            // Setup presence system
+            const myStatusRef = ref(db, `status/${gameState.player.name}`);
+            onValue(ref(db, '.info/connected'), (snap) => {
+                if (snap.val() === true) {
+                    set(myStatusRef, 'online');
+                    onDisconnect(myStatusRef).set('offline');
+                }
+            });
+            
+            listenForInvites();
             showScreen('online-home');
         };
 
@@ -274,11 +445,105 @@
                 p1: gameState.player.name, 
                 messages: {},
             });
-            listenToGame(roomId);
+            
+            // Show invite screen instead of going directly to game
+            showInviteScreen(roomId);
+        };
+
+        const showInviteScreen = async (roomId) => {
+            document.getElementById('invite-room-id-text').textContent = roomId;
+            document.getElementById('invite-copy-code-button').onclick = () => copyRoomCode(roomId);
+            showScreen('invite');
+
+            const listDiv = document.getElementById('invite-friends-list');
+            listDiv.innerHTML = '<p>جاري تحميل قائمة الأصدقاء...</p>';
+
+            const userFollowingRef = ref(db, `users/${gameState.player.name}/following`);
+            const snapshot = await get(userFollowingRef);
+            
+            if (!snapshot.exists()) {
+                listDiv.innerHTML = '<p>أنت لا تتابع أي شخص حتى الآن. يمكنك متابعة اللاعبين من داخل اللعبة.</p>';
+                return;
+            }
+
+            const following = snapshot.val();
+            listDiv.innerHTML = ''; // Clear loading message
+
+            for (const playerName of Object.keys(following)) {
+                const playerProfileRef = ref(db, `users/${playerName}`);
+                const profileSnap = await get(playerProfileRef);
+                
+                if (profileSnap.exists()) {
+                    const playerData = profileSnap.val();
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'followed-player-item';
+                    itemDiv.innerHTML = `
+                        <div class="player-info">
+                            <img src="${playerData.avatar}" alt="${playerData.name}">
+                            <span>${playerData.name}</span>
+                        </div>
+                        <button class="button" id="invite-${playerName}">دعوة</button>
+                    `;
+                    listDiv.appendChild(itemDiv);
+                    
+                    document.getElementById(`invite-${playerName}`).onclick = () => sendInvite(playerName, roomId);
+                }
+            }
+        };
+
+        const sendInvite = async (targetPlayerName, roomId) => {
+            const inviteButton = document.getElementById(`invite-${targetPlayerName}`);
+            const inviterData = {
+                name: gameState.player.name,
+                avatar: gameState.player.avatar
+            };
+            const invitationRef = ref(db, `invitations/${targetPlayerName}/${gameState.player.name}`);
+            await set(invitationRef, {
+                from: inviterData,
+                roomId: roomId,
+                timestamp: Date.now()
+            });
+            showToast(`تم إرسال الدعوة إلى ${targetPlayerName}`);
+            inviteButton.disabled = true;
+            inviteButton.textContent = 'تم الإرسال';
         };
         
-        window.joinRoom = async () => {
-            const roomId = document.getElementById('join-id-input').value.trim();
+        const listenForInvites = () => {
+            const myInvitesRef = ref(db, `invitations/${gameState.player.name}`);
+            if (invitationListener) invitationListener(); // Detach any old listener
+            
+            invitationListener = onValue(myInvitesRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const invites = snapshot.val();
+                    const firstInviteKey = Object.keys(invites)[0];
+                    const inviteData = invites[firstInviteKey];
+                    
+                    document.getElementById('inviter-avatar').src = inviteData.from.avatar;
+                    document.getElementById('invite-notification-text').textContent = `${inviteData.from.name} يدعوك للعب!`;
+                    showModal('invite-notification', true);
+
+                    document.getElementById('invite-accept-button').onclick = () => {
+                        joinRoom(inviteData.roomId);
+                        remove(ref(db, `invitations/${gameState.player.name}/${inviteData.from.name}`));
+                        showModal('invite-notification', false);
+                    };
+
+                    document.getElementById('invite-decline-button').onclick = () => {
+                        remove(ref(db, `invitations/${gameState.player.name}/${inviteData.from.name}`));
+                        showModal('invite-notification', false);
+                    };
+                } else {
+                    showModal('invite-notification', false);
+                }
+            });
+        };
+        
+        window.goToGameFromInvite = () => {
+            listenToGame(gameState.roomId);
+        }
+        
+        window.joinRoom = async (roomIdFromInvite = null) => {
+            const roomId = roomIdFromInvite || document.getElementById('join-id-input').value.trim();
             if(!roomId) return showToast("الرجاء إدخال كود الغرفة");
             
             const gameRef = ref(db, `games/${roomId}`);
@@ -286,9 +551,12 @@
             if(!snapshot.exists()) return showToast("الغرفة غير موجودة!");
             let gameData = snapshot.val();
             if(Object.keys(gameData.players).length >= 2 && !gameData.players[gameState.player.name]) return showToast("الغرفة ممتلئة!");
+
+            gameData.players[gameState.player.name] = gameState.player;
             
-            if (!gameData.p2) gameData.p2 = gameState.player.name;
-            
+            if (!gameData.p2) {
+                gameData.p2 = gameState.player.name;
+            }
             await update(gameRef, {
                 [`players/${gameState.player.name}`]: gameState.player,
                 p2: gameData.p2
@@ -299,6 +567,7 @@
         const listenToGame = (roomId) => {
             gameState.roomId = roomId;
             activeGameRef = ref(db, `games/${roomId}`);
+            
             sessionStorage.setItem('xo_active_room', roomId);
 
             gameValueListener = onValue(activeGameRef, (snap) => {
@@ -311,6 +580,7 @@
                     return;
                 }
                 gameState.gameData = gameData;
+                gameState.board = gameData.board;
                 
                 if (gameData.winner || gameData.leaver) {
                     if (gameState.isGameActive) endGame(gameData.winner === 'Draw', gameData.leaver);
@@ -320,10 +590,11 @@
                     showModal('winner', false); showModal('rematch', false);
                 }
 
-                updatePlayerUI(1, gameData.players[gameData.p1]);
-                updatePlayerUI(2, gameData.players[gameData.p2]);
-                renderBoard(gameData.board || Array(9).fill(''));
-                updateTurnHighlight(gameData);
+                updatePlayerUI(1, gameData.players[gameData.p1], gameData.p1);
+                updatePlayerUI(2, gameData.players[gameData.p2], gameData.p2);
+                updateFollowButtons();
+                renderBoard();
+                updateTurnHighlight();
                 updateChat(gameData.messages || {});
                 showScreen('game');
                 
@@ -339,6 +610,7 @@
                         update(activeGameRef, { rematch: null });
                     }
                 } else {
+                     showModal('rematch', false);
                      const playAgainBtn = document.getElementById('play-again-button');
                      if (playAgainBtn) {
                          playAgainBtn.disabled = false;
@@ -347,25 +619,48 @@
                 }
             });
         };
+
+        const startGame = () => { 
+            gameState.board = Array(9).fill('');
+            gameState.currentPlayer = 'X';
+            gameState.isGameActive = true;
+            updatePlayerUI(1, gameState.players[1]);
+            updatePlayerUI(2, gameState.players[2]);
+            renderBoard();
+            updateTurnHighlight();
+            showScreen('game');
+            document.getElementById('chat-button').style.display = 'none';
+            document.querySelectorAll('.follow-button').forEach(b => b.style.display = 'none');
+        };
         
-        const updatePlayerUI = (playerNum, playerData) => {
+        const updatePlayerUI = (playerNum, playerData, playerName) => {
             const nameEl = document.getElementById(`p${playerNum}-name`);
             const avatarEl = document.getElementById(`p${playerNum}-avatar`);
+            const followBtn = document.getElementById(`p${playerNum}-follow-button`);
+            
             if(playerData) {
                 nameEl.textContent = playerData.name;
                 avatarEl.src = playerData.avatar;
-                nameEl.parentElement.style.opacity = '1';
+                nameEl.closest('.player-panel').style.opacity = '1';
+                if (gameState.mode === 'online' && playerName && playerName !== gameState.player.name) {
+                    followBtn.style.display = 'flex';
+                    followBtn.dataset.playerName = playerName;
+                    followBtn.onclick = () => toggleFollow(playerName);
+                } else {
+                    followBtn.style.display = 'none';
+                }
             } else {
                 nameEl.textContent = 'في انتظار لاعب...';
                 avatarEl.src = 'https://i.ibb.co/Zc3bJcK/avatar-placeholder.png';
-                nameEl.parentElement.style.opacity = '0.5';
+                nameEl.closest('.player-panel').style.opacity = '0.5';
+                followBtn.style.display = 'none';
             }
         };
 
-        const renderBoard = (board) => {
+        const renderBoard = () => {
             const boardDiv = document.getElementById('board');
             boardDiv.innerHTML = '';
-            board.forEach((cell, i) => {
+            (gameState.board || []).forEach((cell, i) => {
                 const cellDiv = document.createElement('div');
                 cellDiv.className = `cell ${cell ? cell.toLowerCase() : ''}`;
                 cellDiv.textContent = cell;
@@ -377,34 +672,52 @@
 
         const handleCellClick = async (e) => {
             const index = parseInt(e.target.dataset.index);
-            if (!gameState.isGameActive || gameState.gameData.board[index] !== '') return;
-            if (!gameState.gameData.p2) return showToast("انتظر انضمام اللاعب الثاني.");
-            if (gameState.gameData.turn !== gameState.player.name) return showToast("ليس دورك!");
-            
-            const symbol = gameState.player.name === gameState.gameData.p1 ? 'X' : 'O';
-            const opponent = gameState.player.name === gameState.gameData.p1 ? gameState.gameData.p2 : gameState.gameData.p1;
-            let newBoard = [...gameState.gameData.board];
-            newBoard[index] = symbol;
-            const winnerResult = checkWinner(newBoard);
-            let updateData = { board: newBoard, turn: opponent };
-            if (winnerResult) {
-                 updateData.winner = winnerResult === 'Draw' ? 'Draw' : gameState.player.name;
+            if (!gameState.isGameActive || gameState.board[index] !== '') return;
+            if (gameState.mode === 'offline') {
+                gameState.board[index] = gameState.currentPlayer;
+                if (!checkResult()) {
+                    gameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+                    updateTurnHighlight();
+                }
+            } else {
+                if (!gameState.gameData.p2) return showToast("انتظر انضمام اللاعب الثاني.");
+                if (gameState.gameData.turn !== gameState.player.name) return showToast("ليس دورك!");
+                const symbol = gameState.player.name === gameState.gameData.p1 ? 'X' : 'O';
+                const opponent = gameState.player.name === gameState.gameData.p1 ? gameState.gameData.p2 : gameState.gameData.p1;
+                let newBoard = [...gameState.board];
+                newBoard[index] = symbol;
+                const winnerResult = checkWinner(newBoard);
+                let updateData = { board: newBoard, turn: opponent };
+                if (winnerResult) {
+                     updateData.winner = winnerResult === 'Draw' ? 'Draw' : gameState.player.name;
+                }
+                await update(activeGameRef, updateData);
             }
-            await update(activeGameRef, updateData);
+            renderBoard();
         };
 
+        const checkResult = () => { 
+            const winnerSymbol = checkWinner(gameState.board);
+            if (winnerSymbol) {
+                endGame(winnerSymbol === 'Draw', null);
+                return true;
+            }
+            return false;
+        };
         const checkWinner = (board) => {
             const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
             for (let c of wins) if (board[c[0]] && board[c[0]] === board[c[1]] && board[c[0]] === board[c[2]]) return board[c[0]];
             return board.includes('') ? null : 'Draw';
         };
 
-        const updateTurnHighlight = (gameData) => {
+        const updateTurnHighlight = () => {
             const p1Indicator = document.querySelector('#player-1 .status-indicator');
             const p2Indicator = document.querySelector('#player-2 .status-indicator');
-            let turnSymbol = null;
-            if (gameData?.p2) {
-                turnSymbol = gameData.turn === gameData.p1 ? 'X' : 'O';
+            let turnSymbol;
+            if (gameState.mode === 'offline') {
+                turnSymbol = gameState.currentPlayer;
+            } else if (gameState.gameData?.p2) {
+                turnSymbol = gameState.gameData.turn === gameState.gameData.p1 ? 'X' : 'O';
             }
             p1Indicator.className = 'status-indicator ' + (turnSymbol === 'X' ? 'active' : 'inactive');
             p2Indicator.className = 'status-indicator ' + (turnSymbol === 'O' ? 'active' : 'inactive');
@@ -429,7 +742,11 @@
                     winnerAvatar.style.display = 'block';
                 }
             } else {
-                winner = gameState.gameData.players[gameState.gameData.winner];
+                if (gameState.mode === 'offline') {
+                    winner = gameState.currentPlayer === 'X' ? gameState.players[1] : gameState.players[2];
+                } else {
+                    winner = gameState.gameData.players[gameState.gameData.winner];
+                }
                 winnerText.textContent = `🎉 ${winner.name} هو الفائز!`;
                 winnerAvatar.src = winner.avatar;
                 winnerAvatar.style.display = 'block';
@@ -438,16 +755,27 @@
         };
         
         window.leaveGame = async () => {
-            if (!activeGameRef || !gameState.gameData) return goToOnlineHome();
+            if (gameState.mode === 'offline' || !activeGameRef || !gameState.gameData) {
+                goToOnlineHome();
+                return;
+            }
             const isHost = gameState.player.name === gameState.gameData.p1;
-            if (isHost) await remove(activeGameRef);
-            else await update(activeGameRef, { leaver: gameState.player.name });
+            if (isHost) {
+                await remove(activeGameRef);
+            } else {
+                await update(activeGameRef, { leaver: gameState.player.name });
+            }
             goToOnlineHome();
         };
 
         window.logout = () => {
-             localStorage.removeItem('xo_player_data_online');
+             localStorage.removeItem('xo_player_data');
              sessionStorage.removeItem('xo_active_room');
+             // Set status to offline before logging out
+             if(gameState.player.name) {
+                const myStatusRef = ref(db, `status/${gameState.player.name}`);
+                set(myStatusRef, 'offline');
+             }
              gameState = { player: {} };
              location.reload();
         }
@@ -457,17 +785,29 @@
             if (gameValueListener) { gameValueListener(); gameValueListener = null; }
             activeGameRef = null;
             showModal('winner', false); showModal('rematch', false); showModal('chat', false);
+            document.getElementById('chat-button').style.display = 'block';
             if (gameState.player && gameState.player.name) showScreen('online-home');
             else showScreen('start');
         };
 
-        document.getElementById('main-menu-button').onclick = async () => { await leaveGame(); };
+        document.getElementById('main-menu-button').onclick = async () => {
+            showModal('winner', false); 
+            if(gameState.mode === 'online') await leaveGame();
+            else showScreen('start');
+        };
 
         document.getElementById('play-again-button').onclick = async () => {
-            if (!activeGameRef) return;
-            document.getElementById('play-again-button').disabled = true;
-            document.getElementById('play-again-button').textContent = 'في انتظار الخصم...';
-            await update(activeGameRef, { rematch: { requester: gameState.player.name, responder: null, status: 'pending' } });
+            if (gameState.mode === 'offline') {
+                showModal('winner', false);
+                startGame();
+            } else if (activeGameRef) {
+                const playAgainBtn = document.getElementById('play-again-button');
+                playAgainBtn.disabled = true;
+                playAgainBtn.textContent = 'في انتظار الخصم...';
+                await update(activeGameRef, {
+                    rematch: { requester: gameState.player.name, responder: null, status: 'pending' }
+                });
+            }
         };
 
         const showRematchModal = (requesterName) => {
@@ -493,6 +833,7 @@
         window.showProfileEditor = () => {
              const savedPlayer = getSavedPlayer();
              createSetupUI('تعديل الملف الشخصي', savedPlayer.name, savedPlayer.avatar);
+             document.getElementById('setup-container').querySelector('h2').textContent = 'تعديل الملف الشخصي';
              const button = document.getElementById('confirm-setup-button');
              button.textContent = 'حفظ التغييرات';
              button.onclick = updateProfile;
@@ -503,7 +844,19 @@
             const newName = document.getElementById('player-name-input').value.trim();
             const newAvatar = document.querySelector('.avatar-selection .selected')?.src;
             if (!newName || !newAvatar) return showToast('الرجاء إدخال الاسم واختيار الصورة!');
+            
+            // Note: Changing name would break follow relationships. A real app would use a unique, immutable user ID.
+            if (newName !== gameState.player.name) {
+                showToast("لا يمكن تغيير الاسم حاليًا.");
+                return;
+            }
+
             const updatedPlayer = { name: newName, avatar: newAvatar };
+            
+            // Update user profile
+            const userRef = ref(db, `users/${newName}`);
+            await update(userRef, { avatar: newAvatar });
+
             savePlayer(updatedPlayer);
             gameState.player = updatedPlayer;
             document.getElementById('online-home-avatar').src = newAvatar;
@@ -519,14 +872,19 @@
 
         const updateShareModalContent = () => {
             document.getElementById('room-id-text').textContent = gameState.roomId;
-            document.getElementById('copy-code-button').onclick = copyRoomCode;
+            document.getElementById('copy-code-button').onclick = () => copyRoomCode(gameState.roomId);
         };
         
-        const copyRoomCode = () => navigator.clipboard.writeText(gameState.roomId).then(() => showToast('تم نسخ الكود!'), () => showToast('فشل نسخ الكود.'));
+        const copyRoomCode = (roomId) => {
+            navigator.clipboard.writeText(roomId).then(() => showToast('تم نسخ الكود!'), () => showToast('فشل نسخ الكود.'));
+        };
 
-        const savePlayer = (playerData) => localStorage.setItem('xo_player_data_online', JSON.stringify(playerData));
+        const savePlayer = (playerData) => localStorage.setItem('xo_player_data', JSON.stringify(playerData));
         const getSavedPlayer = () => {
-            try { return JSON.parse(localStorage.getItem('xo_player_data_online')); } catch (e) { return null; }
+            try {
+                const player = JSON.parse(localStorage.getItem('xo_player_data'));
+                return (player && player.name && player.avatar) ? player : null;
+            } catch (e) { return null; }
         };
 
         const initializeAppSession = () => {
@@ -534,7 +892,6 @@
             const savedPlayer = getSavedPlayer();
             if (roomIdFromSession && savedPlayer) handleReconnect(roomIdFromSession);
             else if (savedPlayer) loginOnline(savedPlayer);
-            else showScreen('start');
         };
         
         const handleReconnect = async (roomId) => {
@@ -554,6 +911,44 @@
             }
         };
 
+        // --- FOLLOW LOGIC ---
+        const updateFollowButtons = async () => {
+            const myFollowingRef = ref(db, `users/${gameState.player.name}/following`);
+            const snapshot = await get(myFollowingRef);
+            const followingList = snapshot.exists() ? snapshot.val() : {};
+
+            document.querySelectorAll('.follow-button').forEach(btn => {
+                const targetName = btn.dataset.playerName;
+                if (targetName) {
+                    if (followingList[targetName]) {
+                        btn.classList.add('is-following');
+                        btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`; // Checkmark
+                    } else {
+                        btn.classList.remove('is-following');
+                        btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`; // Plus
+                    }
+                }
+            });
+        };
+
+        const toggleFollow = async (targetPlayerName) => {
+            const amIFollowing = document.querySelector(`.follow-button[data-player-name="${targetPlayerName}"]`).classList.contains('is-following');
+            
+            const myFollowingRef = ref(db, `users/${gameState.player.name}/following/${targetPlayerName}`);
+            const theirFollowersRef = ref(db, `users/${targetPlayerName}/followers/${gameState.player.name}`);
+
+            if (amIFollowing) {
+                await remove(myFollowingRef);
+                await remove(theirFollowersRef);
+                showToast(`تم إلغاء متابعة ${targetPlayerName}`);
+            } else {
+                await set(myFollowingRef, true);
+                await set(theirFollowersRef, true);
+                showToast(`أنت تتابع الآن ${targetPlayerName}`);
+            }
+            updateFollowButtons();
+        };
+
         // --- CHAT LOGIC ---
         window.openChat = () => {
             showModal('chat', true);
@@ -567,8 +962,14 @@
             const input = document.getElementById('chat-text-input');
             const text = input.value.trim();
             if (!text || !activeGameRef) return;
-            const message = { type: 'text', sender: gameState.player.name, content: text, timestamp: Date.now() };
-            push(ref(db, `games/${gameState.roomId}/messages`), message);
+            const message = {
+                type: 'text',
+                sender: gameState.player.name,
+                content: text,
+                timestamp: Date.now()
+            };
+            const messagesRef = ref(db, `games/${gameState.roomId}/messages`);
+            push(messagesRef, message);
             input.value = '';
         };
 
@@ -576,12 +977,16 @@
             const chatMessagesDiv = document.getElementById('chat-messages');
             chatMessagesDiv.innerHTML = '';
             let hasUnread = false;
+
+            if (!messages) return;
+
             const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp - b.timestamp);
             let latestMessage = sortedMessages.length > 0 ? sortedMessages[sortedMessages.length - 1] : null;
 
             sortedMessages.forEach(msg => {
                 const senderData = gameState.gameData.players[msg.sender];
                 if (!senderData) return;
+                
                 const isSentByMe = msg.sender === gameState.player.name;
                 const container = document.createElement('div');
                 container.className = `message-container ${isSentByMe ? 'sent' : 'received'}`;
@@ -591,13 +996,35 @@
                     messageContentHTML = `<p>${msg.content}</p>`;
                 } else if(msg.type === 'voice') {
                     const waveformBars = (msg.waveform || []).map(h => `<div class="bar" style="height: ${h}%;"></div>`).join('');
-                    messageContentHTML = `<div class="voice-message-container" onclick="playAudio('${msg.content}')"><div class="voice-play-button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></div><div class="voice-waveform">${waveformBars}</div></div>`;
+                    messageContentHTML = `
+                        <div class="voice-message-container" data-audio-src="${msg.content}">
+                            <div class="voice-play-button">
+                                <svg viewBox="0 0 24 24" class="play-icon"><path d="M8 5v14l11-7z"></path></svg> 
+                                <svg viewBox="0 0 24 24" class="pause-icon" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                            </div>
+                            <div class="voice-waveform">${waveformBars}</div>
+                        </div>`;
                 }
 
-                container.innerHTML = `<div class="message-bubble">${!isSentByMe ? `<div class="message-sender">${senderData.name}</div>` : ''}${messageContentHTML}</div>`;
+                container.innerHTML = `
+                    <div class="message-bubble">
+                        ${!isSentByMe ? `<div class="message-sender">${senderData.name}</div>` : ''}
+                        ${messageContentHTML}
+                    </div>
+                `;
                 chatMessagesDiv.appendChild(container);
 
-                if (!isSentByMe && msg.timestamp > gameState.chat.lastReadTimestamp) hasUnread = true;
+                if (msg.type === 'voice') {
+                    container.querySelector('.voice-message-container').onclick = (e) => {
+                        const target = e.currentTarget;
+                        const src = target.dataset.audioSrc;
+                        playAudio(src, target.querySelector('.voice-play-button'));
+                    };
+                }
+
+                if (!isSentByMe && msg.timestamp > gameState.chat.lastReadTimestamp) {
+                    hasUnread = true;
+                }
             });
 
             if (hasUnread && !document.getElementById('chat-modal').classList.contains('active')) {
@@ -625,61 +1052,129 @@
                 <p>"${contentPreview}"</p>
                 <div class="button-container">
                     <button class="button" id="notification-view">شاهد الآن</button>
-                    <button class="button" id="notification-close">X</button>
+                    <button class="icon-button" id="notification-close">
+                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+                    </button>
                 </div>`;
+            
             notificationDiv.style.display = 'block';
 
-            document.getElementById('notification-view').onclick = () => { openChat(); notificationDiv.style.display = 'none'; };
-            document.getElementById('notification-close').onclick = () => { notificationDiv.style.display = 'none'; };
+            document.getElementById('notification-view').onclick = () => {
+                openChat();
+                notificationDiv.style.display = 'none';
+            };
+            document.getElementById('notification-close').onclick = () => {
+                notificationDiv.style.display = 'none';
+            };
         };
+        
+        const playAudio = (src, buttonElement) => {
+            const playIcon = buttonElement.querySelector('.play-icon');
+            const pauseIcon = buttonElement.querySelector('.pause-icon');
 
-        window.playAudio = (src) => { new Audio(src).play(); };
+            if (currentlyPlayingAudio && currentlyPlayingAudio.src === src && !currentlyPlayingAudio.paused) {
+                currentlyPlayingAudio.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            } else {
+                if (currentlyPlayingAudio) {
+                    currentlyPlayingAudio.pause();
+                    const allPlayButtons = document.querySelectorAll('.voice-play-button .play-icon');
+                    const allPauseButtons = document.querySelectorAll('.voice-play-button .pause-icon');
+                    allPlayButtons.forEach(btn => btn.style.display = 'block');
+                    allPauseButtons.forEach(btn => btn.style.display = 'none');
+                }
+                
+                currentlyPlayingAudio = new Audio(src);
+                currentlyPlayingAudio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+
+                currentlyPlayingAudio.onended = () => {
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                };
+            }
+        };
         
         document.getElementById('send-chat-button').onclick = sendChatMessage;
-        document.getElementById('chat-text-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+        document.getElementById('chat-text-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
         
         // --- VOICE MESSAGE LOGIC ---
         const recordVoiceButton = document.getElementById('record-voice-button');
-        const toggleRecording = async () => { if(isRecording) stopRecording(); else await startRecording(); };
+        
+        const toggleRecording = async () => {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                try {
+                    // Request microphone permission
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    startRecording(stream);
+                } catch (err) {
+                    console.error("Error accessing microphone:", err);
+                    showToast("تم رفض إذن الميكروفون. يرجى السماح بالوصول للميكروفون في إعدادات المتصفح.");
+                }
+            }
+        };
 
-        const startRecording = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                audioChunks = [];
-                isRecording = true;
-                recordVoiceButton.innerHTML = `<svg viewBox="0 0 24 24" fill="${getComputedStyle(document.documentElement).getPropertyValue('--red-glow')}"><path d="M6 6h12v12H6z"></path></svg>`;
-                
-                mediaRecorder.addEventListener("dataavailable", e => audioChunks.push(e.data));
-                mediaRecorder.addEventListener("stop", () => {
-                    sendVoiceMessage(new Blob(audioChunks, { type: 'audio/webm' }));
-                    stream.getTracks().forEach(track => track.stop());
-                });
-            } catch (err) { console.error(err); showToast("لا يمكن الوصول للميكروفون."); }
+        const startRecording = (stream) => {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+            audioChunks = [];
+            isRecording = true;
+            recordVoiceButton.innerHTML = `<svg viewBox="0 0 24 24" fill="${getComputedStyle(document.documentElement).getPropertyValue('--red-glow')}"><path d="M6 6h12v12H6z"></path></svg>`;
+            
+            mediaRecorder.addEventListener("dataavailable", event => {
+                audioChunks.push(event.data);
+            });
+
+            mediaRecorder.addEventListener("stop", () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                sendVoiceMessage(audioBlob);
+                stream.getTracks().forEach(track => track.stop()); // Stop the stream tracks to release the microphone
+            });
         };
 
         const stopRecording = () => { 
             if (mediaRecorder && mediaRecorder.state === "recording") {
                 mediaRecorder.stop();
                 isRecording = false;
-                recordVoiceButton.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path></svg>`;
+                recordVoiceButton.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1.2-9.1c0-1.03.83-1.9 1.9-1.9 1.05 0 1.9.87 1.9 1.9l-.01 6.2c0 1.03-.83 1.9-1.9 1.9s-1.9-.87-1.9-1.9V4.9zm6.5 6.1c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></svg>`;
             }
         };
         
-        const generateWaveform = () => Array.from({length: 30}, () => Math.floor(Math.random() * 80) + 15);
+        const generateWaveform = () => {
+            const bars = 30; // Number of bars in the waveform
+            const waveform = [];
+            for (let i = 0; i < bars; i++) {
+                waveform.push(Math.floor(Math.random() * 80) + 15); // Random height between 15% and 95%
+            }
+            return waveform;
+        };
 
         const sendVoiceMessage = (blob) => {
             const reader = new FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => {
-                const message = { type: 'voice', sender: gameState.player.name, content: reader.result, waveform: generateWaveform(), timestamp: Date.now() };
-                push(ref(db, `games/${gameState.roomId}/messages`), message);
+                const base64String = reader.result;
+                const message = {
+                    type: 'voice',
+                    sender: gameState.player.name,
+                    content: base64String,
+                    waveform: generateWaveform(),
+                    timestamp: Date.now()
+                };
+                const messagesRef = ref(db, `games/${gameState.roomId}/messages`);
+                push(messagesRef, message);
             };
         };
 
         recordVoiceButton.onclick = toggleRecording;
         document.addEventListener('DOMContentLoaded', initializeAppSession);
+
     </script>
 </body>
 </html>
