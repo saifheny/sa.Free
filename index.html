@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="الاختبارات الذكية">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/3RBYLnd3/818334fa-20ba-431a-ad38-6bec7ef02203.png">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#0d1117">
     <!-- Fonts and Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,6 +113,12 @@
             text-shadow: 0 0 15px rgba(47, 129, 247, 0.5), 0 0 30px rgba(47, 129, 247, 0.3);
         }
         #main-landing-page p { font-size: 1.2rem; color: #8b949e; line-height: 1.8; margin-bottom: 35px; max-width: 800px; }
+        .role-selection {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
         
         /* --- 3D Button Style --- */
         .btn-3d {
@@ -288,8 +294,12 @@
             border-right: none;
             border-top: none;
         }
-        #my-student-results-container .test-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; border-top: 1px solid #30363d;}
-        #my-student-results-container .test-item:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+        #my-student-results-container-wrapper {
+             border: 1px solid #30363d; 
+             border-radius: 12px; 
+             overflow: hidden;
+        }
+        #my-student-results-container-wrapper .test-item:first-child { border-top: none;}
 
         /* Advanced Search Bar */
         #search-bar {
@@ -311,6 +321,16 @@
             transform: translateY(-20px);
             opacity: 0;
             pointer-events: none;
+        }
+        .dashboard-header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .dashboard-header-controls .header-buttons {
+            display: flex;
+            gap: 10px;
         }
 
         /* --- Generic Modal --- */
@@ -343,7 +363,7 @@
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
         }
         .image-modal-overlay.visible { opacity: 1; visibility: visible; }
-        .image-modal-content { max-width: 90vw; max-height: 80vh; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: default; }
+        .image-modal-content { max-width: 90vw; max-height: 80vh; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: pointer; }
         .image-modal-download-btn {
             position: absolute; top: 20px;
             width: 45px; height: 45px;
@@ -441,8 +461,8 @@
         <h1>منصة الاختبارات الذكية 🚀</h1>
         <p>بوابة التعلم الذكي التي تدمج التكنولوجيا بالتعليم! 🌟 سواء كنت <strong>معلمًا</strong> مبتكرًا أو <strong>طالبًا</strong> طموحًا، نقدم لك أدوات متكاملة لتحقيق التميز الأكاديمي!</p>
         <div class="role-selection">
-            <a href="#" id="show-teacher-portal" class="btn-3d">دخول المعلمين <i class="fas fa-chalkboard-teacher"></i></a>
-            <a href="#" id="show-student-portal" class="btn-3d">دخول الطلاب <i class="fas fa-user-graduate"></i></a>
+            <button id="show-teacher-portal" class="btn-3d">دخول المعلمين <i class="fas fa-chalkboard-teacher"></i></button>
+            <button id="show-student-portal" class="btn-3d">دخول الطلاب <i class="fas fa-user-graduate"></i></button>
         </div>
     </main>
 
@@ -476,7 +496,13 @@
                 <p>ليس لديك حساب؟ <a href="#" class="to-register">تسجيل جديد</a></p>
             </section>
             <section id="teacher-dashboard-section" class="hidden">
-                <h1>مرحبًا بك، <span id="teacher-name"></span>!</h1><hr />
+                <div class="dashboard-header-controls">
+                     <h1>مرحبًا بك، <span id="teacher-name"></span>!</h1>
+                     <div class="header-buttons">
+                        <button id="teacher-refresh-btn" class="icon-btn" title="تحديث"><i class="fas fa-sync-alt"></i></button>
+                     </div>
+                </div>
+                <hr />
                 <div id="teacher-tests-content" class="tab-content"><h2>اختباراتي المنشأة</h2><div id="my-tests-container"></div></div>
                 <div id="teacher-results-content" class="tab-content hidden"><h2>نتائج الطلاب</h2><select id="results-test-selector"></select><div id="student-results-container"></div></div>
                 <div id="teacher-create-test-content" class="tab-content hidden">
@@ -578,16 +604,22 @@
                 <button id="student-login-btn" class="btn-primary">دخول</button><p>ليس لديك حساب؟ <a href="#" class="to-register">تسجيل جديد</a></p>
             </section>
             <section id="student-dashboard-section" class="hidden">
-                <h1>مرحبًا بك، <span id="student-name"></span>!</h1><hr />
+                 <div class="dashboard-header-controls">
+                    <h1>مرحبًا بك، <span id="student-name"></span>!</h1>
+                 </div>
+                <hr />
                 <div class="tab-content" id="student-tests-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div class="dashboard-header-controls">
                         <h2>الاختبارات المتاحة</h2>
-                        <button id="show-search-btn" class="icon-btn" title="بحث"><i class="fas fa-search"></i></button>
+                        <div class="header-buttons">
+                             <button id="refresh-tests-btn" class="icon-btn" title="تحديث"><i class="fas fa-sync-alt"></i></button>
+                             <button id="show-search-btn" class="icon-btn" title="بحث"><i class="fas fa-search"></i></button>
+                        </div>
                     </div>
                     <input type="text" id="search-bar" placeholder="ابحث عن اختبار..." class="hidden" style="margin-bottom:20px;"/>
                     <div id="available-tests-container"></div>
                 </div>
-                <div class="tab-content hidden" id="student-results-content"><h2>نتائجي السابقة</h2><div id="my-student-results-container" style="border: 1px solid #30363d; border-radius: 12px; overflow: hidden;"></div></div>
+                <div class="tab-content hidden" id="student-results-content"><h2>نتائجي السابقة</h2><div id="my-student-results-container-wrapper"><div id="my-student-results-container"></div></div></div>
             </section>
             <section id="take-test-section" class="hidden">
                 <h2 id="current-test-title"></h2>
@@ -771,6 +803,7 @@
             const addQuestionBtn = teacherPortal.querySelector('#add-question-btn'), cancelQuestionEditBtn = teacherPortal.querySelector('#cancel-question-edit-btn'), saveTestBtn = teacherPortal.querySelector('#save-test-btn'), cancelTestEditBtn = teacherPortal.querySelector('#cancel-test-edit-btn');
             const reviewModal = teacherPortal.querySelector('#teacher-review-modal'), reviewModalBody = teacherPortal.querySelector('#review-modal-body'), reviewModalTitle = teacherPortal.querySelector('#review-modal-title'), reviewModalFooter = teacherPortal.querySelector('#review-modal-footer'), finalizeGradesBtn = teacherPortal.querySelector('#finalize-grades-btn');
             const updateNameInput = teacherPortal.querySelector('#teacher-update-name'), updatePasswordInput = teacherPortal.querySelector('#teacher-update-password'), updateBtn = teacherPortal.querySelector('#teacher-update-btn');
+            const refreshBtn = teacherPortal.querySelector('#teacher-refresh-btn');
 
             let currentUser = null, myTests = {}, questionsArray = [], currentQuestionImageBase64 = null, currentModelAnswerImageBase64 = null, currentQuestionType = 'mcq', currentEditingTestId = null, currentEditingQuestionIndex = -1;
             
@@ -793,6 +826,8 @@
             
             async function updateDashboard() { if(!currentUser) return; teacherNameSpan.textContent = currentUser; menuIcon.classList.remove('hidden'); setDefaultTab(); showLoadingSpinner(myTestsContainer); const testsRef = ref(db, `tests/${currentUser}`); onValue(testsRef, (snapshot) => { myTests = snapshot.exists() ? snapshot.val() : {}; renderMyTests(); populateResultsSelector(); }); initChatSystem(currentUser, 'teacher'); }
             
+            refreshBtn.onclick = updateDashboard;
+
             function renderMyTests() {
                 myTestsContainer.innerHTML = "";
                 if (countdownInterval) clearInterval(countdownInterval);
@@ -1006,6 +1041,7 @@
             const qNavContainer=studentPortal.querySelector('#question-navigation-container'), [prevQBtn,nextQBtn]=[studentPortal.querySelector('#prev-question-btn'),studentPortal.querySelector('#next-question-btn')], submitBtn=studentPortal.querySelector('#submit-test-btn');
             const reviewContainer=studentPortal.querySelector('#review-container'), updateNameInput = studentPortal.querySelector('#student-update-name'), updatePasswordInput = studentPortal.querySelector('#student-update-password'), updateBtn = studentPortal.querySelector('#student-update-btn');
             const showSearchBtn = studentPortal.querySelector('#show-search-btn');
+            const refreshBtn = studentPortal.querySelector('#refresh-tests-btn');
 
             let currentStudent=null,takenTests={},allTests={},currentTest=null,testInterval=null,totalSec=0,remainSec=0,answers=[], qIndex=0;
             
@@ -1019,8 +1055,10 @@
             function showSection(s){allSections.forEach(e=>e.classList.add('hidden'));if(s) s.classList.remove('hidden');bottomNav.classList.toggle('hidden',!s || s.id!=='student-dashboard-section')};
             const showLoading=c=>{c.innerHTML='<div class="spinner"></div>'};
             
-            async function loadDashboard(){if(!currentStudent)return;nameSpan.textContent=currentStudent;menuIcon.classList.remove('hidden'); setDefaultTab();showLoading(testsContainer);showLoading(resultsContainer);const resultsSnap=await get(ref(db,`studentResults/${currentStudent}`));takenTests=resultsSnap.exists()?resultsSnap.val():{};renderStudentResults();const testsRef=ref(db,'tests');onValue(testsRef,snap=>{allTests=snap.exists()?snap.val():{};renderAvailableTests()},{onlyOnce:true}); initChatSystem(currentStudent, 'student');}
+            async function loadDashboard(){if(!currentStudent)return;nameSpan.textContent=currentStudent;menuIcon.classList.remove('hidden'); setDefaultTab();showLoading(testsContainer);showLoading(resultsContainer);const resultsSnap=await get(ref(db,`studentResults/${currentStudent}`));takenTests=resultsSnap.exists()?resultsSnap.val():{};renderStudentResults();const testsRef=ref(db,'tests');onValue(testsRef,snap=>{allTests=snap.exists()?snap.val():{};renderAvailableTests()}); initChatSystem(currentStudent, 'student');}
             
+            refreshBtn.onclick = loadDashboard;
+
             function renderAvailableTests(filter=''){
                 testsContainer.innerHTML=''; let found=false;
                 const testEntries = [];
