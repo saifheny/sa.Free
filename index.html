@@ -190,9 +190,17 @@
         .student-test-card .test-info { flex-grow: 1; text-align: right; }
         .student-test-card .test-actions { display: flex; flex-direction: column; gap: 8px; align-items: stretch; flex-shrink: 0; width: 120px; }
         .student-test-card .action-btn { width: 100%; padding: 8px 10px !important; font-size: 0.9rem !important; }
-        .student-test-card .teacher-info { font-size: 0.8rem; color: #ccc; cursor: pointer; margin-top: 4px; }
-        .student-test-card .teacher-info:hover { color: #00aaff; }
+        
+        .student-test-card .teacher-info {
+            font-size: 0.9rem; color: #00aaff; font-weight: 600;
+            background: rgba(0, 170, 255, 0.1); padding: 4px 8px;
+            border-radius: 8px; margin-top: 8px; display: inline-block;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .student-test-card .teacher-info:hover { background: rgba(0, 170, 255, 0.2); transform: scale(1.05); }
         .student-test-card .test-grade { font-size: 0.8rem; color: #aaa; margin-top: 4px; }
+        .student-test-card .test-expiry { font-size: 0.8rem; color: #ffc107; margin-top: 4px; }
+        .btn-text { margin: 0 5px; }
 
         /* --- Generic Modal --- */
         .modal-overlay {
@@ -294,10 +302,35 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         @media (max-width: 767px) {
             #main-landing-page h1 { font-size: 2.8rem; }
             #main-landing-page .supervision-tag { display: none; }
             .btn-3d { font-size: 1.2rem; padding: 18px 30px; }
+
+            .student-test-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .student-test-card .test-actions {
+                flex-direction: row;
+                justify-content: space-around;
+                margin-top: 10px;
+                width: 100%;
+            }
+            .student-test-card .action-btn, .student-test-card .start-btn, .student-test-card .retake-btn {
+                padding: 10px !important;
+                width: auto;
+                flex-grow: 1;
+                border-radius: 10px !important;
+            }
+            .student-test-card .btn-text {
+                display: none;
+            }
+            .student-test-card i {
+                margin-left: 0 !important;
+                font-size: 1rem !important;
+            }
         }
     </style>
 </head>
@@ -447,8 +480,12 @@
             <section id="student-dashboard-section" class="hidden">
                 <h1>مرحبًا بك، <span id="student-name"></span>!</h1><hr />
                 <div class="tab-content" id="student-tests-content">
-                    <input type="text" id="search-bar" placeholder="ابحث عن اختبار..." style="margin-bottom:20px;"/>
-                    <h2>الاختبارات المتاحة</h2><div id="available-tests-container"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h2>الاختبارات المتاحة</h2>
+                        <button id="show-search-btn" class="icon-btn" title="بحث"><i class="fas fa-search"></i></button>
+                    </div>
+                    <input type="text" id="search-bar" placeholder="ابحث عن اختبار..." class="hidden" style="margin-bottom:20px;"/>
+                    <div id="available-tests-container"></div>
                 </div>
                 <div class="tab-content hidden" id="student-results-content"><h2>نتائجي السابقة</h2><div id="my-student-results-container"></div></div>
             </section>
@@ -743,7 +780,9 @@
                     const studentAnswer = answers[index] || {}; let reviewHtml = '';
                     if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(63,185,80,0.1)' : 'rgba(248,81,73,0.1)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
                     else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:#222; padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
-                    const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;'; qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${reviewHtml}`; reviewModalBody.appendChild(qDiv);
+                    const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;';
+                    qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${reviewHtml}`;
+                    reviewModalBody.appendChild(qDiv);
                 });
                 finalizeGradesBtn.onclick = () => finalizeGrades(studentName, testId, test, result); reviewModal.classList.add('visible');
             }
@@ -866,8 +905,9 @@
             const finalScore=studentPortal.querySelector('#final-score'), feedbackMsg=studentPortal.querySelector('#feedback-message'), bottomNav=studentPortal.querySelector('#student-bottom-nav');
             const qNavContainer=studentPortal.querySelector('#question-navigation-container'), [prevQBtn,nextQBtn]=[studentPortal.querySelector('#prev-question-btn'),studentPortal.querySelector('#next-question-btn')], submitBtn=studentPortal.querySelector('#submit-test-btn');
             const reviewContainer=studentPortal.querySelector('#review-container'), updateNameInput = studentPortal.querySelector('#student-update-name'), updatePasswordInput = studentPortal.querySelector('#student-update-password'), updateBtn = studentPortal.querySelector('#student-update-btn');
+            const showSearchBtn = studentPortal.querySelector('#show-search-btn');
             
-            let currentStudent=null,takenTests={},allTests={},currentTest=null,testInterval=null,totalSec=0,remainSec=0,answers=[];
+            let currentStudent=null,takenTests={},allTests={},currentTest=null,testInterval=null,totalSec=0,remainSec=0,answers=[], qIndex=0;
             
             const loggedInUser = localStorage.getItem('loggedInStudent');
             if(loggedInUser){
@@ -899,21 +939,32 @@
 
                     const card = document.createElement('div');
                     card.className = 'student-test-card';
+                    
+                    const expiryTime = new Date(test.timestamp + 48 * 60 * 60 * 1000);
+                    const formattedExpiry = `متاح حتى: ${expiryTime.toLocaleDateString('ar-EG')} ${expiryTime.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}`;
+
                     card.innerHTML = `
                         <div class="test-info">
                             <strong style="font-size:1.1rem;">${test.name}</strong>
                             <div class="test-grade">${test.grade || ''}</div>
+                            <div class="test-expiry">${formattedExpiry}</div>
                             <div class="teacher-info" data-teacher-id="${teacherId}">
                                 <i class="fas fa-chalkboard-teacher" style="margin-left: 5px;"></i> ${teacherId}
                             </div>
                         </div>
                         <div class="test-actions">
-                            <button class="btn-primary start-btn" style="padding: 10px !important; font-size:0.9rem !important; border-bottom-width:4px;">${isTaken ? 'مراجعة النتيجة' : 'ابدأ الاختبار'}</button>
-                            <button class="btn-secondary retake-btn" style="padding: 6px !important; font-size:0.8rem !important; border-bottom-width:4px; display: ${isTaken ? 'flex' : 'none'};"><i class="fas fa-redo" style="margin-left: 5px;"></i>إعادة (تدريب)</button>
-                            <button class="btn-secondary" data-action="share" title="مشاركة رابط الاختبار" style="padding: 6px !important; font-size:0.8rem !important; border-bottom-width:4px;"><i class="fas fa-share-alt"></i> مشاركة</button>
+                            <button class="btn-primary start-btn" style="border-bottom-width:4px;"></button>
+                            <button class="btn-secondary retake-btn" style="border-bottom-width:4px; display: ${isTaken ? 'flex' : 'none'};"><i class="fas fa-redo"></i><span class="btn-text">إعادة</span></button>
+                            <button class="btn-secondary" data-action="share" title="مشاركة رابط الاختبار" style="border-bottom-width:4px;"><i class="fas fa-share-alt"></i><span class="btn-text">مشاركة</span></button>
                         </div>
                     `;
-                    card.querySelector('.start-btn').onclick = () => isTaken ? openStudentReview(testId) : startTest(teacherId, testId, test, false);
+                    
+                    const startBtn = card.querySelector('.start-btn');
+                    startBtn.innerHTML = isTaken 
+                        ? `<i class="fas fa-poll-h"></i> <span class="btn-text">مراجعة</span>`
+                        : `<i class="fas fa-play"></i> <span class="btn-text">ابدأ</span>`;
+
+                    startBtn.onclick = () => isTaken ? openStudentReview(testId) : startTest(teacherId, testId, test, false);
                     card.querySelector('.retake-btn').onclick = () => startTest(teacherId, testId, test, true);
                     card.querySelector('.teacher-info').onclick = (e) => { e.stopPropagation(); openChatModal(currentStudent, teacherId); };
                     card.querySelector('[data-action="share"]').onclick = (e) => { e.stopPropagation(); copyTestLink(teacherId, testId); };
@@ -923,11 +974,40 @@
             }
             function renderStudentResults(){resultsContainer.innerHTML='';const results=Object.values(takenTests).sort((a,b)=>b.timestamp-a.timestamp);if(results.length===0){resultsContainer.innerHTML='<p>لم تقم بإجراء أي اختبار بعد.</p>';return}results.forEach(r=>{const d=new Date(r.timestamp).toLocaleString('ar-EG'), pendingIndicator = r.status === 'pending' ? `<span style="color:#ffc107; font-weight:bold; font-size: 0.8rem;">(قيد المراجعة)</span>` : '';const div=document.createElement('div');div.className='test-item';div.innerHTML=`<div style="text-align:right; flex-grow:1;"><strong>${r.testName}</strong><br><small>الدرجة: <strong>${r.score}</strong> ${pendingIndicator}</small></div><small>${d}</small>`;resultsContainer.appendChild(div)})}
             
-            function startTest(teacherId,testId,testData, isPractice = false){
-                currentTest={...testData,id:testId,teacherId, isPractice}; 
-                if(currentTest.shuffle) currentTest.questions.sort(() => Math.random() - 0.5);
+            function startTest(teacherId, testId, testData, isPractice = false) {
+                if (!testData.questions || testData.questions.length === 0) {
+                    showCustomAlert("خطأ", "هذا الاختبار لا يحتوي على أسئلة ولا يمكن بدؤه.");
+                    return;
+                }
+                currentTest = { ...testData, id: testId, teacherId, isPractice };
+                if (currentTest.shuffle) currentTest.questions.sort(() => Math.random() - 0.5);
                 testTitle.textContent = testData.name + (isPractice ? ' (وضع التدريب)' : '');
-                totalSec=currentTest.duration*60;remainSec=totalSec;answers=new Array(currentTest.questions.length).fill(null);qIndex=0;timerDisplay.textContent=formatTime(remainSec);timerProgress.style.width='100%';if(testInterval)clearInterval(testInterval);testInterval=setInterval(()=>{remainSec--;timerDisplay.textContent=formatTime(remainSec);timerProgress.style.width=((remainSec/totalSec)*100)+'%';if(remainSec<=0){clearInterval(testInterval);submitTest(true)}},1000);if(currentTest.preventGoBack){submitBtn.classList.add('hidden');qNavContainer.classList.remove('hidden');renderQuestion(qIndex)}else{submitBtn.classList.remove('hidden');qNavContainer.classList.add('hidden');renderAllQuestions()}showSection(takeTest)
+                totalSec = currentTest.duration * 60;
+                remainSec = totalSec;
+                answers = new Array(currentTest.questions.length).fill(null);
+                qIndex = 0;
+                timerDisplay.textContent = formatTime(remainSec);
+                timerProgress.style.width = '100%';
+                if (testInterval) clearInterval(testInterval);
+                testInterval = setInterval(() => {
+                    remainSec--;
+                    timerDisplay.textContent = formatTime(remainSec);
+                    timerProgress.style.width = ((remainSec / totalSec) * 100) + '%';
+                    if (remainSec <= 0) {
+                        clearInterval(testInterval);
+                        submitTest(true)
+                    }
+                }, 1000);
+                if (currentTest.preventGoBack) {
+                    submitBtn.classList.add('hidden');
+                    qNavContainer.classList.remove('hidden');
+                    renderQuestion(qIndex)
+                } else {
+                    submitBtn.classList.remove('hidden');
+                    qNavContainer.classList.add('hidden');
+                    renderAllQuestions()
+                }
+                showSection(takeTest)
             }
             
             async function openStudentReview(testId) {
@@ -1019,8 +1099,15 @@
             studentPortal.querySelectorAll('.to-register').forEach(el=>el.onclick=e=>{e.preventDefault();showSection(registerSection)});
             studentPortal.querySelector('#back-to-dashboard-btn').onclick=()=>{showSection(dashboard);loadDashboard()};
             studentPortal.querySelector('#cancel-test-btn').onclick= async ()=>{ if(await showCustomConfirm('تأكيد', 'هل أنت متأكد من إلغاء الاختبار؟ لن يتم حفظ تقدمك.')){ clearInterval(testInterval); showSection(dashboard); loadDashboard(); } };
-            studentPortal.querySelector('#review-answers-btn').onclick=()=>openStudentReview(currentTest.isPractice ? currentTest.id : takenTests[currentTest.id].testId);
-            studentPortal.querySelector('#back-to-dashboard-from-review-btn').onclick=()=>showSection(dashboard);
+            studentPortal.querySelector('#review-answers-btn').onclick = () => { if (currentTest.isPractice) { renderReview(currentTest, answers); showSection(review); } else { openStudentReview(currentTest.id); } };
+            studentPortal.querySelector('#back-to-dashboard-from-review-btn').onclick=()=>{showSection(dashboard);loadDashboard()};
+            
+            showSearchBtn.addEventListener('click', () => {
+                searchBar.classList.toggle('hidden');
+                if (!searchBar.classList.contains('hidden')) {
+                    searchBar.focus();
+                }
+            });
             searchBar.addEventListener('input',e=>renderAvailableTests(e.target.value));
             
             // --- Menu Logic ---
@@ -1144,15 +1231,27 @@
             chatMessagesListener = onValue(messagesRef, (snapshot) => {
                 chatModalBody.innerHTML = '';
                 if (snapshot.exists()) {
+                    const now = Date.now();
+                    const expiryPeriod = 48 * 60 * 60 * 1000;
+                    let messageFound = false;
                     snapshot.forEach(child => {
                         const msg = child.val();
-                        const msgDiv = document.createElement('div');
-                        msgDiv.className = `chat-message ${msg.sender === currentUserId ? 'sent' : 'received'}`;
-                        const time = new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-                        msgDiv.innerHTML = `<span>${msg.text}</span><span class="msg-time">${time}</span>`;
-                        chatModalBody.appendChild(msgDiv);
+                        if (now - msg.timestamp < expiryPeriod) {
+                             messageFound = true;
+                             const msgDiv = document.createElement('div');
+                             msgDiv.className = `chat-message ${msg.sender === currentUserId ? 'sent' : 'received'}`;
+                             const time = new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                             msgDiv.innerHTML = `<span>${msg.text}</span><span class="msg-time">${time}</span>`;
+                             chatModalBody.appendChild(msgDiv);
+                        }
                     });
-                    chatModalBody.scrollTop = chatModalBody.scrollHeight;
+                    
+                    if(messageFound) {
+                        chatModalBody.scrollTop = chatModalBody.scrollHeight;
+                    } else {
+                        chatModalBody.innerHTML = '<p>لا توجد رسائل حديثة. ابدأ المحادثة!</p>';
+                    }
+
                 } else { chatModalBody.innerHTML = '<p>ابدأ المحادثة!</p>'; }
             });
         }
