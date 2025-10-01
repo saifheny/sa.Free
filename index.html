@@ -25,8 +25,8 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: #0d1117;
+            color: #e6edf3;
             min-height: 100vh;
             direction: rtl;
             text-align: center;
@@ -54,18 +54,46 @@
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4), inset 0px 1px 1px rgba(0,0,0,0.2);
         }
         input, select, textarea {
+            background-color: #010409;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.08);
+            transition: box-shadow 0.3s, border-color 0.3s;
         }
         input:focus, select:focus, textarea:focus {
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 0 10px rgba(0, 170, 255, 0.6);
+            outline: none;
+            border-color: #2f81f7;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 0 10px rgba(47, 129, 247, 0.6);
         }
         .list-item, .test-item {
+             background-color: #161b22;
+             border: 1px solid #30363d;
+             border-radius: 12px;
+             padding: 15px;
+             margin-bottom: 12px;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
              box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
+             transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
         }
         .modal-content {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 2px 2px rgba(255,255,255,0.1);
         }
-
 
         /* --- Landing Page Styles --- */
         #main-landing-page {
@@ -75,24 +103,24 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
-            background: #000;
+            background: #0d1117;
         }
         #main-landing-page h1 {
             font-size: 4rem;
-            background: linear-gradient(45deg, #007BFF 30%, #00C6FF 70%);
+            background: linear-gradient(45deg, #3081f7 30%, #58a6ff 70%);
             -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 30px; font-weight: 800; line-height: 1.2;
-            text-shadow: 0 0 15px rgba(0, 123, 255, 0.5), 0 0 30px rgba(0, 123, 255, 0.3);
+            text-shadow: 0 0 15px rgba(47, 129, 247, 0.5), 0 0 30px rgba(47, 129, 247, 0.3);
         }
-        #main-landing-page p { font-size: 1.2rem; color: #ccc; line-height: 1.8; margin-bottom: 35px; max-width: 800px; }
+        #main-landing-page p { font-size: 1.2rem; color: #8b949e; line-height: 1.8; margin-bottom: 35px; max-width: 800px; }
         
         /* --- 3D Button Style --- */
         .btn-3d {
             padding: 20px 40px; border: none; border-radius: 12px;
             font-size: 1.5rem; font-family: 'Cairo', sans-serif; font-weight: 800; color: #fff;
             cursor: pointer; position: relative;
-            background: linear-gradient(180deg, #00A6F3 0%, #0072D3 100%);
-            border-bottom: 6px solid #00529A;
+            background: linear-gradient(180deg, #3081f7 0%, #1f6feb 100%);
+            border-bottom: 6px solid #1158c7;
         }
         .btn-3d i { margin-left: 15px; font-size: 1.8rem; }
         .btn-3d:hover { border-bottom-width: 8px; }
@@ -101,90 +129,98 @@
         /* --- General Portal Styles --- */
         .portal-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000; animation: fadeIn 0.6s ease-out; color: #eee;
+            background-color: #0d1117; animation: fadeIn 0.6s ease-out; color: #e6edf3;
             overflow-y: auto; padding: 40px 20px 120px 20px;
         }
         .portal-content { max-width: 600px; margin: 0 auto; }
         .portal-container .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; background: #1a1a1a;
-            border: 1px solid #333; color: #eee; display: flex; align-items: center;
+            width: 40px; height: 40px; border-radius: 50%; background: #21262d;
+            border: 1px solid #30363d; color: #e6edf3; display: flex; align-items: center;
             justify-content: center; cursor: pointer; font-size: 18px; 
-            position: relative;
+            position: relative; transition: background-color 0.2s, transform 0.2s;
         }
+        .portal-container .icon-btn:hover { background-color: #30363d; transform: scale(1.1); }
         .portal-container .icon-btn .notification-badge {
-            position: absolute; top: 0px; right: 0px;
-            width: 12px; height: 12px; background-color: #dc3545;
-            border-radius: 50%; border: 2px solid #000;
+            position: absolute; top: -2px; right: -2px;
+            width: 14px; height: 14px; background-color: #da3633;
+            border-radius: 50%; border: 2px solid #0d1117;
             display: none;
         }
-        .portal-container .spinner { border: 4px solid #333; border-top: 4px solid #00aaff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        .portal-container p { text-align: center; margin-top: 15px; font-size: 0.9rem; color: #aaa; }
-        .portal-container p a { color: #00aaff; text-decoration: none; font-weight: 600; }
-        .portal-container hr { border: none; border-top: 1px solid #333; margin: 25px 0; }
+        .portal-container .spinner { border: 4px solid #30363d; border-top: 4px solid #2f81f7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .portal-container p { text-align: center; margin-top: 15px; font-size: 0.9rem; color: #8b949e; }
+        .portal-container p a { color: #58a6ff; text-decoration: none; font-weight: 600; }
+        .portal-container hr { border: none; border-top: 1px solid #30363d; margin: 25px 0; }
         .portal-container button { width: 100%; padding: 14px 15px; border: none; border-radius: 12px; font-size: 1.1rem; font-family: 'Cairo', sans-serif; font-weight: 700; color: #fff; cursor: pointer; }
-        .portal-container button:disabled { cursor: not-allowed; background: #555; border-bottom-color: #333; opacity: 0.6; }
-        .portal-container .btn-primary { background: linear-gradient(180deg, #00A6F3 0%, #0072D3 100%); border-bottom: 4px solid #00529A; }
+        .portal-container button:disabled { cursor: not-allowed; background: #21262d; border-bottom-color: #30363d; opacity: 0.6; }
+        .portal-container .btn-primary { background: linear-gradient(180deg, #3081f7 0%, #1f6feb 100%); border-bottom: 4px solid #1158c7; }
         .portal-container .btn-primary:not(:disabled):hover { border-bottom-width: 6px; }
         .portal-container .btn-primary:not(:disabled):active { border-bottom-width: 3px; }
-        .portal-container .btn-secondary { background: #2a2a2a; border-bottom: 4px solid #111; }
+        .portal-container .btn-secondary { background: #21262d; border-bottom: 4px solid #010409; }
         .portal-container .btn-secondary:not(:disabled):hover { border-bottom-width: 6px; }
         .portal-container .btn-secondary:not(:disabled):active { border-bottom-width: 3px; }
         
         .bottom-nav {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: auto; display: flex;
-            gap: 8px; padding: 8px; background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(20px);
-            border-radius: 99px; border: 1px solid #333; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.7); z-index: 1000;
+            gap: 8px; padding: 8px; background: rgba(1, 4, 9, 0.7); backdrop-filter: blur(20px);
+            border-radius: 99px; border: 1px solid #30363d; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.7); z-index: 1000;
         }
-        .bottom-nav .nav-btn { display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: transparent; border: none; color: #aaa; opacity: 0.7; border-radius: 99px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-        .bottom-nav .nav-btn.active { opacity: 1; background: rgba(0, 170, 255, 0.15); color: #00aaff; box-shadow: 0 0 15px -5px rgba(0, 170, 255, 0.5); }
+        .bottom-nav .nav-btn { display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: transparent; border: none; color: #8b949e; opacity: 0.7; border-radius: 99px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .bottom-nav .nav-btn.active { opacity: 1; background: rgba(47, 129, 247, 0.15); color: #58a6ff; box-shadow: 0 0 15px -5px rgba(47, 129, 247, 0.5); }
 
         /* --- Header Dropdown Menu --- */
         .header-menu-container { position: relative; }
         .header-dropdown-menu {
             display: none; position: absolute; top: 50px; left: 0;
-            background: #1a1a1a; border: 1px solid #333; border-radius: 10px;
+            background: #161b22; border: 1px solid #30363d; border-radius: 10px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.7); z-index: 1100;
             width: 200px; overflow: hidden;
         }
         .header-dropdown-menu.show { display: block; }
         .dropdown-item {
             display: flex; align-items: center; gap: 12px;
-            padding: 12px 15px; color: #eee; text-decoration: none;
+            padding: 12px 15px; color: #e6edf3; text-decoration: none;
             font-size: 0.95rem; text-align: right; cursor: pointer;
             transition: background-color 0.2s ease;
         }
-        .dropdown-item:hover { background-color: #252525; }
-        .dropdown-item i { width: 20px; text-align: center; color: #00aaff; text-shadow: none; }
+        .dropdown-item:hover { background-color: #21262d; }
+        .dropdown-item i { width: 20px; text-align: center; color: #58a6ff; text-shadow: none; }
         
         /* --- Teacher Portal Specifics --- */
         #teacher-portal .header-icons { position: absolute; top: 40px; left: 25px; display: flex; gap: 10px; z-index: 100; }
         #teacher-portal label { font-weight: 600; display: block; margin-bottom: 5px; text-align: right; }
-        .file-input-label { background: #222; border: 1px dashed #444; text-align: center; padding: 15px; border-radius: 10px; cursor: pointer; }
+        .file-input-label { background: #21262d; border: 2px dashed #30363d; text-align: center; padding: 15px; border-radius: 10px; cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
+        .file-input-label:hover { border-color: #58a6ff; background-color: #30363d; }
         .image-preview { max-width: 100px; max-height: 100px; border-radius: 8px; border: 1px solid #444; cursor: pointer; }
         .action-btn { padding: 6px 10px !important; font-size: 0.8rem !important; margin:0 !important; width: auto !important; display: flex; align-items: center; gap: 5px; }
         .test-countdown { font-size: 0.8rem; color: #ffc107; font-weight: bold; margin-top: 5px; text-align: left; }
 
         /* --- Student Portal --- */
         .student-test-item-container {
-            background: #1a1a1a;
+            background: #161b22;
             border-radius: 12px;
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08);
-            border: 1px solid #333;
+            border: 1px solid #30363d;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .student-test-item-container:hover {
+            border-color: #58a6ff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(47, 129, 247, 0.3);
         }
         .student-test-actions-bar {
             display: flex;
             justify-content: space-around;
-            background: #222;
-            padding: 6px;
-            border-bottom: 1px solid #444;
+            background: #21262d;
+            padding: 8px;
+            border-bottom: 1px solid #30363d;
         }
         .student-test-actions-bar .action-icon {
-            background: #2f2f2f;
-            color: #ccc;
-            width: 35px;
-            height: 35px;
+            background: #30363d;
+            color: #8b949e;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -192,36 +228,43 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            font-size: 1.1rem;
         }
         .student-test-actions-bar .action-icon:hover {
-            background: #007bff;
             color: #fff;
-            transform: scale(1.1);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
         }
+        .action-icon[title="ابدأ الاختبار"]:hover { background-color: #238636; }
+        .action-icon[title="مراجعة النتيجة"]:hover { background-color: #8957e5; }
+        .action-icon[title^="مراسلة"]:hover { background-color: #1f6feb; }
+        .action-icon[title="مشاركة رابط الاختبار"]:hover { background-color: #e3b341; }
+        .action-icon[title="إعادة (تدريب)"]:hover { background-color: #bf5507; }
+
         .student-test-card {
-            padding: 8px 12px;
+            padding: 12px 15px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
         .test-main-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         .test-grade-badge {
-            background-color: rgba(0, 170, 255, 0.2);
-            color: #00aaff;
-            padding: 2px 8px;
+            background-color: rgba(88, 166, 255, 0.2);
+            color: #58a6ff;
+            padding: 3px 10px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: bold;
             flex-shrink: 0;
-            border: 1px solid rgba(0, 170, 255, 0.5);
+            border: 1px solid rgba(88, 166, 255, 0.5);
         }
         .test-name {
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             text-align: right;
             white-space: nowrap;
             overflow: hidden;
@@ -229,9 +272,45 @@
             text-shadow: 0 1px 2px #000;
         }
         .test-expiry {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #ffc107;
             text-align: right;
+        }
+        
+        /* Separator for student results */
+        #my-student-results-container .test-item:not(:last-child) {
+            border-bottom: 2px solid #30363d;
+        }
+        #my-student-results-container .test-item {
+            border-radius: 0;
+            margin-bottom: 0;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+        }
+        #my-student-results-container .test-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; border-top: 1px solid #30363d;}
+        #my-student-results-container .test-item:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+
+        /* Advanced Search Bar */
+        #search-bar {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 25px;
+            padding: 10px 20px 10px 45px;
+            font-size: 1rem;
+            position: relative;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238b949e' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 15px center;
+            transition: all 0.3s ease-in-out;
+        }
+        #search-bar:focus {
+            background-color: #010409;
+        }
+        #search-bar.hidden {
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* --- Generic Modal --- */
@@ -242,7 +321,7 @@
         }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
         .modal-close-btn {
-            position: absolute; top: 10px; left: 10px;
+            position: absolute; top: 15px; left: 15px;
             width: 35px; height: 35px;
             background: rgba(255,255,255,0.1); color: #fff;
             border: 1px solid rgba(255,255,255,0.2);
@@ -250,6 +329,7 @@
             font-size: 20px; font-weight: bold; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             line-height: 1; z-index: 10;
+            transition: transform 0.3s, background-color 0.3s;
         }
         .modal-close-btn:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
         .modal-body { flex-grow: 1; overflow-y: auto; }
@@ -278,22 +358,70 @@
         /* --- Custom Dialogs (Alerts/Confirms) --- */
         .custom-dialog-overlay { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,.7); backdrop-filter: blur(5px); opacity:0; visibility:hidden; transition:opacity .3s; z-index:9999; }
         .custom-dialog-overlay.show { opacity:1; visibility:visible; }
-        .custom-dialog { background:#1a1a1a; border: 1px solid #333; border-radius: 16px; padding:25px 30px; margin: 20px; width: 90%; max-width:400px; text-align:center; transform:scale(0.9); opacity:0; transition:transform .3s,opacity .3s; }
+        .custom-dialog { background:#161b22; border: 1px solid #30363d; border-radius: 16px; padding:25px 30px; margin: 20px; width: 90%; max-width:400px; text-align:center; transform:scale(0.9); opacity:0; transition:transform .3s,opacity .3s; }
         .custom-dialog-overlay.show .custom-dialog { transform:scale(1); opacity:1; }
         .custom-dialog .dialog-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
         
         /* --- Text Chat Styles --- */
         #text-chat-modal .chat-body { display: flex; flex-direction: column; gap: 12px; padding: 15px; max-height: 60vh; overflow-y: auto; }
         .chat-message { max-width: 80%; padding: 10px 15px; border-radius: 18px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .chat-message.sent { background: #007bff; align-self: flex-end; border-bottom-right-radius: 4px; text-align: left; }
-        .chat-message.received { background: #333; align-self: flex-start; border-bottom-left-radius: 4px; text-align: right; }
-        .chat-message .msg-time { display: block; font-size: 0.7rem; color: #ddd; margin-top: 5px; opacity: 0.8; }
+        .chat-message.sent { background: #1f6feb; align-self: flex-end; border-bottom-right-radius: 4px; text-align: left; }
+        .chat-message.received { background: #21262d; align-self: flex-start; border-bottom-left-radius: 4px; text-align: right; }
+        .chat-message .msg-time { display: block; font-size: 0.7rem; color: #8b949e; margin-top: 5px; opacity: 0.8; }
         
         #text-chat-modal .chat-input-area { display: flex; gap: 10px; align-items: center; }
         #text-chat-modal textarea { flex-grow: 1; margin: 0; resize: none; }
         #text-chat-modal .chat-action-btn { width: 50px !important; height: 50px; padding: 0 !important; font-size: 1.2rem !important; flex-shrink: 0; border-radius: 50% !important; }
-        #speech-to-text-btn.listening { color: #dc3545; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
+        #speech-to-text-btn.listening { color: #da3633; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(218, 54, 51, 0); } 100% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0); } }
+
+        /* --- Advanced Radio & Checkbox --- */
+        .question-options { display: flex; flex-direction: column; gap: 10px; }
+        .question-options label, .checkbox-container {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .question-options label:hover, .checkbox-container:hover {
+            border-color: #58a6ff;
+            background-color: #30363d;
+        }
+        .question-options input[type="radio"], .checkbox-container input[type="checkbox"] { display: none; }
+        .question-options input[type="radio"] + span::before, .checkbox-container input[type="checkbox"] + label::before {
+            content: '';
+            width: 22px;
+            height: 22px;
+            border: 2px solid #8b949e;
+            background-color: #0d1117;
+            display: inline-block;
+            margin-left: 15px;
+            vertical-align: middle;
+            transition: all 0.2s;
+        }
+        .question-options input[type="radio"] + span::before { border-radius: 50%; }
+        .checkbox-container input[type="checkbox"] + label::before { border-radius: 6px; }
+        .question-options input[type="radio"]:checked + span::before, .checkbox-container input[type="checkbox"]:checked + label::before {
+            background-color: #1f6feb;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px #0d1117, 0 0 0 5px #1f6feb;
+        }
+        .checkbox-container input[type="checkbox"]:checked + label::after {
+            content: '\f00c'; /* Font Awesome check icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 23px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #fff;
+        }
         
         /* Animations & Responsiveness */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -357,13 +485,13 @@
                     <label for="test-grade">الصف:</label>
                     <select id="test-grade"><option value="" disabled selected>اختر الصف</option><option value="الصف الأول الإعدادي">الصف الأول الإعدادي</option><option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option><option value="الصف الثالث الإعدادي">الصف الثالث الإعدادي</option><option value="الصف الأول الثانوي">الصف الأول الثانوي</option><option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option><option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option></select>
                     <label for="test-duration">مدة الاختبار بالدقائق:</label><input type="number" id="test-duration" min="1" />
-                    <div class="list-item" style="flex-direction: row; justify-content: flex-start; gap: 10px; cursor: pointer;" onclick="this.querySelector('input').click()"><input type="checkbox" id="prevent-go-back-checkbox" style="width: auto; margin: 0;"><label for="prevent-go-back-checkbox" style="margin: 0;">منع الطالب من الرجوع للخلف</label></div>
-                    <div class="list-item" style="flex-direction: row; justify-content: flex-start; gap: 10px; cursor: pointer;" onclick="this.querySelector('input').click()"><input type="checkbox" id="shuffle-questions-checkbox" style="width: auto; margin: 0;"><label for="shuffle-questions-checkbox" style="margin: 0;">ترتيب الأسئلة عشوائيًا</label></div>
-                    <div class="list-item" style="flex-direction: row; justify-content: flex-start; gap: 10px; cursor: pointer;" onclick="this.querySelector('input').click()"><input type="checkbox" id="fateful-test-checkbox" style="width: auto; margin: 0;"><label for="fateful-test-checkbox" style="margin: 0;">اختبار مصيري (أمان عالي)</label></div>
+                    <div class="checkbox-container"><input type="checkbox" id="prevent-go-back-checkbox"><label for="prevent-go-back-checkbox">منع الطالب من الرجوع للخلف</label></div>
+                    <div class="checkbox-container"><input type="checkbox" id="shuffle-questions-checkbox"><label for="shuffle-questions-checkbox">ترتيب الأسئلة عشوائيًا</label></div>
+                    <div class="checkbox-container"><input type="checkbox" id="fateful-test-checkbox"><label for="fateful-test-checkbox">اختبار مصيري (أمان عالي)</label></div>
                     <hr/><h3>إضافة سؤال جديد</h3>
-                    <div style="display: flex; border: 1px solid #333; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
-                        <button class="switch-button active" data-type="mcq" style="flex:1; padding:10px; background: #0072D3; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال اختياري</button>
-                        <button class="switch-button" data-type="essay" style="flex:1; padding:10px; background: #222; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال مقالي</button>
+                    <div style="display: flex; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
+                        <button class="switch-button active" data-type="mcq" style="flex:1; padding:10px; background: #1f6feb; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال اختياري</button>
+                        <button class="switch-button" data-type="essay" style="flex:1; padding:10px; background: #21262d; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال مقالي</button>
                     </div>
                     <label for="question-text">نص السؤال:</label><textarea id="question-text" rows="3"></textarea>
                     <label for="question-image-input" class="file-input-label"><i class="fas fa-image"></i> <span>إرفاق صورة للسؤال (اختياري)</span></label>
@@ -384,7 +512,7 @@
                         <button id="cancel-question-edit-btn" class="btn-secondary hidden" style="margin: 0; width: auto; background: #5a6268; border-color: #495057;">إلغاء التعديل</button>
                     </div>
                     <div id="questions-list-container" style="margin-top: 15px;"></div>
-                    <button id="save-test-btn" class="btn-primary" style="margin-top: 20px; background: linear-gradient(180deg, #28a745 0%, #218838 100%); border-bottom-color: #1e7e34;">حفظ الاختبار</button>
+                    <button id="save-test-btn" class="btn-primary" style="margin-top: 20px; background: linear-gradient(180deg, #238636 0%, #1a6328 100%); border-bottom-color: #134b1f;">حفظ الاختبار</button>
                     <button id="cancel-test-edit-btn" class="btn-secondary hidden" style="margin-top: 10px;">إلغاء التعديل</button>
                 </div>
             </section>
@@ -459,18 +587,18 @@
                     <input type="text" id="search-bar" placeholder="ابحث عن اختبار..." class="hidden" style="margin-bottom:20px;"/>
                     <div id="available-tests-container"></div>
                 </div>
-                <div class="tab-content hidden" id="student-results-content"><h2>نتائجي السابقة</h2><div id="my-student-results-container"></div></div>
+                <div class="tab-content hidden" id="student-results-content"><h2>نتائجي السابقة</h2><div id="my-student-results-container" style="border: 1px solid #30363d; border-radius: 12px; overflow: hidden;"></div></div>
             </section>
             <section id="take-test-section" class="hidden">
                 <h2 id="current-test-title"></h2>
                 <div id="timer" style="font-size:1.6rem; font-weight:700; color:#ffc107; margin-bottom:8px;"></div>
-                <div style="width:100%; height:6px; background:#222; border-radius:3px; overflow:hidden; margin-bottom:20px;"><div id="timer-progress" style="height:100%; width:100%; background:#007bff; transition:width .5s linear;"></div></div>
+                <div style="width:100%; height:8px; background:#21262d; border-radius:4px; overflow:hidden; margin-bottom:20px;"><div id="timer-progress" style="height:100%; width:100%; background:linear-gradient(90deg, #1f6feb, #58a6ff); transition:width .5s linear;"></div></div>
                 <div id="questions-display"></div>
                 <div id="question-navigation-container" style="display:flex; gap:10px; margin-top: 20px;" class="hidden">
                     <button id="prev-question-btn" class="btn-secondary">السابق</button>
                     <button id="next-question-btn" class="btn-primary">التالي</button>
                 </div>
-                <button id="submit-test-btn" class="btn-primary" style="margin-top: 20px; background: linear-gradient(180deg, #28a745 0%, #218838 100%); border-bottom-color: #1e7e34;">تسليم الاختبار</button>
+                <button id="submit-test-btn" class="btn-primary" style="margin-top: 20px; background: linear-gradient(180deg, #238636 0%, #1a6328 100%); border-bottom-color: #134b1f;">تسليم الاختبار</button>
                 <button id="cancel-test-btn" class="btn-secondary" style="margin-top: 10px;">إلغاء الاختبار</button>
             </section>
             <section id="test-result-section" class="hidden">
@@ -656,8 +784,8 @@
             const setDefaultTab = () => navButtons[0].click();
             
             teacherPortal.querySelectorAll('.switch-button').forEach(btn => btn.addEventListener('click', () => {
-                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = '#222'; });
-                btn.classList.add('active'); btn.style.background = '#0072D3'; currentQuestionType = btn.dataset.type;
+                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = '#21262d'; });
+                btn.classList.add('active'); btn.style.background = '#1f6feb'; currentQuestionType = btn.dataset.type;
                 teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq'); teacherPortal.querySelector("#essay-fields").classList.toggle('hidden', currentQuestionType !== 'essay');
             }));
 
@@ -683,7 +811,7 @@
                             <button class="action-btn btn-secondary" data-action="share" title="مشاركة" style="flex-grow: 1;"><i class="fas fa-share-alt"></i></button>
                             <button class="action-btn btn-secondary" data-action="results" title="النتائج" style="flex-grow: 1;"><i class="fas fa-poll-h"></i></button>
                             <button class="action-btn btn-secondary" data-action="edit" title="تعديل" style="flex-grow: 1;"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-secondary" data-action="delete" title="حذف" style="flex-grow: 1; background:#dc3545; border-color:#c82333;"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn btn-secondary" data-action="delete" title="حذف" style="flex-grow: 1; background:#da3633; border-color:#c82333;"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
                     testCard.querySelector('[data-action="share"]').onclick = () => copyTestLink(currentUser, testId);
@@ -738,7 +866,7 @@
                 Object.entries(snapshot.val()).forEach(([studentName, result]) => {
                     const div = document.createElement('div'); div.className = 'list-item';
                     const pendingIndicator = result.status === 'pending' ? `<span style="color:#ffc107; font-weight:bold; margin-inline:10px;">(قيد المراجعة)</span>` : '';
-                    div.innerHTML = `<span style="flex-grow:1; text-align: right;">الطالب: <strong>${studentName}</strong></span><span>الدرجة: <strong>${result.score}</strong></span>${pendingIndicator}<i class="fas fa-comment-dots" title="مراسلة الطالب" style="margin: 0 15px; color: #00aaff; cursor: pointer; font-size: 1.2rem;"></i><button class="action-btn btn-secondary" data-action="details">التفاصيل</button>`;
+                    div.innerHTML = `<span style="flex-grow:1; text-align: right;">الطالب: <strong>${studentName}</strong></span><span>الدرجة: <strong>${result.score}</strong></span>${pendingIndicator}<i class="fas fa-comment-dots" title="مراسلة الطالب" style="margin: 0 15px; color: #58a6ff; cursor: pointer; font-size: 1.2rem;"></i><button class="action-btn btn-secondary" data-action="details">التفاصيل</button>`;
                     div.querySelector('[data-action="details"]').onclick = () => showStudentAnswerReview(studentName, testId, result);
                     div.querySelector('.fa-comment-dots').onclick = () => openChatModal(currentUser, studentName);
                     studentResultsContainer.appendChild(div);
@@ -750,8 +878,8 @@
                 if (result.status === 'pending' && test.questions.some(q => q.type === 'essay')) reviewModalFooter.classList.remove('hidden');
                 test.questions.forEach((q, index) => {
                     const studentAnswer = answers[index] || {}; let reviewHtml = '';
-                    if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(63,185,80,0.1)' : 'rgba(248,81,73,0.1)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
-                    else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:#222; padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
+                    if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(35, 134, 54, 0.2)' : 'rgba(218, 54, 51, 0.2)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
+                    else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:#21262d; padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
                     const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;';
                     qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${reviewHtml}`;
                     reviewModalBody.appendChild(qDiv);
@@ -782,7 +910,7 @@
                 questionsListContainer.innerHTML = questionsArray.length > 0 ? "<h3>الأسئلة المضافة:</h3>" : "";
                 questionsArray.forEach((q, i) => {
                     const d=document.createElement('div'); d.className='list-item';
-                    d.innerHTML=`<span style="flex-grow:1; text-align:right;">${i+1}. [${q.type==='mcq'?'اختياري':'مقالي'}] ${q.question ? q.question.substring(0,30) : 'سؤال بصورة'}... (${q.points} درجات)</span><div style="display:flex; gap: 5px;"><button data-index="${i}" class="action-btn btn-secondary edit-q-btn" title="تعديل"><i class="fas fa-edit"></i></button><button data-index="${i}" class="action-btn btn-secondary delete-q-btn" title="حذف" style="background:#dc3545; border-color:#c82333;"><i class="fas fa-trash"></i></button></div>`;
+                    d.innerHTML=`<span style="flex-grow:1; text-align:right;">${i+1}. [${q.type==='mcq'?'اختياري':'مقالي'}] ${q.question ? q.question.substring(0,30) : 'سؤال بصورة'}... (${q.points} درجات)</span><div style="display:flex; gap: 5px;"><button data-index="${i}" class="action-btn btn-secondary edit-q-btn" title="تعديل"><i class="fas fa-edit"></i></button><button data-index="${i}" class="action-btn btn-secondary delete-q-btn" title="حذف" style="background:#da3633; border-color:#c82333;"><i class="fas fa-trash"></i></button></div>`;
                     questionsListContainer.appendChild(d);
                     d.querySelector('.delete-q-btn').onclick = () => { questionsArray.splice(i,1); renderQuestionsList(); };
                     d.querySelector('.edit-q-btn').onclick = () => startEditingQuestion(i);
@@ -1036,7 +1164,7 @@
                     takenTests[currentTest.id] = resultObj; 
                     
                     if (hasEssays) { feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: #ffc107;"; feedbackMsg.textContent = "تم إرسال إجاباتك المقالية للمراجعة! هذه نتيجتك المبدئية."; }
-                    else { const p = totalTestPoints > 0 ? Math.round((mcqScore / totalTestPoints) * 100) : 0; const fb = p === 100 ? { t: '🥳 ممتاز!', c: '#28a745' } : p >= 80 ? { t: '😊 عمل رائع!', c: '#28a745' } : p >= 50 ? { t: '🙂 جيد!', c: '#ffc107', tc: '#111' } : { t: '🙁 حاول مجددًا!', c: '#dc3545' }; feedbackMsg.style.background = fb.c; feedbackMsg.style.color = fb.tc || '#fff'; feedbackMsg.textContent = fb.t; }
+                    else { const p = totalTestPoints > 0 ? Math.round((mcqScore / totalTestPoints) * 100) : 0; const fb = p === 100 ? { t: '🥳 ممتاز!', c: '#238636' } : p >= 80 ? { t: '😊 عمل رائع!', c: '#238636' } : p >= 50 ? { t: '🙂 جيد!', c: '#ffc107', tc: '#111' } : { t: '🙁 حاول مجددًا!', c: '#da3633' }; feedbackMsg.style.background = fb.c; feedbackMsg.style.color = fb.tc || '#fff'; feedbackMsg.textContent = fb.t; }
                 }
                 showSection(result);
             }
@@ -1049,7 +1177,7 @@
                     let html='';
                     if (q.type === 'mcq') {
                         const isCorrect = ans.answer === q.correct;
-                        html=`<div style="background:${isCorrect ? 'rgba(63,185,80,0.1)' : 'rgba(248,81,73,0.1)'}; padding:10px; border-radius:8px;">
+                        html=`<div style="background:${isCorrect ? 'rgba(35, 134, 54, 0.2)' : 'rgba(218, 54, 51, 0.2)'}; padding:10px; border-radius:8px;">
                             <b>إجابتك:</b> ${ans.answer ? q.options[ans.answer-1] : '<i>لم تجب</i>'}<br>
                             <b>الإجابة الصحيحة:</b> ${q.options[q.correct-1]}
                         </div>`;
@@ -1057,7 +1185,7 @@
                         const txt = ans.textAnswer || '<em>لم تقدم إجابة نصية.</em>';
                         const img = ans.imageAnswer ? `<p><b>صورتك:</b></p><img src="${ans.imageAnswer}" style="max-width:80%;border-radius:8px; cursor:pointer;">` : '';
                         const model = q.modelAnswerImage ? `<p><b>الإجابة النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%;border-radius:8px; cursor:pointer;">` : '';
-                        html=`<div><p><b>إجابتك النصية:</b></p><div style="background:#222;padding:10px;border-radius:8px; white-space:pre-wrap;">${txt}</div>${img}${model}</div>`;
+                        html=`<div><p><b>إجابتك النصية:</b></p><div style="background:#21262d;padding:10px;border-radius:8px; white-space:pre-wrap;">${txt}</div>${img}${model}</div>`;
                     }
                     const qDiv = document.createElement('div');
                     qDiv.className = 'list-item';
@@ -1095,6 +1223,9 @@
                 searchBar.classList.toggle('hidden');
                 if (!searchBar.classList.contains('hidden')) {
                     searchBar.focus();
+                } else {
+                    renderAvailableTests('');
+                    searchBar.value = '';
                 }
             });
             searchBar.addEventListener('input',e=>renderAvailableTests(e.target.value));
