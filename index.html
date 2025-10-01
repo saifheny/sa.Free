@@ -307,6 +307,7 @@
                     <label for="test-duration">مدة الاختبار بالدقائق:</label><input type="number" id="test-duration" min="1" />
                     <div class="list-item" style="flex-direction: row; justify-content: flex-start; gap: 10px; cursor: pointer;" onclick="this.querySelector('input').click()"><input type="checkbox" id="prevent-go-back-checkbox" style="width: auto; margin: 0;"><label for="prevent-go-back-checkbox" style="margin: 0;">منع الطالب من الرجوع للخلف</label></div>
                     <div class="list-item" style="flex-direction: row; justify-content: flex-start; gap: 10px; cursor: pointer;" onclick="this.querySelector('input').click()"><input type="checkbox" id="shuffle-questions-checkbox" style="width: auto; margin: 0;"><label for="shuffle-questions-checkbox" style="margin: 0;">ترتيب الأسئلة عشوائيًا</label></div>
+                    <div class="list-item" style="flex-direction: row; justify-content: flex-start; gap: 10px; cursor: pointer;" onclick="this.querySelector('input').click()"><input type="checkbox" id="fateful-test-checkbox" style="width: auto; margin: 0;"><label for="fateful-test-checkbox" style="margin: 0;">اختبار مصيري (أمان عالي)</label></div>
                     <hr/><h3>إضافة سؤال جديد</h3>
                     <div style="display: flex; border: 1px solid #333; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
                         <button class="switch-button active" data-type="mcq" style="flex:1; padding:10px; background: #0072D3; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال اختياري</button>
@@ -565,6 +566,7 @@
             const testDurationInput = teacherPortal.querySelector("#test-duration");
             const preventGoBackCheckbox = teacherPortal.querySelector("#prevent-go-back-checkbox");
             const shuffleQuestionsCheckbox = teacherPortal.querySelector('#shuffle-questions-checkbox');
+            const fatefulTestCheckbox = document.getElementById('fateful-test-checkbox');
             const questionText = teacherPortal.querySelector("#question-text");
             const optionInputs = teacherPortal.querySelectorAll(".option-input");
             const correctAnswerInput = teacherPortal.querySelector("#correct-answer");
@@ -656,6 +658,7 @@
                 testDurationInput.value = testData.duration;
                 preventGoBackCheckbox.checked = testData.preventGoBack || false;
                 shuffleQuestionsCheckbox.checked = testData.shuffle || false;
+                fatefulTestCheckbox.checked = testData.fateful || false;
                 questionsArray = [...(testData.questions || [])];
                 renderQuestionsList();
             }
@@ -665,7 +668,7 @@
                 createTestSection.querySelector('#create-edit-title').textContent = "إنشاء اختبار جديد";
                 saveTestBtn.textContent = "حفظ الاختبار";
                 cancelTestEditBtn.classList.add('hidden');
-                testNameInput.value = ""; testGradeSelect.value = ""; testDurationInput.value = ""; preventGoBackCheckbox.checked=false; shuffleQuestionsCheckbox.checked=false;
+                testNameInput.value = ""; testGradeSelect.value = ""; testDurationInput.value = ""; preventGoBackCheckbox.checked=false; shuffleQuestionsCheckbox.checked=false; fatefulTestCheckbox.checked=false;
                 questionsArray = [];
                 renderQuestionsList();
                 clearQuestionForm();
@@ -853,13 +856,13 @@
                 button.disabled = true;
                 button.textContent = "جاري الحفظ...";
 
-                const n=testNameInput.value.trim(),g=testGradeSelect.value,d=testDurationInput.value.trim(),p=preventGoBackCheckbox.checked, s=shuffleQuestionsCheckbox.checked;
+                const n=testNameInput.value.trim(),g=testGradeSelect.value,d=testDurationInput.value.trim(),p=preventGoBackCheckbox.checked, s=shuffleQuestionsCheckbox.checked, f=fatefulTestCheckbox.checked;
                 if(!n||!g||!d||questionsArray.length===0){
                     showCustomAlert("خطأ", "يرجى ملء تفاصيل الاختبار وإضافة سؤال واحد على الأقل.");
                     button.disabled = false; button.textContent = originalText;
                     return;
                 }
-                const testData = { name:n, grade:g, duration:parseInt(d), preventGoBack:p, shuffle: s, questions:questionsArray, timestamp:Date.now() };
+                const testData = { name:n, grade:g, duration:parseInt(d), preventGoBack:p, shuffle: s, fateful: f, questions:questionsArray, timestamp:Date.now() };
                 
                 try {
                     if (currentEditingTestId) {
@@ -1255,4 +1258,4 @@
         }
     </script>
 </body>
-</html>
+</html>v
