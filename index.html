@@ -530,7 +530,6 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
         import { getDatabase, ref, set, get, onValue, push, serverTimestamp, remove, update, query, orderByChild, equalTo, off } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDb19zrwV84CCbI8s2q8utFdIhasokmrpQ",
             authDomain: "saif-28e78.firebaseapp.com",
@@ -543,7 +542,7 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
+        getAnalytics(app);
         const db = getDatabase(app);
 
         const mainLandingPage = document.getElementById('main-landing-page');
@@ -553,106 +552,50 @@
         document.getElementById('show-teacher-portal').addEventListener('click', (e) => { e.preventDefault(); mainLandingPage.classList.add('hidden'); teacherPortal.classList.remove('hidden'); initTeacherApp(); });
         document.getElementById('show-student-portal').addEventListener('click', (e) => { e.preventDefault(); mainLandingPage.classList.add('hidden'); studentPortal.classList.remove('hidden'); initStudentApp(); });
         
-        const handleDeepLink = () => { const h=window.location.hash; if(h.startsWith('#test/')){const p=h.split('/');if(p.length===3){sessionStorage.setItem('deepLinkTest',JSON.stringify({teacherId:decodeURIComponent(p[1]),testId:decodeURIComponent(p[2])}));mainLandingPage.classList.add('hidden');studentPortal.classList.remove('hidden');initStudentApp();return true}}return false };
         const getBase64 = (file) => new Promise((resolve, reject) => { const reader=new FileReader();reader.readAsDataURL(file);reader.onload=()=>resolve(reader.result);reader.onerror=e=>reject(e) });
         
         const alertCont = document.getElementById('custom-alert-container');
         const confirmCont = document.getElementById('custom-confirm-container');
-
-        const showCustomAlert = (title, message) => {
-            alertCont.querySelector('#custom-alert-title').textContent = title;
-            alertCont.querySelector('#custom-alert-message').textContent = message;
-            alertCont.classList.add('show');
-        };
+        const showCustomAlert = (title, message) => { alertCont.querySelector('#custom-alert-title').textContent = title; alertCont.querySelector('#custom-alert-message').textContent = message; alertCont.classList.add('show'); };
         alertCont.querySelector('#custom-alert-close-btn').onclick = () => alertCont.classList.remove('show');
-
         const showCustomConfirm = (title, message) => {
             return new Promise(resolve => {
-                confirmCont.querySelector('#custom-confirm-title').textContent = title;
-                confirmCont.querySelector('#custom-confirm-message').textContent = message;
-                confirmCont.classList.add('show');
-
-                const okBtn = confirmCont.querySelector('#custom-confirm-ok-btn');
-                const cancelBtn = confirmCont.querySelector('#custom-confirm-cancel-btn');
-
-                const cleanup = (result) => {
-                    confirmCont.classList.remove('show');
-                    okBtn.replaceWith(okBtn.cloneNode(true));
-                    cancelBtn.replaceWith(cancelBtn.cloneNode(true));
-                    resolve(result);
-                };
-
+                confirmCont.querySelector('#custom-confirm-title').textContent = title; confirmCont.querySelector('#custom-confirm-message').textContent = message; confirmCont.classList.add('show');
+                const okBtn = confirmCont.querySelector('#custom-confirm-ok-btn'), cancelBtn = confirmCont.querySelector('#custom-confirm-cancel-btn');
+                const cleanup = (result) => { confirmCont.classList.remove('show'); okBtn.replaceWith(okBtn.cloneNode(true)); cancelBtn.replaceWith(cancelBtn.cloneNode(true)); resolve(result); };
                 okBtn.addEventListener('click', () => cleanup(true), { once: true });
                 cancelBtn.addEventListener('click', () => cleanup(false), { once: true });
             });
         };
 
-
         function initTeacherApp() {
-            const allSections = teacherPortal.querySelectorAll('section');
-            const dashboardSection = teacherPortal.querySelector('#teacher-dashboard-section');
-            const loginSection = teacherPortal.querySelector('#teacher-login-section');
-            const registerSection = teacherPortal.querySelector('#teacher-register-section');
-            const createTestSection = teacherPortal.querySelector('#teacher-create-test-content');
-            const settingsIcon = teacherPortal.querySelector('#teacher-settings-icon');
-            const settingsModal = teacherPortal.querySelector('#teacher-settings-modal');
-            const logoutBtn = settingsModal.querySelector('#teacher-logout-btn');
-            const teacherNameSpan = teacherPortal.querySelector("#teacher-name");
-            const bottomNav = teacherPortal.querySelector('#teacher-bottom-nav');
-            const myTestsContainer = teacherPortal.querySelector("#my-tests-container");
-            const resultsTestSelector = teacherPortal.querySelector("#results-test-selector");
-            const studentResultsContainer = teacherPortal.querySelector("#student-results-container");
-            const testNameInput = teacherPortal.querySelector("#test-name");
-            const testGradeSelect = teacherPortal.querySelector("#test-grade");
-            const testDurationInput = teacherPortal.querySelector("#test-duration");
-            const preventGoBackCheckbox = teacherPortal.querySelector("#prevent-go-back-checkbox");
-            const shuffleQuestionsCheckbox = teacherPortal.querySelector('#shuffle-questions-checkbox');
-            const fatefulTestCheckbox = document.getElementById('fateful-test-checkbox');
-            const questionText = teacherPortal.querySelector("#question-text");
-            const optionInputs = teacherPortal.querySelectorAll(".option-input");
-            const correctAnswerInput = teacherPortal.querySelector("#correct-answer");
-            const questionPointsInput = teacherPortal.querySelector("#question-points");
-            const questionsListContainer = teacherPortal.querySelector("#questions-list-container");
-            const questionImageInput = teacherPortal.querySelector("#question-image-input");
-            const modelAnswerImageInput = teacherPortal.querySelector("#model-answer-image-input");
-            const addQuestionBtn = teacherPortal.querySelector('#add-question-btn');
-            const cancelQuestionEditBtn = teacherPortal.querySelector('#cancel-question-edit-btn');
-            const saveTestBtn = teacherPortal.querySelector('#save-test-btn');
-            const cancelTestEditBtn = teacherPortal.querySelector('#cancel-test-edit-btn');
-            const reviewModal = teacherPortal.querySelector('#teacher-review-modal');
-            const reviewModalBody = teacherPortal.querySelector('#review-modal-body');
-            const reviewModalTitle = teacherPortal.querySelector('#review-modal-title');
-            const reviewModalFooter = teacherPortal.querySelector('#review-modal-footer');
-            const finalizeGradesBtn = teacherPortal.querySelector('#finalize-grades-btn');
-            const updateNameInput = teacherPortal.querySelector('#teacher-update-name');
-            const updatePasswordInput = teacherPortal.querySelector('#teacher-update-password');
-            const updateBtn = teacherPortal.querySelector('#teacher-update-btn');
+            const allSections = teacherPortal.querySelectorAll('section'), dashboardSection = teacherPortal.querySelector('#teacher-dashboard-section'), loginSection = teacherPortal.querySelector('#teacher-login-section');
+            const settingsIcon = teacherPortal.querySelector('#teacher-settings-icon'), settingsModal = teacherPortal.querySelector('#teacher-settings-modal'), logoutBtn = settingsModal.querySelector('#teacher-logout-btn');
+            const teacherNameSpan = teacherPortal.querySelector("#teacher-name"), bottomNav = teacherPortal.querySelector('#teacher-bottom-nav'), myTestsContainer = teacherPortal.querySelector("#my-tests-container");
+            const resultsTestSelector = teacherPortal.querySelector("#results-test-selector"), studentResultsContainer = teacherPortal.querySelector("#student-results-container");
+            const createTestSection = teacherPortal.querySelector('#teacher-create-test-content'), testNameInput = teacherPortal.querySelector("#test-name"), testGradeSelect = teacherPortal.querySelector("#test-grade"), testDurationInput = teacherPortal.querySelector("#test-duration");
+            const preventGoBackCheckbox = teacherPortal.querySelector("#prevent-go-back-checkbox"), shuffleQuestionsCheckbox = teacherPortal.querySelector('#shuffle-questions-checkbox'), fatefulTestCheckbox = document.getElementById('fateful-test-checkbox');
+            const questionText = teacherPortal.querySelector("#question-text"), optionInputs = teacherPortal.querySelectorAll(".option-input"), correctAnswerInput = teacherPortal.querySelector("#correct-answer"), questionPointsInput = teacherPortal.querySelector("#question-points");
+            const questionsListContainer = teacherPortal.querySelector("#questions-list-container"), questionImageInput = teacherPortal.querySelector("#question-image-input"), modelAnswerImageInput = teacherPortal.querySelector("#model-answer-image-input");
+            const addQuestionBtn = teacherPortal.querySelector('#add-question-btn'), cancelQuestionEditBtn = teacherPortal.querySelector('#cancel-question-edit-btn'), saveTestBtn = teacherPortal.querySelector('#save-test-btn'), cancelTestEditBtn = teacherPortal.querySelector('#cancel-test-edit-btn');
+            const reviewModal = teacherPortal.querySelector('#teacher-review-modal'), reviewModalBody = teacherPortal.querySelector('#review-modal-body'), reviewModalTitle = teacherPortal.querySelector('#review-modal-title'), reviewModalFooter = teacherPortal.querySelector('#review-modal-footer'), finalizeGradesBtn = teacherPortal.querySelector('#finalize-grades-btn');
+            const updateNameInput = teacherPortal.querySelector('#teacher-update-name'), updatePasswordInput = teacherPortal.querySelector('#teacher-update-password'), updateBtn = teacherPortal.querySelector('#teacher-update-btn');
 
             let currentUser = null, myTests = {}, questionsArray = [], currentQuestionImageBase64 = null, currentModelAnswerImageBase64 = null, currentQuestionType = 'mcq', currentEditingTestId = null, currentEditingQuestionIndex = -1;
             
-            // --- MODIFIED: Persistent Login Check ---
             const loggedInUser = localStorage.getItem('loggedInTeacher');
-            if (loggedInUser) {
-                currentUser = loggedInUser;
-                showSection(dashboardSection);
-                updateDashboard();
-            } else {
-                showSection(loginSection); // Default to login if not remembered
-            }
+            if (loggedInUser) { currentUser = loggedInUser; showSection(dashboardSection); updateDashboard(); } else { showSection(loginSection); }
 
-            const showSection = (section) => { allSections.forEach(s=>s.classList.add('hidden')); section.classList.remove('hidden'); bottomNav.classList.toggle('hidden', !section || section.id !== 'teacher-dashboard-section'); };
+            function showSection(section) { allSections.forEach(s=>s.classList.add('hidden')); if(section) section.classList.remove('hidden'); bottomNav.classList.toggle('hidden', !section || section.id !== 'teacher-dashboard-section'); };
             const showLoadingSpinner = (container) => { container.innerHTML = `<div class="spinner"></div>`; };
             const navButtons = teacherPortal.querySelectorAll('.nav-btn');
             navButtons.forEach(button => { button.addEventListener('click', () => { navButtons.forEach(btn=>btn.classList.remove('active')); teacherPortal.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden')); button.classList.add('active'); teacherPortal.querySelector(`#${button.dataset.target}`).classList.remove('hidden'); if(button.dataset.target === 'teacher-create-test-content' && !currentEditingTestId) resetCreateFormState(); }); });
             const setDefaultTab = () => navButtons[0].click();
             
-            const switchBtns = teacherPortal.querySelectorAll('.switch-button');
-            switchBtns.forEach(btn => btn.addEventListener('click', () => {
-                switchBtns.forEach(b => { b.classList.remove('active'); b.style.background = '#222'; });
-                btn.classList.add('active'); btn.style.background = '#0072D3';
-                currentQuestionType = btn.dataset.type;
-                teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq');
-                teacherPortal.querySelector("#essay-fields").classList.toggle('hidden', currentQuestionType !== 'essay');
+            teacherPortal.querySelectorAll('.switch-button').forEach(btn => btn.addEventListener('click', () => {
+                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = '#222'; });
+                btn.classList.add('active'); btn.style.background = '#0072D3'; currentQuestionType = btn.dataset.type;
+                teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq'); teacherPortal.querySelector("#essay-fields").classList.toggle('hidden', currentQuestionType !== 'essay');
             }));
 
             const clearQuestionForm = () => { questionText.value=""; questionImageInput.value=""; modelAnswerImageInput.value=""; currentQuestionImageBase64=null; currentModelAnswerImageBase64=null; teacherPortal.querySelectorAll('.image-preview-container').forEach(c=>c.classList.add('hidden')); teacherPortal.querySelectorAll('.image-preview').forEach(i=>i.src='#'); optionInputs.forEach(i=>i.value=""); correctAnswerInput.value=""; questionPointsInput.value = ""; currentEditingQuestionIndex = -1; addQuestionBtn.textContent = 'إضافة سؤال للقائمة'; cancelQuestionEditBtn.classList.add('hidden'); };
@@ -662,10 +605,8 @@
             function renderMyTests() {
                 myTestsContainer.innerHTML = "";
                 if (Object.keys(myTests).length === 0) { myTestsContainer.innerHTML = "<p>لم تقم بإنشاء أي اختبارات.</p>"; return; }
-                const tests = Object.entries(myTests).sort((a,b) => b[1].timestamp - a[1].timestamp);
-                tests.forEach(([testId, test]) => {
-                    const testCard = document.createElement('div');
-                    testCard.className = 'list-item';
+                Object.entries(myTests).sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([testId, test]) => {
+                    const testCard = document.createElement('div'); testCard.className = 'list-item';
                     testCard.style.cssText = `flex-direction: column; align-items: stretch; padding: 12px; gap: 10px;`;
                     testCard.innerHTML = `
                         <div style="font-weight: bold; font-size: 1.1rem; text-align: right;">${test.name}</div>
@@ -680,49 +621,22 @@
                     testCard.querySelector('[data-action="share"]').onclick = () => copyTestLink(currentUser, testId);
                     testCard.querySelector('[data-action="results"]').onclick = () => { navButtons[1].click(); resultsTestSelector.value = testId; loadStudentResultsForTest(testId); };
                     testCard.querySelector('[data-action="edit"]').onclick = () => startEditingTest(testId, test);
-                    testCard.querySelector('[data-action="delete"]').onclick = async () => {
-                        if (await showCustomConfirm("تأكيد الحذف", "هل أنت متأكد من حذف هذا الاختبار نهائيًا؟ سيتم حذف جميع نتائج الطلاب المرتبطة به.")) {
-                            deleteTest(testId);
-                        }
-                    };
+                    testCard.querySelector('[data-action="delete"]').onclick = async () => { if (await showCustomConfirm("تأكيد الحذف", "هل أنت متأكد من حذف هذا الاختبار نهائيًا؟ سيتم حذف جميع نتائج الطلاب المرتبطة به.")) deleteTest(testId); };
                     myTestsContainer.appendChild(testCard);
                 });
             }
 
-            async function deleteTest(testId) {
-                try {
-                    await remove(ref(db, `tests/${currentUser}/${testId}`));
-                    await remove(ref(db, `results/${currentUser}/${testId}`));
-                    showCustomAlert("نجاح", "تم حذف الاختبار بنجاح.");
-                } catch (error) { showCustomAlert("خطأ", "حدث خطأ أثناء حذف الاختبار."); }
-            }
+            async function deleteTest(testId) { try { await remove(ref(db, `tests/${currentUser}/${testId}`)); await remove(ref(db, `results/${currentUser}/${testId}`)); showCustomAlert("نجاح", "تم حذف الاختبار بنجاح."); } catch (e) { showCustomAlert("خطأ", "حدث خطأ أثناء حذف الاختبار."); } }
             
             function startEditingTest(testId, testData) {
-                navButtons[2].click();
-                currentEditingTestId = testId;
-                createTestSection.querySelector('#create-edit-title').textContent = "تعديل الاختبار";
-                saveTestBtn.textContent = "تحديث الاختبار";
-                cancelTestEditBtn.classList.remove('hidden');
-                testNameInput.value = testData.name;
-                testGradeSelect.value = testData.grade;
-                testDurationInput.value = testData.duration;
-                preventGoBackCheckbox.checked = testData.preventGoBack || false;
-                shuffleQuestionsCheckbox.checked = testData.shuffle || false;
-                fatefulTestCheckbox.checked = testData.fateful || false;
-                questionsArray = [...(testData.questions || [])];
-                renderQuestionsList();
+                navButtons[2].click(); currentEditingTestId = testId;
+                createTestSection.querySelector('#create-edit-title').textContent = "تعديل الاختبار"; saveTestBtn.textContent = "تحديث الاختبار"; cancelTestEditBtn.classList.remove('hidden');
+                testNameInput.value = testData.name; testGradeSelect.value = testData.grade; testDurationInput.value = testData.duration;
+                preventGoBackCheckbox.checked = !!testData.preventGoBack; shuffleQuestionsCheckbox.checked = !!testData.shuffle; fatefulTestCheckbox.checked = !!testData.fateful;
+                questionsArray = [...(testData.questions || [])]; renderQuestionsList();
             }
 
-            function resetCreateFormState() {
-                currentEditingTestId = null;
-                createTestSection.querySelector('#create-edit-title').textContent = "إنشاء اختبار جديد";
-                saveTestBtn.textContent = "حفظ الاختبار";
-                cancelTestEditBtn.classList.add('hidden');
-                testNameInput.value = ""; testGradeSelect.value = ""; testDurationInput.value = ""; preventGoBackCheckbox.checked=false; shuffleQuestionsCheckbox.checked=false; fatefulTestCheckbox.checked=false;
-                questionsArray = [];
-                renderQuestionsList();
-                clearQuestionForm();
-            }
+            function resetCreateFormState() { currentEditingTestId = null; createTestSection.querySelector('#create-edit-title').textContent = "إنشاء اختبار جديد"; saveTestBtn.textContent = "حفظ الاختبار"; cancelTestEditBtn.classList.add('hidden'); testNameInput.value = ""; testGradeSelect.value = ""; testDurationInput.value = ""; preventGoBackCheckbox.checked=false; shuffleQuestionsCheckbox.checked=false; fatefulTestCheckbox.checked=false; questionsArray = []; renderQuestionsList(); clearQuestionForm(); }
             cancelTestEditBtn.onclick = resetCreateFormState;
 
             async function loadStudentResultsForTest(testId) {
@@ -731,18 +645,10 @@
                 const snapshot = await get(ref(db, `results/${currentUser}/${testId}`));
                 studentResultsContainer.innerHTML = "";
                 if (!snapshot.exists()) { studentResultsContainer.innerHTML = "<p>لا توجد نتائج لهذا الاختبار بعد.</p>"; return; }
-                const results = snapshot.val();
-                Object.entries(results).forEach(([studentName, result]) => {
+                Object.entries(snapshot.val()).forEach(([studentName, result]) => {
                     const div = document.createElement('div'); div.className = 'list-item';
-                    const isPending = result.status === 'pending';
-                    const pendingIndicator = isPending ? `<span style="color:#ffc107; font-weight:bold; margin-inline:10px;">(قيد المراجعة)</span>` : '';
-                    div.innerHTML = `
-                        <span style="flex-grow:1; text-align: right;">الطالب: <strong>${studentName}</strong></span>
-                        <span>الدرجة: <strong>${result.score}</strong></span>
-                        ${pendingIndicator}
-                        <i class="fas fa-comment-dots" title="مراسلة الطالب" style="margin: 0 15px; color: #00aaff; cursor: pointer; font-size: 1.2rem;"></i>
-                        <button class="action-btn btn-secondary" data-action="details">التفاصيل</button>
-                    `;
+                    const pendingIndicator = result.status === 'pending' ? `<span style="color:#ffc107; font-weight:bold; margin-inline:10px;">(قيد المراجعة)</span>` : '';
+                    div.innerHTML = `<span style="flex-grow:1; text-align: right;">الطالب: <strong>${studentName}</strong></span><span>الدرجة: <strong>${result.score}</strong></span>${pendingIndicator}<i class="fas fa-comment-dots" title="مراسلة الطالب" style="margin: 0 15px; color: #00aaff; cursor: pointer; font-size: 1.2rem;"></i><button class="action-btn btn-secondary" data-action="details">التفاصيل</button>`;
                     div.querySelector('[data-action="details"]').onclick = () => showStudentAnswerReview(studentName, testId, result);
                     div.querySelector('.fa-comment-dots').onclick = () => openChatModal(currentUser, studentName);
                     studentResultsContainer.appendChild(div);
@@ -750,56 +656,28 @@
             }
 
             function showStudentAnswerReview(studentName, testId, result) {
-                const test = myTests[testId];
-                const answers = result.answers;
-                reviewModalTitle.textContent = `مراجعة إجابات: ${studentName}`;
-                reviewModalBody.innerHTML = '';
-                reviewModalFooter.classList.add('hidden');
-
-                if (result.status === 'pending' && test.questions.some(q => q.type === 'essay')) {
-                    reviewModalFooter.classList.remove('hidden');
-                }
-
+                const test = myTests[testId], answers = result.answers; reviewModalTitle.textContent = `مراجعة إجابات: ${studentName}`; reviewModalBody.innerHTML = ''; reviewModalFooter.classList.add('hidden');
+                if (result.status === 'pending' && test.questions.some(q => q.type === 'essay')) reviewModalFooter.classList.remove('hidden');
                 test.questions.forEach((q, index) => {
-                    const studentAnswer = answers[index] || {}; 
-                    let reviewHtml = '';
-                    if (q.type === 'mcq') {
-                        const isCorrect = studentAnswer.answer === q.correct;
-                        reviewHtml = `<div style="background: ${isCorrect ? 'rgba(63,185,80,0.1)' : 'rgba(248,81,73,0.1)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`;
-                    } else {
-                        const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>';
-                        const studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '';
-                        const modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '';
-                        let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`;
-                        reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:#222; padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`;
-                    }
-                    const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.flexDirection = 'column'; qDiv.style.alignItems = 'flex-start';
-                    qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${reviewHtml}`;
-                    reviewModalBody.appendChild(qDiv);
+                    const studentAnswer = answers[index] || {}; let reviewHtml = '';
+                    if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(63,185,80,0.1)' : 'rgba(248,81,73,0.1)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
+                    else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:#222; padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
+                    const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;'; qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${reviewHtml}`; reviewModalBody.appendChild(qDiv);
                 });
-                
-                finalizeGradesBtn.onclick = () => finalizeGrades(studentName, testId, test, result);
-                reviewModal.classList.add('visible');
+                finalizeGradesBtn.onclick = () => finalizeGrades(studentName, testId, test, result); reviewModal.classList.add('visible');
             }
 
             async function finalizeGrades(studentName, testId, test, originalResult) {
-                let totalEssayScore = 0; let allGraded = true;
-                const updatedAnswers = [...originalResult.answers];
+                let totalEssayScore = 0, allGraded = true; const updatedAnswers = [...originalResult.answers];
                 reviewModalBody.querySelectorAll('.essay-grade-input').forEach(input => {
                     const questionIndex = parseInt(input.dataset.questionIndex), points = parseInt(input.value), maxPoints = test.questions[questionIndex].points || 1;
                     if (isNaN(points) || points < 0 || points > maxPoints) { showCustomAlert("خطأ", `الرجاء إدخال درجة صحيحة للسؤال المقالي رقم ${questionIndex + 1}.`); allGraded = false; return; }
-                    totalEssayScore += points;
-                    updatedAnswers[questionIndex] = {...(updatedAnswers[questionIndex] || {type: 'essay'}), pointsAwarded: points};
+                    totalEssayScore += points; updatedAnswers[questionIndex] = {...(updatedAnswers[questionIndex] || {type: 'essay'}), pointsAwarded: points};
                 });
                 if (!allGraded) return;
                 const finalScore = originalResult.mcqScore + totalEssayScore, totalTestPoints = test.questions.reduce((sum, q) => sum + (q.points || 1), 0);
                 const finalResult = { ...originalResult, score: `${finalScore} / ${totalTestPoints}`, status: 'graded', answers: updatedAnswers };
-                try {
-                    await update(ref(db), { [`results/${currentUser}/${testId}/${studentName}`]: finalResult, [`studentResults/${studentName}/${testId}`]: finalResult });
-                    showCustomAlert("نجاح", "تم حفظ الدرجات بنجاح.");
-                    reviewModal.classList.remove('visible');
-                    loadStudentResultsForTest(testId);
-                } catch (error) { showCustomAlert("خطأ", "حدث خطأ أثناء حفظ الدرجات."); }
+                try { await update(ref(db), { [`results/${currentUser}/${testId}/${studentName}`]: finalResult, [`studentResults/${studentName}/${testId}`]: finalResult }); showCustomAlert("نجاح", "تم حفظ الدرجات بنجاح."); reviewModal.classList.remove('visible'); loadStudentResultsForTest(testId); } catch (e) { showCustomAlert("خطأ", "حدث خطأ أثناء حفظ الدرجات."); }
             }
             reviewModal.querySelector('.modal-close-btn').onclick = () => reviewModal.classList.remove('visible');
 
@@ -814,9 +692,9 @@
                     const d=document.createElement('div'); d.className='list-item';
                     d.innerHTML=`<span style="flex-grow:1; text-align:right;">${i+1}. [${q.type==='mcq'?'اختياري':'مقالي'}] ${q.question ? q.question.substring(0,30) : 'سؤال بصورة'}... (${q.points} درجات)</span><div style="display:flex; gap: 5px;"><button data-index="${i}" class="action-btn btn-secondary edit-q-btn" title="تعديل"><i class="fas fa-edit"></i></button><button data-index="${i}" class="action-btn btn-secondary delete-q-btn" title="حذف" style="background:#dc3545; border-color:#c82333;"><i class="fas fa-trash"></i></button></div>`;
                     questionsListContainer.appendChild(d);
+                    d.querySelector('.delete-q-btn').onclick = () => { questionsArray.splice(i,1); renderQuestionsList(); };
+                    d.querySelector('.edit-q-btn').onclick = () => startEditingQuestion(i);
                 });
-                questionsListContainer.querySelectorAll('.delete-q-btn').forEach(btn => btn.onclick = e => { questionsArray.splice(parseInt(btn.dataset.index),1); renderQuestionsList(); });
-                questionsListContainer.querySelectorAll('.edit-q-btn').forEach(btn => btn.onclick = e => startEditingQuestion(parseInt(btn.dataset.index)));
             };
 
             const startEditingQuestion = (index) => { const q = questionsArray[index]; if (!q) return; currentEditingQuestionIndex = index; questionText.value = q.question; questionPointsInput.value = q.points; addQuestionBtn.textContent = "تحديث السؤال"; cancelQuestionEditBtn.classList.remove('hidden'); };
@@ -828,7 +706,7 @@
                 let questionData = { question: q, type: currentQuestionType, image: currentQuestionImageBase64, points: points };
                 if (currentQuestionType === 'mcq') {
                     const opts = Array.from(optionInputs).map(i => i.value.trim()), correct = parseInt(correctAnswerInput.value);
-                    if (opts.some(o => o === "") || !correct || opts.length !== 4 || correct < 1 || correct > 4) { showCustomAlert("خطأ", "يرجى ملء الخيارات الأربعة وتحديد الإجابة الصحيحة (1-4)."); return; }
+                    if (opts.some(o => o === "") || !correct || correct < 1 || correct > 4) { showCustomAlert("خطأ", "يرجى ملء الخيارات الأربعة وتحديد الإجابة الصحيحة (1-4)."); return; }
                     questionData = { ...questionData, options: opts, correct };
                 } else { questionData.modelAnswerImage = currentModelAnswerImageBase64; }
                 if (currentEditingQuestionIndex > -1) questionsArray[currentEditingQuestionIndex] = questionData; else questionsArray.push(questionData);
@@ -851,19 +729,10 @@
             async function authUser(name, password, isRegister) { 
                 if (!name || !password) { showCustomAlert("خطأ", "الرجاء تعبئة كل الحقول"); return; }
                 if (!/^[a-zA-Z0-9\s]+$/.test(name)) { showCustomAlert("خطأ", "الرجاء استخدام الحروف والأرقام الإنجليزية فقط في الاسم."); return; }
-                const userRef = ref(db, `users/${name}`); 
-                const snapshot = await get(userRef); 
-                if (isRegister) { 
-                    if (snapshot.exists()) { showCustomAlert("خطأ", "اسم المستخدم هذا موجود بالفعل."); return; }
-                    await set(userRef, { password }); 
-                    currentUser = name;
-                } else { 
-                    if (!snapshot.exists() || snapshot.val().password !== password) { showCustomAlert("خطأ", "اسم المستخدم أو كلمة المرور غير صحيحة."); return; }
-                    currentUser = name; 
-                }
-                localStorage.setItem("loggedInTeacher", currentUser); 
-                showSection(dashboardSection); 
-                updateDashboard(); 
+                const userRef = ref(db, `users/${name}`); const snapshot = await get(userRef); 
+                if (isRegister) { if (snapshot.exists()) { showCustomAlert("خطأ", "اسم المستخدم هذا موجود بالفعل."); return; } await set(userRef, { password }); currentUser = name; } 
+                else { if (!snapshot.exists() || snapshot.val().password !== password) { showCustomAlert("خطأ", "اسم المستخدم أو كلمة المرور غير صحيحة."); return; } currentUser = name; }
+                localStorage.setItem("loggedInTeacher", currentUser); showSection(dashboardSection); updateDashboard(); 
             }
             
             teacherPortal.querySelector('#teacher-login-btn').onclick = () => authUser(teacherPortal.querySelector("#teacher-login-name").value.trim(), teacherPortal.querySelector("#teacher-login-password").value.trim(), false);
@@ -871,87 +740,54 @@
             
             settingsIcon.onclick = () => { updateNameInput.value = currentUser; updatePasswordInput.value = ''; settingsModal.classList.add('visible'); };
             settingsModal.querySelector('.modal-close-btn').onclick = () => settingsModal.classList.remove('visible');
-
-            logoutBtn.onclick = async () => { 
-                if (await showCustomConfirm("تأكيد", "هل أنت متأكد من رغبتك في تسجيل الخروج؟")) { 
-                    localStorage.removeItem("loggedInTeacher");
-                    window.location.reload();
-                } 
-            };
+            logoutBtn.onclick = async () => { if (await showCustomConfirm("تأكيد", "هل أنت متأكد من رغبتك في تسجيل الخروج؟")) { localStorage.removeItem("loggedInTeacher"); window.location.reload(); } };
             resultsTestSelector.onchange = (e) => loadStudentResultsForTest(e.target.value);
             teacherPortal.querySelectorAll('.to-login').forEach(el=>el.onclick=e=>{e.preventDefault();showSection(loginSection)});
-            teacherPortal.querySelectorAll('.to-register').forEach(el=>el.onclick=e=>{e.preventDefault();showSection(registerSection)});
+            teacherPortal.querySelectorAll('.to-register').forEach(el=>el.onclick=e=>{e.preventDefault();showSection(teacherPortal.querySelector('#teacher-register-section'))});
 
-            // --- MODIFIED: Profile Update Logic ---
             updateBtn.onclick = async () => {
-                const newName = updateNameInput.value.trim();
-                const newPassword = updatePasswordInput.value.trim();
-                
+                const newName = updateNameInput.value.trim(), newPassword = updatePasswordInput.value.trim();
                 if (!newName) { showCustomAlert("خطأ", "لا يمكن أن يكون الاسم فارغًا."); return; }
                 if (!/^[a-zA-Z0-9\s]+$/.test(newName)) { showCustomAlert("خطأ", "الرجاء استخدام الحروف والأرقام الإنجليزية فقط في الاسم."); return; }
                 if (newName === currentUser && !newPassword) { settingsModal.classList.remove('visible'); return; }
-
                 try {
-                    const updates = {};
-                    if(newPassword) updates.password = newPassword;
-
+                    const updates = {}; if(newPassword) updates.password = newPassword;
                     if (newName !== currentUser) {
-                        const newNameSnap = await get(ref(db, `users/${newName}`));
-                        if (newNameSnap.exists()) { showCustomAlert("خطأ", "هذا الاسم مستخدم بالفعل. الرجاء اختيار اسم آخر."); return; }
-
-                        const oldUserRef = ref(db, `users/${currentUser}`);
-                        const oldDataSnap = await get(oldUserRef);
-                        const oldData = oldDataSnap.val();
-                        
+                        if ((await get(ref(db, `users/${newName}`))).exists()) { showCustomAlert("خطأ", "هذا الاسم مستخدم بالفعل."); return; }
+                        const oldData = (await get(ref(db, `users/${currentUser}`))).val();
                         const dataToMove = { [`users/${newName}`]: { ...oldData, ...updates }, [`users/${currentUser}`]: null };
-                        
-                        const pathsToMigrate = ['tests', 'results', 'messageLimits'];
-                        for (const path of pathsToMigrate) {
-                            const oldPathRef = ref(db, `${path}/${currentUser}`);
-                            const pathSnap = await get(oldPathRef);
-                            if (pathSnap.exists()) {
-                                dataToMove[`${path}/${newName}`] = pathSnap.val();
-                                dataToMove[`${path}/${currentUser}`] = null;
-                            }
+                        for (const path of ['tests', 'results', 'messageLimits']) {
+                            const snap = await get(ref(db, `${path}/${currentUser}`));
+                            if (snap.exists()) { dataToMove[`${path}/${newName}`] = snap.val(); dataToMove[`${path}/${currentUser}`] = null; }
                         }
-                        
                         await update(ref(db), dataToMove);
                         localStorage.setItem('loggedInTeacher', newName); 
                         showCustomAlert("نجاح", "تم تحديث الحساب بنجاح! سيتم إعادة تحميل الصفحة.");
                         setTimeout(() => window.location.reload(), 1500);
-
-                    } else {
-                        await update(ref(db, `users/${currentUser}`), updates);
-                        showCustomAlert("نجاح", "تم تحديث كلمة المرور بنجاح!");
-                        settingsModal.classList.remove('visible');
-                    }
-                } catch (error) { showCustomAlert("خطأ", "حدث خطأ أثناء تحديث الحساب."); }
+                    } else { await update(ref(db, `users/${currentUser}`), updates); showCustomAlert("نجاح", "تم تحديث كلمة المرور بنجاح!"); settingsModal.classList.remove('visible'); }
+                } catch (e) { showCustomAlert("خطأ", "حدث خطأ أثناء تحديث الحساب."); }
             };
         }
 
         function initStudentApp() {
-            const allSections=studentPortal.querySelectorAll('section');const[registerSection,loginSection,dashboard,takeTest,result,review]=allSections;const nameSpan=studentPortal.querySelector('#student-name');
-            const settingsIcon = studentPortal.querySelector('#student-settings-icon');
-            const settingsModal = studentPortal.querySelector('#student-settings-modal');
-            const logoutBtn = settingsModal.querySelector('#student-logout-btn');
-            const testsContainer=studentPortal.querySelector('#available-tests-container');const resultsContainer=studentPortal.querySelector('#my-student-results-container');const searchBar=studentPortal.querySelector('#search-bar');const timerDisplay=studentPortal.querySelector('#timer');const timerProgress=studentPortal.querySelector('#timer-progress');const testTitle=studentPortal.querySelector('#current-test-title');const questionsDisplay=studentPortal.querySelector('#questions-display');const finalScore=studentPortal.querySelector('#final-score');const feedbackMsg=studentPortal.querySelector('#feedback-message');const bottomNav=studentPortal.querySelector('#student-bottom-nav');const qNavContainer=studentPortal.querySelector('#question-navigation-container');const[prevQBtn,nextQBtn]=[studentPortal.querySelector('#prev-question-btn'),studentPortal.querySelector('#next-question-btn')];const submitBtn=studentPortal.querySelector('#submit-test-btn');const reviewContainer=studentPortal.querySelector('#review-container');
-            const updateNameInput = studentPortal.querySelector('#student-update-name');
-            const updatePasswordInput = studentPortal.querySelector('#student-update-password');
-            const updateBtn = studentPortal.querySelector('#student-update-btn');
+            const allSections=studentPortal.querySelectorAll('section'),[registerSection,loginSection,dashboard,takeTest,result,review]=allSections, nameSpan=studentPortal.querySelector('#student-name');
+            const settingsIcon = studentPortal.querySelector('#student-settings-icon'), settingsModal = studentPortal.querySelector('#student-settings-modal'), logoutBtn = settingsModal.querySelector('#student-logout-btn');
+            const testsContainer=studentPortal.querySelector('#available-tests-container'), resultsContainer=studentPortal.querySelector('#my-student-results-container'), searchBar=studentPortal.querySelector('#search-bar');
+            const timerDisplay=studentPortal.querySelector('#timer'), timerProgress=studentPortal.querySelector('#timer-progress'), testTitle=studentPortal.querySelector('#current-test-title'), questionsDisplay=studentPortal.querySelector('#questions-display');
+            const finalScore=studentPortal.querySelector('#final-score'), feedbackMsg=studentPortal.querySelector('#feedback-message'), bottomNav=studentPortal.querySelector('#student-bottom-nav');
+            const qNavContainer=studentPortal.querySelector('#question-navigation-container'), [prevQBtn,nextQBtn]=[studentPortal.querySelector('#prev-question-btn'),studentPortal.querySelector('#next-question-btn')], submitBtn=studentPortal.querySelector('#submit-test-btn');
+            const reviewContainer=studentPortal.querySelector('#review-container'), updateNameInput = studentPortal.querySelector('#student-update-name'), updatePasswordInput = studentPortal.querySelector('#student-update-password'), updateBtn = studentPortal.querySelector('#student-update-btn');
             
             let currentStudent=null,takenTests={},allTests={},currentTest=null,testInterval=null,totalSec=0,remainSec=0,answers=[],qIndex=0,lastAnswers=[];
             
-            // --- MODIFIED: Persistent Login Check ---
             const loggedInUser = localStorage.getItem('loggedInStudent');
             if(loggedInUser){
                 currentStudent = loggedInUser;
                 const deepLink=sessionStorage.getItem('deepLinkTest');
                 if(deepLink){ startDeepLinkTest(); } else { showSection(dashboard); loadDashboard(); }
-            } else {
-                showSection(loginSection);
-            }
+            } else { showSection(loginSection); }
 
-            const showSection=s=>{allSections.forEach(e=>e.classList.add('hidden'));s.classList.remove('hidden');bottomNav.classList.toggle('hidden',!s || s.id!=='student-dashboard-section')};
+            function showSection(s){allSections.forEach(e=>e.classList.add('hidden'));if(s) s.classList.remove('hidden');bottomNav.classList.toggle('hidden',!s || s.id!=='student-dashboard-section')};
             const showLoading=c=>{c.innerHTML='<div class="spinner"></div>'};
             
             async function loadDashboard(){if(!currentStudent)return;nameSpan.textContent=currentStudent;settingsIcon.classList.remove('hidden');setDefaultTab();showLoading(testsContainer);showLoading(resultsContainer);const resultsSnap=await get(ref(db,`studentResults/${currentStudent}`));takenTests=resultsSnap.exists()?resultsSnap.val():{};renderStudentResults();const testsRef=ref(db,'tests');onValue(testsRef,snap=>{allTests=snap.exists()?snap.val():{};renderAvailableTests()},{onlyOnce:true}); initChatSystem(currentStudent, 'student');}
@@ -961,7 +797,6 @@
                 const testEntries = [];
                 Object.entries(allTests).forEach(([teacherId, teacherTests]) => { Object.entries(teacherTests).forEach(([testId, test]) => { testEntries.push({ teacherId, testId, test }); }); });
                 testEntries.sort((a, b) => b.test.timestamp - a.test.timestamp);
-
                 testEntries.forEach(({teacherId, testId, test}) => {
                     const isTaken = !!takenTests[testId], searchStr = `${test.name}${test.grade}${teacherId}`.toLowerCase();
                     if(filter && !searchStr.includes(filter.toLowerCase())) return;
@@ -969,18 +804,10 @@
                     const card = document.createElement('div'); card.className = 'student-test-card';
                     card.innerHTML = `
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
-                            <div style="text-align: right;">
-                                <strong style="font-size:1.1rem;">${test.name}</strong>
-                                <small style="display: block; color: #ccc;">${test.grade}</small>
-                            </div>
+                            <div style="text-align: right;"><strong style="font-size:1.1rem;">${test.name}</strong><small style="display: block; color: #ccc;">${test.grade}</small></div>
                             <button class="action-btn btn-secondary" data-action="share" title="مشاركة رابط الاختبار"><i class="fas fa-share-alt"></i></button>
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                            <small style="color: #ccc; cursor: pointer;" class="chat-init-icon" data-teacher-id="${teacherId}">
-                                <i class="fas fa-comment-dots" style="margin-left: 5px; color: #00aaff;"></i> المعلم: ${teacherId}
-                            </small>
-                            <small>${new Date(test.timestamp).toLocaleDateString('ar-EG')}</small>
-                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;"><small style="color: #ccc; cursor: pointer;" class="chat-init-icon" data-teacher-id="${teacherId}"><i class="fas fa-comment-dots" style="margin-left: 5px; color: #00aaff;"></i> المعلم: ${teacherId}</small><small>${new Date(test.timestamp).toLocaleDateString('ar-EG')}</small></div>
                         <button class="btn-primary start-btn" style="width:100%; padding: 12px; font-size:1rem; border-bottom-width:4px;">${isTaken ? 'مراجعة النتيجة' : 'ابدأ الاختبار'}</button>
                     `;
                     card.querySelector('.start-btn').onclick = () => isTaken ? reviewTest(testId) : startTest(teacherId, testId, test);
@@ -990,11 +817,10 @@
                 });
                 if(!found) testsContainer.innerHTML='<p>لا توجد اختبارات متاحة حاليًا.</p>';
             }
-            function renderStudentResults(){resultsContainer.innerHTML='';const results=Object.values(takenTests).sort((a,b)=>b.timestamp-a.timestamp);if(results.length===0){resultsContainer.innerHTML='<p>لم تقم بإجراء أي اختبار بعد.</p>';return}results.forEach(r=>{const d=new Date(r.timestamp).toLocaleString('ar-EG'), isPending = r.status === 'pending', pendingIndicator = isPending ? `<span style="color:#ffc107; font-weight:bold; font-size: 0.8rem;">(قيد المراجعة)</span>` : '';const div=document.createElement('div');div.className='test-item';div.innerHTML=`<div style="text-align:right; flex-grow:1;"><strong>${r.testName}</strong><br><small>الدرجة: <strong>${r.score}</strong> ${pendingIndicator}</small></div><small>${d}</small>`;resultsContainer.appendChild(div)})}
+            function renderStudentResults(){resultsContainer.innerHTML='';const results=Object.values(takenTests).sort((a,b)=>b.timestamp-a.timestamp);if(results.length===0){resultsContainer.innerHTML='<p>لم تقم بإجراء أي اختبار بعد.</p>';return}results.forEach(r=>{const d=new Date(r.timestamp).toLocaleString('ar-EG'), pendingIndicator = r.status === 'pending' ? `<span style="color:#ffc107; font-weight:bold; font-size: 0.8rem;">(قيد المراجعة)</span>` : '';const div=document.createElement('div');div.className='test-item';div.innerHTML=`<div style="text-align:right; flex-grow:1;"><strong>${r.testName}</strong><br><small>الدرجة: <strong>${r.score}</strong> ${pendingIndicator}</small></div><small>${d}</small>`;resultsContainer.appendChild(div)})}
             
             function startTest(teacherId,testId,testData){
-                currentTest={...testData,id:testId,teacherId};
-                if(currentTest.shuffle) currentTest.questions.sort(() => Math.random() - 0.5);
+                currentTest={...testData,id:testId,teacherId}; if(currentTest.shuffle) currentTest.questions.sort(() => Math.random() - 0.5);
                 testTitle.textContent=currentTest.name;totalSec=currentTest.duration*60;remainSec=totalSec;answers=new Array(currentTest.questions.length).fill(null);qIndex=0;timerDisplay.textContent=formatTime(remainSec);timerProgress.style.width='100%';if(testInterval)clearInterval(testInterval);testInterval=setInterval(()=>{remainSec--;timerDisplay.textContent=formatTime(remainSec);timerProgress.style.width=((remainSec/totalSec)*100)+'%';if(remainSec<=0){clearInterval(testInterval);submitTest(true)}},1000);if(currentTest.preventGoBack){submitBtn.classList.add('hidden');qNavContainer.classList.remove('hidden');renderQuestion(qIndex)}else{submitBtn.classList.remove('hidden');qNavContainer.classList.add('hidden');renderAllQuestions()}showSection(takeTest)
             }
             
@@ -1002,60 +828,45 @@
                 const result = takenTests[testId]; if (!result) return;
                 const testRef = ref(db, `tests/${result.teacherName}/${testId}`), testSnap = await get(testRef);
                 if (!testSnap.exists()) { showCustomAlert('خطأ', 'لم يعد هذا الاختبار متاحًا للمراجعة.'); return; }
-                currentTest = {name: result.testName, questions: testSnap.val().questions};
-                lastAnswers = result.answers;
-                finalScore.textContent = `درجتك: ${result.score}`;
-                feedbackMsg.style.background = '#333'; feedbackMsg.style.color = '#fff';
-                feedbackMsg.textContent = "هذه مراجعة لنتيجتك السابقة.";
-                if (result.status === 'pending') { feedbackMsg.style.background = 'rgba(255, 193, 7, 0.2)'; feedbackMsg.style.color = '#ffc107'; feedbackMsg.textContent = "نتيجتك النهائية لا تزال قيد المراجعة من قبل المعلم."; }
+                currentTest = {name: result.testName, questions: testSnap.val().questions}; lastAnswers = result.answers; finalScore.textContent = `درجتك: ${result.score}`;
+                feedbackMsg.style.cssText = 'background: #333; color: #fff;'; feedbackMsg.textContent = "هذه مراجعة لنتيجتك السابقة.";
+                if (result.status === 'pending') { feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: #ffc107;"; feedbackMsg.textContent = "نتيجتك النهائية لا تزال قيد المراجعة من قبل المعلم."; }
                 showSection(result);
             }
 
             function renderAllQuestions(){questionsDisplay.innerHTML='';currentTest.questions?.forEach((q,idx)=>{const qDiv=document.createElement('div');qDiv.style.marginBottom='25px';let ansHtml='';if(q.type==='mcq'){ansHtml=`<div class="question-options">${q.options.map((o,i)=>`<label><input type="radio" name="question-${idx}" value="${i+1}" onchange="saveAnswer(${idx},this.value,'mcq')"/><span>${o}</span></label>`).join('')}</div>`}else{ansHtml=`<div><label>إجابتك:</label><textarea id="text-answer-${idx}" oninput="saveAnswer(${idx}, this.value, 'essay-text')"></textarea><label for="image-answer-${idx}" class="file-input-label"><i class="fas fa-upload"></i> رفع صورة</label><input type="file" id="image-answer-${idx}" accept="image/*" class="hidden" onchange="handleEssayImageUpload(${idx}, this)"></div>`}qDiv.innerHTML=`<h4 style="text-align:right;margin-bottom:15px;">س ${idx+1}: ${q.question}</h4>${q.image?`<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">`:''}${ansHtml}`;questionsDisplay.appendChild(qDiv)})}
             function renderQuestion(index){const q=currentTest.questions[index];let ansHtml='';const saved=answers[index];if(q.type==='mcq'){ansHtml=`<div class="question-options">${q.options.map((o,i)=>{const checked=saved&&saved.answer===(i+1)?'checked':'';return`<label><input type="radio" name="question-${index}" value="${i+1}" ${checked}/><span>${o}</span></label>`}).join('')}</div>`}else{const text=saved&&saved.textAnswer?saved.textAnswer:'';const uploaded=saved&&saved.imageAnswer;ansHtml=`<div><label>إجابتك:</label><textarea id="text-answer-${index}">${text}</textarea><label for="image-answer-${index}" class="file-input-label"><i class="fas ${uploaded?'fa-check-circle':'fa-upload'}"></i> ${uploaded?'تغيير الصورة':'رفع صورة'}</label><input type="file" id="image-answer-${index}" accept="image/*" class="hidden"></div>`}questionsDisplay.innerHTML=`<h4 style="margin-bottom:15px;">س ${index+1}/${currentTest.questions.length}: ${q.question}</h4>${q.image?`<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">`:''}${ansHtml}`;if(q.type==='essay'){document.getElementById(`image-answer-${index}`).onchange=()=>handleEssayImageUpload(index,document.getElementById(`image-answer-${index}`))}prevQBtn.disabled=index===0;nextQBtn.classList.toggle('hidden',index===currentTest.questions.length-1);submitBtn.classList.toggle('hidden',index!==currentTest.questions.length-1)}
             
-            window.saveAnswer=(idx,val,type)=>{if(type==='mcq'){answers[idx]={type:'mcq',answer:parseInt(val)}}else if(type==='essay-text'){if(!answers[idx])answers[idx]={type:'essay'};answers[idx].textAnswer=val}};
+            window.saveAnswer=(idx,val,type)=>{if(type==='mcq')answers[idx]={type:'mcq',answer:parseInt(val)};else if(type==='essay-text'){if(!answers[idx])answers[idx]={type:'essay'};answers[idx].textAnswer=val}};
             window.handleEssayImageUpload=async(idx,input)=>{const file=input.files[0];if(file){const b64=await getBase64(file);if(!answers[idx])answers[idx]={type:'essay'};answers[idx].imageAnswer=b64;input.previousElementSibling.innerHTML=`<i class="fas fa-check-circle"></i> تم الرفع!`}};
-            
-            function saveCurrentAnswer(){const q=currentTest.questions[qIndex];if(q.type==='mcq'){const checked=questionsDisplay.querySelector(`input[name="question-${qIndex}"]:checked`);if(checked)answers[qIndex]={type:'mcq',answer:parseInt(checked.value)}}else{const text=questionsDisplay.querySelector(`#text-answer-${qIndex}`).value;if(text.trim()!==''||(answers[qIndex]&&answers[qIndex].imageAnswer)){if(!answers[qIndex])answers[idx]={type:'essay'};answers[qIndex].textAnswer=text}}}
+            function saveCurrentAnswer(){const q=currentTest.questions[qIndex];if(q.type==='mcq'){const c=questionsDisplay.querySelector(`input[name="question-${qIndex}"]:checked`);if(c)answers[qIndex]={type:'mcq',answer:parseInt(c.value)}}else{const t=questionsDisplay.querySelector(`#text-answer-${qIndex}`).value;if(t.trim()!==''||(answers[qIndex]&&answers[qIndex].imageAnswer)){if(!answers[qIndex])answers[qIndex]={type:'essay'};answers[qIndex].textAnswer=t}}}
             nextQBtn.onclick=()=>{if(qIndex<currentTest.questions.length-1){saveCurrentAnswer();qIndex++;renderQuestion(qIndex)}};
             prevQBtn.onclick=()=>{if(qIndex>0){saveCurrentAnswer();qIndex--;renderQuestion(qIndex)}};
             
             async function submitTest(timeUp=false){
                 if(timeUp) showCustomAlert('انتهى الوقت!','تم تسليم إجاباتك الحالية.');
                 if(currentTest.preventGoBack) saveCurrentAnswer();
-                let mcqScore = 0, mcqTotalPoints = 0;
-                const hasEssays = currentTest.questions.some(q => q.type === 'essay'), totalTestPoints = currentTest.questions.reduce((sum, q) => sum + (q.points || 1), 0);
+                let mcqScore = 0, mcqTotalPoints = 0; const hasEssays = currentTest.questions.some(q => q.type === 'essay'), totalTestPoints = currentTest.questions.reduce((s, q) => s + (q.points || 1), 0);
                 currentTest.questions.forEach((q, idx) => { if (q.type === 'mcq') { mcqTotalPoints += (q.points || 1); if (answers[idx] && answers[idx].answer === q.correct) mcqScore += (q.points || 1); } });
                 const resultObj = { testName: currentTest.name, teacherName: currentTest.teacherId, timestamp: serverTimestamp(), answers: answers, mcqScore: mcqScore, totalPoints: totalTestPoints, status: hasEssays ? 'pending' : 'graded', score: hasEssays ? `${mcqScore} / ${mcqTotalPoints} (مبدئي)` : `${mcqScore} / ${totalTestPoints}` };
-                await set(ref(db, `studentResults/${currentStudent}/${currentTest.id}`), resultObj);
-                await set(ref(db, `results/${currentTest.teacherId}/${currentTest.id}/${currentStudent}`), resultObj);
-                takenTests[currentTest.id] = resultObj;
-                lastAnswers = [...answers];
-                finalScore.textContent = `درجتك: ${resultObj.score}`;
-                if (hasEssays) { feedbackMsg.style.background = 'rgba(255, 193, 7, 0.2)'; feedbackMsg.style.color = '#ffc107'; feedbackMsg.textContent = "تم إرسال إجاباتك المقالية للمراجعة! هذه نتيجتك المبدئية للأسئلة الاختيارية."; }
-                else { const percent = totalTestPoints > 0 ? Math.round((mcqScore / totalTestPoints) * 100) : 0; const fb = percent === 100 ? { t: '🥳 ممتاز!', c: '#28a745' } : percent >= 80 ? { t: '😊 عمل رائع!', c: '#28a745' } : percent >= 50 ? { t: '🙂 جيد!', c: '#ffc107', tc: '#111' } : { t: '🙁 حاول مجددًا!', c: '#dc3545' }; feedbackMsg.style.background = fb.c; feedbackMsg.style.color = fb.tc || '#fff'; feedbackMsg.textContent = fb.t; }
+                await set(ref(db, `studentResults/${currentStudent}/${currentTest.id}`), resultObj); await set(ref(db, `results/${currentTest.teacherId}/${currentTest.id}/${currentStudent}`), resultObj);
+                takenTests[currentTest.id] = resultObj; lastAnswers = [...answers]; finalScore.textContent = `درجتك: ${resultObj.score}`;
+                if (hasEssays) { feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: #ffc107;"; feedbackMsg.textContent = "تم إرسال إجاباتك المقالية للمراجعة! هذه نتيجتك المبدئية للأسئلة الاختيارية."; }
+                else { const p = totalTestPoints > 0 ? Math.round((mcqScore / totalTestPoints) * 100) : 0; const fb = p === 100 ? { t: '🥳 ممتاز!', c: '#28a745' } : p >= 80 ? { t: '😊 عمل رائع!', c: '#28a745' } : p >= 50 ? { t: '🙂 جيد!', c: '#ffc107', tc: '#111' } : { t: '🙁 حاول مجددًا!', c: '#dc3545' }; feedbackMsg.style.background = fb.c; feedbackMsg.style.color = fb.tc || '#fff'; feedbackMsg.textContent = fb.t; }
                 showSection(result);
             }
             submitBtn.onclick=()=>submitTest(false);
 
-            function showReview(){reviewContainer.innerHTML='';currentTest.questions.forEach((q,i)=>{const ans=lastAnswers[i]||{};let html='';if(q.type==='mcq'){const correct=ans.answer===q.correct;html=`<div style="background:${correct?'rgba(63,185,80,0.1)':'rgba(248,81,73,0.1)'};padding:10px;border-radius:8px;"><b>إجابتك:</b> ${ans.answer?q.options[ans.answer-1]:'<i>لم تجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct-1]}</div>`}else{const txt=ans.textAnswer||'<em>لم تجب نصيًا.</em>';const img=ans.imageAnswer?`<p><b>صورتك:</b></p><img src="${ans.imageAnswer}" style="max-width:80%;border-radius:8px; cursor:pointer;">`:'';const model=q.modelAnswerImage?`<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%;border-radius:8px; cursor:pointer;">`:'';html=`<div><p><b>إجابتك النصية:</b></p><div style="background:#222;padding:10px;border-radius:8px;">${txt}</div>${img}${model}</div>`}const qDiv=document.createElement('div');qDiv.className='list-item';qDiv.style.flexDirection='column'; qDiv.style.alignItems='flex-start'; qDiv.innerHTML=`<h4 style="margin-bottom:10px;">س ${i+1}: ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${html}`;reviewContainer.appendChild(qDiv)});showSection(review)}
+            function showReview(){reviewContainer.innerHTML='';currentTest.questions.forEach((q,i)=>{const ans=lastAnswers[i]||{};let html='';if(q.type==='mcq'){const correct=ans.answer===q.correct;html=`<div style="background:${correct?'rgba(63,185,80,0.1)':'rgba(248,81,73,0.1)'};padding:10px;border-radius:8px;"><b>إجابتك:</b> ${ans.answer?q.options[ans.answer-1]:'<i>لم تجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct-1]}</div>`}else{const txt=ans.textAnswer||'<em>لم تجب نصيًا.</em>';const img=ans.imageAnswer?`<p><b>صورتك:</b></p><img src="${ans.imageAnswer}" style="max-width:80%;border-radius:8px; cursor:pointer;">`:'';const model=q.modelAnswerImage?`<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%;border-radius:8px; cursor:pointer;">`:'';html=`<div><p><b>إجابتك النصية:</b></p><div style="background:#222;padding:10px;border-radius:8px;">${txt}</div>${img}${model}</div>`}const qDiv=document.createElement('div');qDiv.className='list-item';qDiv.style.cssText='flex-direction: column; align-items: flex-start;'; qDiv.innerHTML=`<h4 style="margin-bottom:10px;">س ${i+1}: ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${html}`;reviewContainer.appendChild(qDiv)});showSection(review)}
             
             async function authUser(name,pass,isRegister){
                 if(!name||!pass) { showCustomAlert('خطأ','الرجاء ملء جميع الحقول'); return; }
                 if (!/^[a-zA-Z0-9\s]+$/.test(name)) { showCustomAlert("خطأ", "الرجاء استخدام الحروف والأرقام الإنجليزية فقط في الاسم."); return; }
                 const userRef=ref(db,`students/${name}`); const snap=await get(userRef);
-                if(isRegister){
-                    if(snap.exists()) { showCustomAlert('خطأ','اسم المستخدم موجود.'); return; }
-                    await set(userRef,{password:pass});
-                    currentStudent = name;
-                } else {
-                    if(!snap.exists()||snap.val().password!==pass) { showCustomAlert('خطأ','بيانات الدخول غير صحيحة.'); return; }
-                    currentStudent=name;
-                }
+                if(isRegister){ if(snap.exists()) { showCustomAlert('خطأ','اسم المستخدم موجود.'); return; } await set(userRef,{password:pass}); currentStudent = name; } 
+                else { if(!snap.exists()||snap.val().password!==pass) { showCustomAlert('خطأ','بيانات الدخول غير صحيحة.'); return; } currentStudent=name; }
                 localStorage.setItem('loggedInStudent',currentStudent);
-                const deepLink=sessionStorage.getItem('deepLinkTest');
-                if(deepLink){await startDeepLinkTest()}else{showSection(dashboard);loadDashboard()}
+                if(sessionStorage.getItem('deepLinkTest')){await startDeepLinkTest()}else{showSection(dashboard);loadDashboard()}
             }
 
             async function startDeepLinkTest(){const dataJSON=sessionStorage.getItem('deepLinkTest');if(!dataJSON)return;const{teacherId,testId}=JSON.parse(dataJSON);sessionStorage.removeItem('deepLinkTest');const testRef=ref(db,`tests/${teacherId}/${testId}`);const testSnap=await get(testRef);if(testSnap.exists()){startTest(teacherId,testId,testSnap.val())}else{showCustomAlert('خطأ','الاختبار غير موجود.');showSection(dashboard);loadDashboard()}}
@@ -1077,7 +888,6 @@
             settingsModal.querySelector('.modal-close-btn').onclick = () => settingsModal.classList.remove('visible');
             logoutBtn.onclick= async ()=>{ if(await showCustomConfirm('تأكيد', 'هل أنت متأكد من رغبتك في تسجيل الخروج؟')){ localStorage.removeItem('loggedInStudent'); window.location.reload(); } };
             
-            // --- MODIFIED: Profile Update Logic ---
             updateBtn.onclick = async () => {
                 const newName = updateNameInput.value.trim(), newPassword = updatePasswordInput.value.trim();
                 if (!newName) { showCustomAlert("خطأ", "لا يمكن أن يكون الاسم فارغًا."); return; }
@@ -1086,87 +896,56 @@
                 try {
                     const updates = {}; if(newPassword) updates.password = newPassword;
                     if (newName !== currentStudent) {
-                        const newNameSnap = await get(ref(db, `students/${newName}`));
-                        if (newNameSnap.exists()) { showCustomAlert("خطأ", "هذا الاسم مستخدم بالفعل."); return; }
-                        const oldUserRef = ref(db, `students/${currentStudent}`), oldDataSnap = await get(oldUserRef), oldData = oldDataSnap.val();
+                        if ((await get(ref(db, `students/${newName}`))).exists()) { showCustomAlert("خطأ", "هذا الاسم مستخدم بالفعل."); return; }
+                        const oldData = (await get(ref(db, `students/${currentStudent}`))).val();
                         const dataToMove = { [`students/${newName}`]: { ...oldData, ...updates }, [`students/${currentStudent}`]: null };
-                        const pathsToMigrate = ['studentResults', 'messageLimits'];
-                        for (const path of pathsToMigrate) {
-                            const pathSnap = await get(ref(db, `${path}/${currentStudent}`));
-                            if (pathSnap.exists()) { dataToMove[`${path}/${newName}`] = pathSnap.val(); dataToMove[`${path}/${currentStudent}`] = null; }
+                        for (const path of ['studentResults', 'messageLimits']) {
+                            const snap = await get(ref(db, `${path}/${currentStudent}`));
+                            if (snap.exists()) { dataToMove[`${path}/${newName}`] = snap.val(); dataToMove[`${path}/${currentStudent}`] = null; }
                         }
                         await update(ref(db), dataToMove);
                         localStorage.setItem('loggedInStudent', newName); 
                         showCustomAlert("نجاح", "تم تحديث الحساب بنجاح! سيتم إعادة تحميل الصفحة.");
                         setTimeout(() => window.location.reload(), 1500);
-                    } else {
-                        await update(ref(db, `students/${currentStudent}`), updates);
-                        showCustomAlert("نجاح", "تم تحديث كلمة المرور بنجاح!");
-                        settingsModal.classList.remove('visible');
-                    }
-                } catch (error) { showCustomAlert("خطأ", "حدث خطأ أثناء تحديث الحساب."); }
+                    } else { await update(ref(db, `students/${currentStudent}`), updates); showCustomAlert("نجاح", "تم تحديث كلمة المرور بنجاح!"); settingsModal.classList.remove('visible'); }
+                } catch (e) { showCustomAlert("خطأ", "حدث خطأ أثناء تحديث الحساب."); console.error(e) }
             };
         }
 
-        function copyTestLink(teacherId, testId) {
-            const link = `${window.location.origin}${window.location.pathname}#test/${encodeURIComponent(teacherId)}/${encodeURIComponent(testId)}`;
-            navigator.clipboard.writeText(link).then(() => { showCustomAlert('تم النسخ', 'تم نسخ رابط الاختبار بنجاح!'); });
-        }
+        function copyTestLink(teacherId, testId) { const link = `${window.location.origin}${window.location.pathname}#test/${encodeURIComponent(teacherId)}/${encodeURIComponent(testId)}`; navigator.clipboard.writeText(link).then(() => { showCustomAlert('تم النسخ', 'تم نسخ رابط الاختبار بنجاح!'); }); }
         
-        const imageViewerModal = document.getElementById('image-viewer-modal');
-        const modalImage = imageViewerModal.querySelector('.image-modal-content');
-        const modalDownloadBtn = imageViewerModal.querySelector('.image-modal-download-btn');
+        const imageViewerModal = document.getElementById('image-viewer-modal'); const modalImage = imageViewerModal.querySelector('.image-modal-content'); const modalDownloadBtn = imageViewerModal.querySelector('.image-modal-download-btn');
         function openImageViewer(src) { if (!src || src.endsWith('#') || !src.startsWith('data:image')) return; modalImage.src = src; modalDownloadBtn.href = src; imageViewerModal.classList.add('visible'); }
         function closeImageViewer() { imageViewerModal.classList.remove('visible'); setTimeout(() => { modalImage.src = ''; }, 300); }
         document.addEventListener('click', (e) => { if (e.target.tagName === 'IMG' && e.target.closest('.portal-container, .modal-content')) { if (e.target.src && e.target.src.startsWith('data:image')) { e.preventDefault(); openImageViewer(e.target.src); } } });
         imageViewerModal.querySelector('.modal-close-btn').addEventListener('click', closeImageViewer);
         imageViewerModal.addEventListener('click', (e) => { if (e.target === imageViewerModal) closeImageViewer(); });
         
-        // --- Global Text Chat Logic ---
-        const textChatModal = document.getElementById('text-chat-modal');
-        const chatModalTitle = document.getElementById('chat-modal-title');
-        const chatModalBody = document.getElementById('chat-modal-body');
-        const messageInput = document.getElementById('chat-message-input');
-        const sendMessageBtn = document.getElementById('send-chat-message-btn');
-        const speechBtn = document.getElementById('speech-to-text-btn');
-        const teacherChatListModal = document.getElementById('teacher-chat-list-modal');
-        const studentChatListModal = document.getElementById('student-chat-list-modal');
+        const textChatModal = document.getElementById('text-chat-modal'), chatModalTitle = document.getElementById('chat-modal-title'), chatModalBody = document.getElementById('chat-modal-body'), messageInput = document.getElementById('chat-message-input');
+        const sendMessageBtn = document.getElementById('send-chat-message-btn'), speechBtn = document.getElementById('speech-to-text-btn');
+        const teacherChatListModal = document.getElementById('teacher-chat-list-modal'), studentChatListModal = document.getElementById('student-chat-list-modal');
 
         let currentUserId, currentUserType, recognition;
         let activeChatPartnerId = null, chatMessagesListener = null;
 
         function initChatSystem(userId, userType) {
-            currentUserId = userId; currentUserType = userType;
-            initSpeechRecognition();
-            const badge = document.querySelector(`#${userType}-portal .notification-badge`);
-            listenForUnreadMessages(userId, badge);
-
-            if (userType === 'teacher') {
-                teacherChatListModal.querySelector('.modal-close-btn').onclick = () => teacherChatListModal.classList.remove('visible');
-                document.getElementById('teacher-chat-icon').onclick = openTeacherChatList;
-            } else {
-                studentChatListModal.querySelector('.modal-close-btn').onclick = () => studentChatListModal.classList.remove('visible');
-                document.getElementById('student-chat-icon').onclick = openStudentChatList;
-            }
+            currentUserId = userId; currentUserType = userType; initSpeechRecognition();
+            const badge = document.querySelector(`#${userType}-portal .notification-badge`); listenForUnreadMessages(userId, badge);
+            if (userType === 'teacher') { teacherChatListModal.querySelector('.modal-close-btn').onclick = () => teacherChatListModal.classList.remove('visible'); document.getElementById('teacher-chat-icon').onclick = openTeacherChatList; } 
+            else { studentChatListModal.querySelector('.modal-close-btn').onclick = () => studentChatListModal.classList.remove('visible'); document.getElementById('student-chat-icon').onclick = openStudentChatList; }
         }
         
         function listenForUnreadMessages(userId, badgeElement) {
             const chatsRef = query(ref(db, 'chats'), orderByChild(`participants/${userId}`), equalTo(true));
             onValue(chatsRef, (snapshot) => {
                 let hasUnread = false;
-                if (snapshot.exists()) {
-                    snapshot.forEach(chatSnap => {
-                        const metadata = chatSnap.val().metadata;
-                        if (metadata && metadata.hasUnread && metadata.hasUnread[userId]) hasUnread = true;
-                    });
-                }
+                if (snapshot.exists()) { snapshot.forEach(chatSnap => { const metadata = chatSnap.val().metadata; if (metadata && metadata.hasUnread && metadata.hasUnread[userId]) hasUnread = true; }); }
                 badgeElement.style.display = hasUnread ? 'block' : 'none';
             });
         }
 
-        async function openChatList(modal, listBody, partnerType) {
-            modal.classList.add('visible');
-            listBody.innerHTML = '<div class="spinner"></div>';
+        async function openChatList(modal, listBody) {
+            modal.classList.add('visible'); listBody.innerHTML = '<div class="spinner"></div>';
             const chatsRef = query(ref(db, 'chats'), orderByChild(`participants/${currentUserId}`), equalTo(true));
             const snapshot = await get(chatsRef);
             if (!snapshot.exists()) { listBody.innerHTML = `<p>لا توجد محادثات حتى الآن.</p>`; return; }
@@ -1174,22 +953,19 @@
             snapshot.forEach(chatSnap => {
                 const partnerId = Object.keys(chatSnap.val().participants).find(p => p !== currentUserId);
                 if (partnerId) {
-                    const listItem = document.createElement('div');
-                    listItem.className = 'list-item chat-list-item';
-                    listItem.textContent = partnerId;
+                    const listItem = document.createElement('div'); listItem.className = 'list-item chat-list-item'; listItem.textContent = partnerId;
                     listItem.onclick = () => { modal.classList.remove('visible'); openChatModal(currentUserId, partnerId); };
                     listBody.appendChild(listItem);
                 }
             });
         }
-        const openTeacherChatList = () => openChatList(teacherChatListModal, document.getElementById('teacher-chat-list-body'), 'student');
-        const openStudentChatList = () => openChatList(studentChatListModal, document.getElementById('student-chat-list-body'), 'teacher');
+        const openTeacherChatList = () => openChatList(teacherChatListModal, document.getElementById('teacher-chat-list-body'));
+        const openStudentChatList = () => openChatList(studentChatListModal, document.getElementById('student-chat-list-body'));
         
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if(!SpeechRecognition) { speechBtn.style.display = 'none'; return; }
-            recognition = new SpeechRecognition();
-            recognition.continuous = false; recognition.lang = 'ar-EG'; recognition.interimResults = false;
+            recognition = new SpeechRecognition(); recognition.continuous = false; recognition.lang = 'ar-EG'; recognition.interimResults = false;
             recognition.onresult = (event) => { messageInput.value += event.results[0][0].transcript; };
             recognition.onend = () => speechBtn.classList.remove('listening');
             recognition.onerror = (event) => { speechBtn.classList.remove('listening'); console.error(event.error); };
@@ -1198,22 +974,18 @@
 
         async function openChatModal(userId, partnerId) {
             if (chatMessagesListener) off(chatMessagesListener);
-            activeChatPartnerId = partnerId;
-            chatModalTitle.textContent = `محادثة مع ${partnerId}`;
-            chatModalBody.innerHTML = ''; messageInput.value = '';
+            activeChatPartnerId = partnerId; chatModalTitle.textContent = `محادثة مع ${partnerId}`; chatModalBody.innerHTML = ''; messageInput.value = '';
             textChatModal.classList.add('visible');
             await checkMessageLimit(userId);
             const chatId = [userId, partnerId].sort().join('_');
             await remove(ref(db, `chats/${chatId}/metadata/hasUnread/${userId}`));
             
-            const messagesRef = ref(db, `chats/${chatId}/messages`);
+            const messagesRef = query(ref(db, `chats/${chatId}/messages`), orderByChild('timestamp'));
             chatMessagesListener = onValue(messagesRef, (snapshot) => {
                 chatModalBody.innerHTML = '';
-                const messages = [];
                 if (snapshot.exists()) {
-                    snapshot.forEach(child => messages.push(child.val()));
-                    messages.sort((a,b) => a.timestamp - b.timestamp);
-                    messages.forEach(msg => {
+                    snapshot.forEach(child => {
+                        const msg = child.val();
                         const msgDiv = document.createElement('div');
                         msgDiv.className = `chat-message ${msg.sender === currentUserId ? 'sent' : 'received'}`;
                         const time = new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
@@ -1221,9 +993,7 @@
                         chatModalBody.appendChild(msgDiv);
                     });
                     chatModalBody.scrollTop = chatModalBody.scrollHeight;
-                } else {
-                    chatModalBody.innerHTML = '<p>ابدأ المحادثة!</p>';
-                }
+                } else { chatModalBody.innerHTML = '<p>ابدأ المحادثة!</p>'; }
             });
         }
 
@@ -1234,9 +1004,7 @@
                 snapshot.forEach(child => { if (now - child.val() < limitPeriod) recentMessages++; else updates[child.key] = null; });
                 if(Object.keys(updates).length > 0) update(limitRef, updates);
             }
-            const remaining = 3 - recentMessages;
-            const limitText = document.getElementById('message-limit-text');
-            const canSend = remaining > 0;
+            const remaining = 3 - recentMessages, canSend = remaining > 0, limitText = document.getElementById('message-limit-text');
             limitText.textContent = canSend ? `لديك ${remaining} رسائل متبقية.` : "لقد وصلت إلى الحد الأقصى للرسائل (3 كل 48 ساعة).";
             sendMessageBtn.disabled = !canSend; messageInput.disabled = !canSend;
             return canSend;
@@ -1254,23 +1022,35 @@
                 await push(ref(db, `messageLimits/${currentUserId}`), serverTimestamp());
                 messageInput.value = ''; messageInput.focus();
                 await checkMessageLimit(currentUserId);
-            } catch (error) { showCustomAlert("خطأ", "لم يتم إرسال الرسالة."); }
+            } catch (e) { showCustomAlert("خطأ", "لم يتم إرسال الرسالة."); }
         };
-        textChatModal.querySelector('.modal-close-btn').onclick = () => { textChatModal.classList.remove('visible'); activeChatPartnerId = null; if (chatMessagesListener) off(chatMessagesListener); };
+        textChatModal.querySelector('.modal-close-btn').onclick = () => { textChatModal.classList.remove('visible'); activeChatPartnerId = null; if (chatMessagesListener) off(chatMessagesListener, 'value'); };
 
-        const savedTeacher = localStorage.getItem('loggedInTeacher');
-        const savedStudent = localStorage.getItem('loggedInStudent');
-        if (savedTeacher) { mainLandingPage.classList.add('hidden'); teacherPortal.classList.remove('hidden'); initTeacherApp(); } 
-        else if (savedStudent) { mainLandingPage.classList.add('hidden'); studentPortal.classList.remove('hidden'); initStudentApp(); } 
-        else if (!handleDeepLink()) { mainLandingPage.classList.remove('hidden'); }
+        // --- Initial Load ---
+        const handleInitialLoad = () => {
+            const savedTeacher = localStorage.getItem('loggedInTeacher');
+            const savedStudent = localStorage.getItem('loggedInStudent');
+
+            // Handle deep links first
+            const urlParams = new URLSearchParams(window.location.hash.substring(1));
+            if(window.location.hash.startsWith('#test/')){
+                if(savedStudent){ initStudentApp(); return; } 
+                else { mainLandingPage.classList.add('hidden'); studentPortal.classList.remove('hidden'); initStudentApp(); return; }
+            }
+            
+            if (savedTeacher) { mainLandingPage.classList.add('hidden'); teacherPortal.classList.remove('hidden'); initTeacherApp(); } 
+            else if (savedStudent) { mainLandingPage.classList.add('hidden'); studentPortal.classList.remove('hidden'); initStudentApp(); } 
+            else { mainLandingPage.classList.remove('hidden'); teacherPortal.classList.add('hidden'); studentPortal.classList.add('hidden'); }
+        };
+
+        handleInitialLoad();
+
     </script>
 
     <!-- Screenshot Prevention Script -->
     <script>
         document.addEventListener('contextmenu', event => event.preventDefault());
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'PrintScreen' || (e.ctrlKey && e.shiftKey) || e.key === 'F12' || (e.ctrlKey && e.key === 'U')) { e.preventDefault(); }
-        });
+        document.addEventListener('keydown', function(e) { if (e.key === 'PrintScreen' || (e.ctrlKey && e.shiftKey) || e.key === 'F12' || (e.ctrlKey && e.key === 'U')) { e.preventDefault(); } });
     </script>
 </body>
 </html>
