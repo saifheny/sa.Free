@@ -21,78 +21,125 @@
 
     <style>
         /* --- General & Base Styles --- */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #010409;
+            --border-primary: #30363d;
+            --border-secondary: #21262d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-primary: #2f81f7;
+            --accent-primary-gradient: linear-gradient(180deg, #3081f7 0%, #1f6feb 100%);
+            --accent-primary-border: #1158c7;
+            --accent-secondary: #58a6ff;
+            --success-gradient: linear-gradient(180deg, #238636 0%, #1a6328 100%);
+            --success-border: #134b1f;
+            --danger-primary: #da3633;
+            --danger-border: #c82333;
+            --warning-primary: #ffc107;
+            --shadow-color-heavy: rgba(0,0,0,0.5);
+            --shadow-color-light: rgba(0,0,0,0.4);
+            --inset-shadow-light: rgba(255,255,255,0.05);
+            --inset-shadow-dark: rgba(0,0,0,0.6);
+        }
+
+        .desert-mode {
+            --bg-primary: #fdf6e3; /* Solarized Light Base */
+            --bg-secondary: #f5eeda;
+            --bg-tertiary: #eee8d5;
+            --border-primary: #d3cbbd;
+            --border-secondary: #e6e0d2;
+            --text-primary: #2c2622; /* Very Dark Brown/Black */
+            --text-secondary: #8a7a66;
+            --accent-primary: #d2691e; /* Terracotta / Chocolate */
+            --accent-primary-gradient: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
+            --accent-primary-border: #a84300;
+            --accent-secondary: #d35400;
+            --success-gradient: linear-gradient(180deg, #28a745 0%, #218838 100%);
+            --success-border: #1e7e34;
+            --danger-primary: #dc3545;
+            --danger-border: #c82333;
+            --warning-primary: #b58900; /* Solarized Yellow */
+            --shadow-color-heavy: rgba(88, 76, 60, 0.3);
+            --shadow-color-light: rgba(88, 76, 60, 0.2);
+            --inset-shadow-light: rgba(0,0,0,0.05);
+            --inset-shadow-dark: rgba(255,255,255,0.8);
+        }
+        
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #0d1117;
-            color: #e6edf3;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             direction: rtl;
             text-align: center;
             overflow-x: hidden;
+            transition: background-color 0.4s, color 0.4s;
         }
         .hidden { display: none !important; }
         .no-select { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
 
         /* --- Global 3D Effects --- */
         h1, h2, h3, h4, h5, h6 {
-             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+             text-shadow: 0 2px 4px var(--shadow-color-light);
         }
         .portal-container button, .btn-3d {
-            text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4), inset 0px -2px 1px rgba(255,255,255,0.15);
+            text-shadow: 0px 1px 2px var(--shadow-color-light);
+            box-shadow: 0px 4px 8px var(--shadow-color-light), inset 0px -2px 1px var(--inset-shadow-light);
             transition: all 0.1s ease-in-out !important;
             transform: translateY(0);
         }
         .portal-container button:not(:disabled):hover, .btn-3d:hover {
             transform: translateY(-2px);
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5), inset 0px -2px 1px rgba(255,255,255,0.15);
+            box-shadow: 0px 6px 12px var(--shadow-color-heavy), inset 0px -2px 1px var(--inset-shadow-light);
         }
         .portal-container button:not(:disabled):active, .btn-3d:active {
             transform: translateY(1px);
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4), inset 0px 1px 1px rgba(0,0,0,0.2);
+            box-shadow: 0px 2px 4px var(--shadow-color-light), inset 0px 1px 1px var(--inset-shadow-dark);
         }
         input, select, textarea {
-            background-color: #010409;
-            border: 1px solid #30363d;
-            color: #e6edf3;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
             border-radius: 8px;
             padding: 12px;
             width: 100%;
             margin-bottom: 15px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.08);
-            transition: box-shadow 0.3s, border-color 0.3s;
+            box-shadow: inset 0 2px 5px var(--inset-shadow-dark), 0 1px 0 var(--inset-shadow-light);
+            transition: box-shadow 0.3s, border-color 0.3s, background-color 0.3s, color 0.3s;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #2f81f7;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6), 0 0 10px rgba(47, 129, 247, 0.6);
+            border-color: var(--accent-primary);
+            box-shadow: inset 0 2px 5px var(--inset-shadow-dark), 0 0 10px var(--accent-primary);
         }
         .list-item, .test-item {
-             background-color: #161b22;
-             border: 1px solid #30363d;
+             background-color: var(--bg-secondary);
+             border: 1px solid var(--border-primary);
              border-radius: 12px;
              padding: 15px;
              margin-bottom: 12px;
              display: flex;
              align-items: center;
              justify-content: space-between;
-             box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
-             transition: transform 0.2s, box-shadow 0.2s;
+             box-shadow: 0 4px 10px var(--shadow-color-heavy), inset 0 1px 1px var(--inset-shadow-light);
+             transition: transform 0.2s, box-shadow 0.2s, background-color 0.4s;
         }
         .list-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 6px 15px var(--shadow-color-heavy);
         }
         .modal-content {
-            background-color: #161b22;
-            border: 1px solid #30363d;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
             border-radius: 15px;
             padding: 25px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 2px 2px rgba(255,255,255,0.1);
+            box-shadow: 0 10px 40px var(--shadow-color-heavy), inset 0 2px 2px var(--inset-shadow-light);
         }
 
         /* --- Landing Page Styles --- */
@@ -103,16 +150,19 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
-            background: #0d1117;
+            background: var(--bg-primary);
         }
         #main-landing-page h1 {
             font-size: 4rem;
-            background: linear-gradient(45deg, #3081f7 30%, #58a6ff 70%);
+            background: var(--accent-primary-gradient);
             -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 30px; font-weight: 800; line-height: 1.2;
-            text-shadow: 0 0 15px rgba(47, 129, 247, 0.5), 0 0 30px rgba(47, 129, 247, 0.3);
+            text-shadow: 0 0 15px var(--accent-primary), 0 0 30px var(--accent-primary);
         }
-        #main-landing-page p { font-size: 1.2rem; color: #8b949e; line-height: 1.8; margin-bottom: 35px; max-width: 800px; }
+        .desert-mode #main-landing-page h1 {
+             text-shadow: 0 2px 5px var(--shadow-color-light);
+        }
+        #main-landing-page p { font-size: 1.2rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 35px; max-width: 800px; }
         .role-selection {
             display: flex;
             gap: 20px;
@@ -125,8 +175,8 @@
             padding: 20px 40px; border: none; border-radius: 12px;
             font-size: 1.5rem; font-family: 'Cairo', sans-serif; font-weight: 800; color: #fff;
             cursor: pointer; position: relative;
-            background: linear-gradient(180deg, #3081f7 0%, #1f6feb 100%);
-            border-bottom: 6px solid #1158c7;
+            background: var(--accent-primary-gradient);
+            border-bottom: 6px solid var(--accent-primary-border);
         }
         .btn-3d i { margin-left: 15px; font-size: 1.8rem; }
         .btn-3d:hover { border-bottom-width: 8px; }
@@ -135,96 +185,97 @@
         /* --- General Portal Styles --- */
         .portal-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0d1117; animation: fadeIn 0.6s ease-out; color: #e6edf3;
+            background-color: var(--bg-primary); animation: fadeIn 0.6s ease-out; color: var(--text-primary);
             overflow-y: auto; padding: 40px 20px 120px 20px;
         }
         .portal-content { max-width: 600px; margin: 0 auto; }
         .portal-container .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; background: #21262d;
-            border: 1px solid #30363d; color: #e6edf3; display: flex; align-items: center;
+            width: 40px; height: 40px; border-radius: 50%; background: var(--border-secondary);
+            border: 1px solid var(--border-primary); color: var(--text-primary); display: flex; align-items: center;
             justify-content: center; cursor: pointer; font-size: 18px; 
             position: relative; transition: background-color 0.2s, transform 0.2s;
         }
-        .portal-container .icon-btn:hover { background-color: #30363d; transform: scale(1.1); }
+        .portal-container .icon-btn:hover { background-color: var(--border-primary); transform: scale(1.1); }
         .portal-container .icon-btn .notification-badge {
             position: absolute; top: -2px; right: -2px;
-            width: 14px; height: 14px; background-color: #da3633;
-            border-radius: 50%; border: 2px solid #0d1117;
+            width: 14px; height: 14px; background-color: var(--danger-primary);
+            border-radius: 50%; border: 2px solid var(--bg-primary);
             display: none;
         }
-        .portal-container .spinner { border: 4px solid #30363d; border-top: 4px solid #2f81f7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        .portal-container p { text-align: center; margin-top: 15px; font-size: 0.9rem; color: #8b949e; }
-        .portal-container p a { color: #58a6ff; text-decoration: none; font-weight: 600; }
-        .portal-container hr { border: none; border-top: 1px solid #30363d; margin: 25px 0; }
+        .portal-container .spinner { border: 4px solid var(--border-primary); border-top: 4px solid var(--accent-primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .portal-container p { text-align: center; margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary); }
+        .portal-container p a { color: var(--accent-secondary); text-decoration: none; font-weight: 600; }
+        .portal-container hr { border: none; border-top: 1px solid var(--border-primary); margin: 25px 0; }
         .portal-container button { width: 100%; padding: 14px 15px; border: none; border-radius: 12px; font-size: 1.1rem; font-family: 'Cairo', sans-serif; font-weight: 700; color: #fff; cursor: pointer; }
-        .portal-container button:disabled { cursor: not-allowed; background: #21262d; border-bottom-color: #30363d; opacity: 0.6; }
-        .portal-container .btn-primary { background: linear-gradient(180deg, #3081f7 0%, #1f6feb 100%); border-bottom: 4px solid #1158c7; }
+        .portal-container button:disabled { cursor: not-allowed; background: var(--border-secondary); border-bottom-color: var(--border-primary); opacity: 0.6; }
+        .portal-container .btn-primary { background: var(--accent-primary-gradient); border-bottom: 4px solid var(--accent-primary-border); }
         .portal-container .btn-primary:not(:disabled):hover { border-bottom-width: 6px; }
         .portal-container .btn-primary:not(:disabled):active { border-bottom-width: 3px; }
-        .portal-container .btn-secondary { background: #21262d; border-bottom: 4px solid #010409; }
+        .portal-container .btn-secondary { background: var(--border-secondary); color: var(--text-primary); border-bottom: 4px solid var(--bg-tertiary); }
         .portal-container .btn-secondary:not(:disabled):hover { border-bottom-width: 6px; }
         .portal-container .btn-secondary:not(:disabled):active { border-bottom-width: 3px; }
         
         .bottom-nav {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: auto; display: flex;
-            gap: 8px; padding: 8px; background: rgba(1, 4, 9, 0.7); backdrop-filter: blur(20px);
-            border-radius: 99px; border: 1px solid #30363d; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.7); z-index: 1000;
+            gap: 8px; padding: 8px; background: color-mix(in srgb, var(--bg-tertiary) 70%, transparent); backdrop-filter: blur(20px);
+            border-radius: 99px; border: 1px solid var(--border-primary); box-shadow: 0 8px 32px 0 var(--shadow-color-heavy); z-index: 1000;
         }
-        .bottom-nav .nav-btn { display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: transparent; border: none; color: #8b949e; opacity: 0.7; border-radius: 99px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .bottom-nav .nav-btn.active { opacity: 1; background: rgba(47, 129, 247, 0.15); color: #58a6ff; box-shadow: 0 0 15px -5px rgba(47, 129, 247, 0.5); }
+        .bottom-nav .nav-btn { display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: transparent; border: none; color: var(--text-secondary); opacity: 0.7; border-radius: 99px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .bottom-nav .nav-btn.active { opacity: 1; background: color-mix(in srgb, var(--accent-primary) 15%, transparent); color: var(--accent-secondary); box-shadow: 0 0 15px -5px var(--accent-primary); }
 
         /* --- Header Dropdown Menu --- */
         .header-menu-container { position: relative; }
         .header-dropdown-menu {
             display: none; position: absolute; top: 50px; left: 0;
-            background: #161b22; border: 1px solid #30363d; border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.7); z-index: 1100;
+            background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 10px;
+            box-shadow: 0 8px 20px var(--shadow-color-heavy); z-index: 1100;
             width: 200px; overflow: hidden;
         }
         .header-dropdown-menu.show { display: block; }
         .dropdown-item {
             display: flex; align-items: center; gap: 12px;
-            padding: 12px 15px; color: #e6edf3; text-decoration: none;
+            padding: 12px 15px; color: var(--text-primary); text-decoration: none;
             font-size: 0.95rem; text-align: right; cursor: pointer;
             transition: background-color 0.2s ease;
         }
-        .dropdown-item:hover { background-color: #21262d; }
-        .dropdown-item i { width: 20px; text-align: center; color: #58a6ff; text-shadow: none; }
+        .dropdown-item:hover { background-color: var(--border-secondary); }
+        .dropdown-item i { width: 20px; text-align: center; color: var(--accent-secondary); text-shadow: none; }
         
         /* --- Teacher Portal Specifics --- */
         #teacher-portal .header-icons { position: absolute; top: 40px; left: 25px; display: flex; gap: 10px; z-index: 100; }
         #teacher-portal label { font-weight: 600; display: block; margin-bottom: 5px; text-align: right; }
-        .file-input-label { background: #21262d; border: 2px dashed #30363d; text-align: center; padding: 15px; border-radius: 10px; cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
-        .file-input-label:hover { border-color: #58a6ff; background-color: #30363d; }
+        .file-input-label { background: var(--border-secondary); border: 2px dashed var(--border-primary); text-align: center; padding: 15px; border-radius: 10px; cursor: pointer; transition: border-color 0.3s, background-color 0.3s; }
+        .file-input-label:hover { border-color: var(--accent-secondary); background-color: var(--border-primary); }
         .image-preview { max-width: 100px; max-height: 100px; border-radius: 8px; border: 1px solid #444; cursor: pointer; }
         .action-btn { padding: 6px 10px !important; font-size: 0.8rem !important; margin:0 !important; width: auto !important; display: flex; align-items: center; gap: 5px; }
-        .test-countdown { font-size: 0.8rem; color: #ffc107; font-weight: bold; margin-top: 5px; text-align: left; }
+        .test-countdown { font-size: 0.8rem; color: var(--warning-primary); font-weight: bold; margin-top: 5px; text-align: left; }
+        .action-btn.btn-danger { background:var(--danger-primary); border-color:var(--danger-border); }
 
         /* --- Student Portal --- */
         .student-test-item-container {
-            background: #161b22;
+            background: var(--bg-secondary);
             border-radius: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08);
-            border: 1px solid #30363d;
+            box-shadow: 0 4px 15px var(--shadow-color-heavy), inset 0 1px 1px var(--inset-shadow-light);
+            border: 1px solid var(--border-primary);
             overflow: hidden;
             transition: all 0.3s ease;
         }
         .student-test-item-container:hover {
-            border-color: #58a6ff;
+            border-color: var(--accent-secondary);
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(47, 129, 247, 0.3);
+            box-shadow: 0 8px 25px var(--accent-primary);
         }
         .student-test-actions-bar {
             display: flex;
             justify-content: space-around;
-            background: #21262d;
+            background: var(--border-secondary);
             padding: 8px;
-            border-bottom: 1px solid #30363d;
+            border-bottom: 1px solid var(--border-primary);
         }
         .student-test-actions-bar .action-icon {
-            background: #30363d;
-            color: #8b949e;
+            background: var(--border-primary);
+            color: var(--text-secondary);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -233,13 +284,13 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            box-shadow: 0 2px 5px var(--shadow-color-heavy), inset 0 1px 1px var(--inset-shadow-light);
             font-size: 1.1rem;
         }
         .student-test-actions-bar .action-icon:hover {
             color: #fff;
             transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+            box-shadow: 0 4px 10px var(--shadow-color-heavy);
         }
         .action-icon[title="ابدأ الاختبار"]:hover { background-color: #238636; }
         .action-icon[title="مراجعة النتيجة"]:hover { background-color: #8957e5; }
@@ -259,14 +310,14 @@
             gap: 10px;
         }
         .test-grade-badge {
-            background-color: rgba(88, 166, 255, 0.2);
-            color: #58a6ff;
+            background-color: color-mix(in srgb, var(--accent-secondary) 20%, transparent);
+            color: var(--accent-secondary);
             padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: bold;
             flex-shrink: 0;
-            border: 1px solid rgba(88, 166, 255, 0.5);
+            border: 1px solid color-mix(in srgb, var(--accent-secondary) 50%, transparent);
         }
         .test-name {
             font-weight: bold;
@@ -277,15 +328,16 @@
             text-overflow: ellipsis;
             text-shadow: 0 1px 2px #000;
         }
+        .desert-mode .test-name { text-shadow: none; }
         .test-expiry {
             font-size: 0.75rem;
-            color: #ffc107;
+            color: var(--warning-primary);
             text-align: right;
         }
         
         /* Separator for student results */
         #my-student-results-container .test-item:not(:last-child) {
-            border-bottom: 2px solid #30363d;
+            border-bottom: 2px solid var(--border-primary);
         }
         #my-student-results-container .test-item {
             border-radius: 0;
@@ -295,7 +347,7 @@
             border-top: none;
         }
         #my-student-results-container-wrapper {
-             border: 1px solid #30363d; 
+             border: 1px solid var(--border-primary); 
              border-radius: 12px; 
              overflow: hidden;
         }
@@ -303,8 +355,8 @@
 
         /* Advanced Search Bar */
         #search-bar {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-primary);
             border-radius: 25px;
             padding: 10px 20px 10px 45px;
             font-size: 1rem;
@@ -314,8 +366,11 @@
             background-position: 15px center;
             transition: all 0.3s ease-in-out;
         }
+        .desert-mode #search-bar {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23584c3c' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+        }
         #search-bar:focus {
-            background-color: #010409;
+            background-color: var(--bg-tertiary);
         }
         #search-bar.hidden {
             transform: translateY(-20px);
@@ -339,6 +394,7 @@
             z-index: 2000; display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
         }
+        .desert-mode .modal-overlay { background: rgba(253, 246, 227, 0.7); }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
         .modal-close-btn {
             position: absolute; top: 15px; left: 15px;
@@ -351,49 +407,95 @@
             line-height: 1; z-index: 10;
             transition: transform 0.3s, background-color 0.3s;
         }
+        .desert-mode .modal-close-btn { background: rgba(0,0,0,0.1); color: var(--text-primary); border-color: rgba(0,0,0,0.2); }
         .modal-close-btn:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
+        .desert-mode .modal-close-btn:hover { background: rgba(0,0,0,0.2); }
         .modal-body { flex-grow: 1; overflow-y: auto; }
         .modal-footer { margin-top: 20px; flex-shrink: 0; }
         
         /* --- Image Viewer Modal --- */
         .image-modal-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(8px); z-index: 3000;
+            backdrop-filter: blur(10px); z-index: 3000;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
         }
         .image-modal-overlay.visible { opacity: 1; visibility: visible; }
-        .image-modal-content { max-width: 90vw; max-height: 80vh; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: pointer; }
-        .image-modal-download-btn {
-            position: absolute; top: 20px;
-            width: 45px; height: 45px;
+        #image-viewer-content-wrapper {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; cursor: grab;
+        }
+        .image-modal-content {
+            max-width: 90vw; max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            transition: transform 0.2s ease-out;
+            will-change: transform;
+            pointer-events: none; /* Let wrapper handle events */
+        }
+        .image-viewer-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 3010;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .image-viewer-controls .icon-btn, .image-modal-download-btn {
             background: rgba(40, 40, 40, 0.8);
-            color: #fff; border: none; border-radius: 50%;
-            font-size: 20px; cursor: pointer;
+            color: #fff; border: none;
+            width: 45px; height: 45px; font-size: 18px;
             display: flex; align-items: center; justify-content: center;
-            text-decoration: none;
-            right: 20px; 
+        }
+        .image-modal-download-btn {
+            position: absolute; top: 20px; right: 20px; z-index: 3010;
+            border-radius: 50%; text-decoration: none;
         }
         
         /* --- Custom Dialogs (Alerts/Confirms) --- */
         .custom-dialog-overlay { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,.7); backdrop-filter: blur(5px); opacity:0; visibility:hidden; transition:opacity .3s; z-index:9999; }
+        .desert-mode .custom-dialog-overlay { background: rgba(253, 246, 227, 0.6); }
         .custom-dialog-overlay.show { opacity:1; visibility:visible; }
-        .custom-dialog { background:#161b22; border: 1px solid #30363d; border-radius: 16px; padding:25px 30px; margin: 20px; width: 90%; max-width:400px; text-align:center; transform:scale(0.9); opacity:0; transition:transform .3s,opacity .3s; }
-        .custom-dialog-overlay.show .custom-dialog { transform:scale(1); opacity:1; }
-        .custom-dialog .dialog-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .custom-dialog-overlay.show .custom-dialog {
+            transform: scale(1); opacity: 1;
+            animation: dialog-pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .custom-dialog {
+            background: var(--bg-secondary); border: 1px solid var(--border-primary);
+            border-radius: 20px; padding: 25px 30px;
+            width: 90%; max-width: 420px; text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-color-heavy);
+            border-top: 5px solid var(--accent-primary);
+            transform:scale(0.9); opacity:0; transition:transform .3s,opacity .3s, background-color 0.4s, border-color 0.4s;
+        }
+        .dialog-icon {
+            font-size: 4rem; line-height: 1; margin-bottom: 20px;
+            color: var(--accent-secondary);
+            animation: icon-bounce 0.6s 0.2s;
+        }
+        .custom-dialog h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
+        .custom-dialog p { font-size: 1rem; color: var(--text-secondary); line-height: 1.6; }
+        .custom-dialog .dialog-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
+        .dialog-buttons button { flex-grow: 1; font-weight: 800 !important; font-size: 1rem !important; }
         
+        @keyframes dialog-pop-in { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes icon-bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+
         /* --- Text Chat Styles --- */
         #text-chat-modal .chat-body { display: flex; flex-direction: column; gap: 12px; padding: 15px; max-height: 60vh; overflow-y: auto; }
-        .chat-message { max-width: 80%; padding: 10px 15px; border-radius: 18px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .chat-message.sent { background: #1f6feb; align-self: flex-end; border-bottom-right-radius: 4px; text-align: left; }
-        .chat-message.received { background: #21262d; align-self: flex-start; border-bottom-left-radius: 4px; text-align: right; }
-        .chat-message .msg-time { display: block; font-size: 0.7rem; color: #8b949e; margin-top: 5px; opacity: 0.8; }
+        .chat-message { max-width: 80%; padding: 10px 15px; border-radius: 18px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2px 4px var(--shadow-color-light); }
+        .chat-message.sent { background: var(--accent-primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; text-align: left; }
+        .chat-message.received { background: var(--border-secondary); align-self: flex-start; border-bottom-left-radius: 4px; text-align: right; }
+        .chat-message .msg-time { display: block; font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px; opacity: 0.8; }
+        .chat-message.sent .msg-time { color: rgba(255,255,255,0.7); }
         
         #text-chat-modal .chat-input-area { display: flex; gap: 10px; align-items: center; }
         #text-chat-modal textarea { flex-grow: 1; margin: 0; resize: none; }
         #text-chat-modal .chat-action-btn { width: 50px !important; height: 50px; padding: 0 !important; font-size: 1.2rem !important; flex-shrink: 0; border-radius: 50% !important; }
-        #speech-to-text-btn.listening { color: #da3633; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(218, 54, 51, 0); } 100% { box-shadow: 0 0 0 0 rgba(218, 54, 51, 0); } }
+        #speech-to-text-btn.listening { color: var(--danger-primary); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger-primary) 70%, transparent); } 70% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--danger-primary) 0%, transparent); } 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger-primary) 0%, transparent); } }
 
         /* --- Advanced Radio & Checkbox --- */
         .question-options { display: flex; flex-direction: column; gap: 10px; }
@@ -401,24 +503,24 @@
             display: flex;
             align-items: center;
             padding: 15px;
-            background-color: #21262d;
-            border: 1px solid #30363d;
+            background-color: var(--border-secondary);
+            border: 1px solid var(--border-primary);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
         }
         .question-options label:hover, .checkbox-container:hover {
-            border-color: #58a6ff;
-            background-color: #30363d;
+            border-color: var(--accent-secondary);
+            background-color: var(--border-primary);
         }
         .question-options input[type="radio"], .checkbox-container input[type="checkbox"] { display: none; }
         .question-options input[type="radio"] + span::before, .checkbox-container input[type="checkbox"] + label::before {
             content: '';
             width: 22px;
             height: 22px;
-            border: 2px solid #8b949e;
-            background-color: #0d1117;
+            border: 2px solid var(--text-secondary);
+            background-color: var(--bg-primary);
             display: inline-block;
             margin-left: 15px;
             vertical-align: middle;
@@ -427,9 +529,9 @@
         .question-options input[type="radio"] + span::before { border-radius: 50%; }
         .checkbox-container input[type="checkbox"] + label::before { border-radius: 6px; }
         .question-options input[type="radio"]:checked + span::before, .checkbox-container input[type="checkbox"]:checked + label::before {
-            background-color: #1f6feb;
-            border-color: #58a6ff;
-            box-shadow: 0 0 0 3px #0d1117, 0 0 0 5px #1f6feb;
+            background-color: var(--accent-primary);
+            border-color: var(--accent-secondary);
+            box-shadow: 0 0 0 3px var(--bg-primary), 0 0 0 5px var(--accent-primary);
         }
         .checkbox-container input[type="checkbox"]:checked + label::after {
             content: '\f00c'; /* Font Awesome check icon */
@@ -442,6 +544,9 @@
             font-size: 14px;
             color: #fff;
         }
+        .desert-mode .checkbox-container input[type="checkbox"]:checked + label::after {
+             color: var(--bg-primary);
+        }
         
         /* Animations & Responsiveness */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -452,6 +557,18 @@
             #main-landing-page h1 { font-size: 2.8rem; }
             .btn-3d { font-size: 1.2rem; padding: 18px 30px; }
         }
+        
+        .tab-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .tab-content-header h2 {
+            margin: 0;
+        }
+
     </style>
 </head>
 <body class="no-select">
@@ -470,6 +587,7 @@
     <div id="teacher-portal" class="portal-container hidden">
         <div class="portal-content">
             <div class="header-icons">
+                <button id="theme-toggle-btn" class="icon-btn" title="تبديل المظهر"><i class="fas fa-sun"></i></button>
                 <div class="header-menu-container">
                     <div id="teacher-menu-icon" class="icon-btn" title="القائمة"><i class="fas fa-ellipsis-v"></i><span class="notification-badge"></span></div>
                     <div id="teacher-dropdown-menu" class="header-dropdown-menu">
@@ -477,7 +595,7 @@
                         <div class="dropdown-item" id="teacher-settings-btn"><i class="fas fa-cog"></i><span>الإعدادات</span></div>
                         <div class="dropdown-item" id="teacher-share-platform-btn"><i class="fas fa-share-alt"></i><span>مشاركة المنصة</span></div>
                         <hr style="margin: 0;">
-                        <div class="dropdown-item" id="teacher-logout-btn" style="color: #ffc107;"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></div>
+                        <div class="dropdown-item" id="teacher-logout-btn" style="color: var(--warning-primary);"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></div>
                     </div>
                 </div>
             </div>
@@ -498,12 +616,15 @@
             <section id="teacher-dashboard-section" class="hidden">
                 <div class="dashboard-header-controls">
                      <h1>مرحبًا بك، <span id="teacher-name"></span>!</h1>
-                     <div class="header-buttons">
-                        <button id="teacher-refresh-btn" class="icon-btn" title="تحديث"><i class="fas fa-sync-alt"></i></button>
-                     </div>
                 </div>
                 <hr />
-                <div id="teacher-tests-content" class="tab-content"><h2>اختباراتي المنشأة</h2><div id="my-tests-container"></div></div>
+                <div id="teacher-tests-content" class="tab-content">
+                    <div class="tab-content-header">
+                        <h2>اختباراتي المنشأة</h2>
+                        <button id="teacher-refresh-btn" class="icon-btn" title="تحديث"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <div id="my-tests-container"></div>
+                </div>
                 <div id="teacher-results-content" class="tab-content hidden"><h2>نتائج الطلاب</h2><select id="results-test-selector"></select><div id="student-results-container"></div></div>
                 <div id="teacher-create-test-content" class="tab-content hidden">
                     <h2 id="create-edit-title">إنشاء اختبار جديد</h2>
@@ -515,9 +636,9 @@
                     <div class="checkbox-container"><input type="checkbox" id="shuffle-questions-checkbox"><label for="shuffle-questions-checkbox">ترتيب الأسئلة عشوائيًا</label></div>
                     <div class="checkbox-container"><input type="checkbox" id="fateful-test-checkbox"><label for="fateful-test-checkbox">اختبار مصيري (أمان عالي)</label></div>
                     <hr/><h3>إضافة سؤال جديد</h3>
-                    <div style="display: flex; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
-                        <button class="switch-button active" data-type="mcq" style="flex:1; padding:10px; background: #1f6feb; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال اختياري</button>
-                        <button class="switch-button" data-type="essay" style="flex:1; padding:10px; background: #21262d; border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال مقالي</button>
+                    <div style="display: flex; border: 1px solid var(--border-primary); border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
+                        <button class="switch-button active" data-type="mcq" style="flex:1; padding:10px; background: var(--accent-primary); border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال اختياري</button>
+                        <button class="switch-button" data-type="essay" style="flex:1; padding:10px; background: var(--border-secondary); border:none; color: var(--text-primary); cursor: pointer; transition: all 0.3s ease;">سؤال مقالي</button>
                     </div>
                     <label for="question-text">نص السؤال:</label><textarea id="question-text" rows="3"></textarea>
                     <label for="question-image-input" class="file-input-label"><i class="fas fa-image"></i> <span>إرفاق صورة للسؤال (اختياري)</span></label>
@@ -538,7 +659,7 @@
                         <button id="cancel-question-edit-btn" class="btn-secondary hidden" style="margin: 0; width: auto; background: #5a6268; border-color: #495057;">إلغاء التعديل</button>
                     </div>
                     <div id="questions-list-container" style="margin-top: 15px;"></div>
-                    <button id="save-test-btn" class="btn-primary" style="margin-top: 20px; background: linear-gradient(180deg, #238636 0%, #1a6328 100%); border-bottom-color: #134b1f;">حفظ الاختبار</button>
+                    <button id="save-test-btn" class="btn-primary" style="margin-top: 20px; background: var(--success-gradient); border-bottom-color: var(--success-border);">حفظ الاختبار</button>
                     <button id="cancel-test-edit-btn" class="btn-secondary hidden" style="margin-top: 10px;">إلغاء التعديل</button>
                 </div>
             </section>
@@ -585,7 +706,7 @@
                             <div class="dropdown-item" id="student-settings-btn"><i class="fas fa-cog"></i><span>الإعدادات</span></div>
                             <div class="dropdown-item" id="student-share-platform-btn"><i class="fas fa-share-alt"></i><span>مشاركة المنصة</span></div>
                             <hr style="margin: 0;">
-                            <div class="dropdown-item" id="student-logout-btn" style="color: #ffc107;"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></div>
+                            <div class="dropdown-item" id="student-logout-btn" style="color: var(--warning-primary);"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></div>
                         </div>
                     </div>
                 </div>
@@ -623,14 +744,14 @@
             </section>
             <section id="take-test-section" class="hidden">
                 <h2 id="current-test-title"></h2>
-                <div id="timer" style="font-size:1.6rem; font-weight:700; color:#ffc107; margin-bottom:8px;"></div>
-                <div style="width:100%; height:8px; background:#21262d; border-radius:4px; overflow:hidden; margin-bottom:20px;"><div id="timer-progress" style="height:100%; width:100%; background:linear-gradient(90deg, #1f6feb, #58a6ff); transition:width .5s linear;"></div></div>
+                <div id="timer" style="font-size:1.6rem; font-weight:700; color:var(--warning-primary); margin-bottom:8px;"></div>
+                <div style="width:100%; height:8px; background:var(--border-secondary); border-radius:4px; overflow:hidden; margin-bottom:20px;"><div id="timer-progress" style="height:100%; width:100%; background:var(--accent-primary-gradient); transition:width .5s linear;"></div></div>
                 <div id="questions-display"></div>
                 <div id="question-navigation-container" style="display:flex; gap:10px; margin-top: 20px;" class="hidden">
                     <button id="prev-question-btn" class="btn-secondary">السابق</button>
                     <button id="next-question-btn" class="btn-primary">التالي</button>
                 </div>
-                <button id="submit-test-btn" class="btn-primary" style="margin-top: 20px; background: linear-gradient(180deg, #238636 0%, #1a6328 100%); border-bottom-color: #134b1f;">تسليم الاختبار</button>
+                <button id="submit-test-btn" class="btn-primary" style="margin-top: 20px; background: var(--success-gradient); border-bottom-color: var(--success-border);">تسليم الاختبار</button>
                 <button id="cancel-test-btn" class="btn-secondary" style="margin-top: 10px;">إلغاء الاختبار</button>
             </section>
             <section id="test-result-section" class="hidden">
@@ -675,9 +796,15 @@
     
     <!-- ======== Universal Modals ======== -->
     <div id="image-viewer-modal" class="image-modal-overlay">
+        <div class="image-viewer-controls">
+            <button id="zoom-in-btn" class="icon-btn" title="تكبير"><i class="fas fa-plus"></i></button>
+            <button id="zoom-out-btn" class="icon-btn" title="تصغير"><i class="fas fa-minus"></i></button>
+        </div>
         <button class="modal-close-btn">&times;</button>
         <a href="#" class="image-modal-download-btn" download="image.jpg"><i class="fas fa-download"></i></a>
-        <img src="" alt="Image Preview" class="image-modal-content">
+        <div id="image-viewer-content-wrapper">
+             <img src="" alt="Image Preview" class="image-modal-content">
+        </div>
     </div>
 
     <div id="text-chat-modal" class="modal-overlay">
@@ -686,7 +813,7 @@
             <h2 id="chat-modal-title">محادثة مع</h2>
             <div class="chat-body" id="chat-modal-body"></div>
             <div class="modal-footer">
-                <p id="message-limit-text" style="font-size: 0.9rem; color: #ffc107; margin-bottom: 10px;"></p>
+                <p id="message-limit-text" style="font-size: 0.9rem; color: var(--warning-primary); margin-bottom: 10px;"></p>
                 <div class="chat-input-area">
                     <button id="speech-to-text-btn" class="chat-action-btn btn-secondary"><i class="fas fa-microphone"></i></button>
                     <textarea id="chat-message-input" rows="1" placeholder="اكتب رسالتك..." style="height: 50px;"></textarea>
@@ -707,6 +834,7 @@
     <!-- ======== Custom Dialogs (Alerts/Confirms) ======== -->
     <div id="custom-alert-container" class="custom-dialog-overlay">
         <div class="custom-dialog">
+            <div class="dialog-icon"><i class="fas fa-check-circle"></i></div>
             <h3 id="custom-alert-title"></h3>
             <p id="custom-alert-message"></p>
             <div class="dialog-buttons">
@@ -716,6 +844,7 @@
     </div>
     <div id="custom-confirm-container" class="custom-dialog-overlay">
         <div class="custom-dialog">
+            <div class="dialog-icon"><i class="fas fa-question-circle"></i></div>
             <h3 id="custom-confirm-title"></h3>
             <p id="custom-confirm-message"></p>
             <div class="dialog-buttons">
@@ -757,19 +886,40 @@
         
         const getBase64 = (file) => new Promise((resolve, reject) => { const reader=new FileReader();reader.readAsDataURL(file);reader.onload=()=>resolve(reader.result);reader.onerror=e=>reject(e) });
         
+        // --- Enhanced Dialog Logic ---
         const alertCont = document.getElementById('custom-alert-container');
         const confirmCont = document.getElementById('custom-confirm-container');
-        const showCustomAlert = (title, message) => { alertCont.querySelector('#custom-alert-title').textContent = title; alertCont.querySelector('#custom-alert-message').innerHTML = message; alertCont.classList.add('show'); };
+        
+        const showCustomAlert = (title, message) => { 
+            alertCont.querySelector('#custom-alert-title').textContent = title; 
+            alertCont.querySelector('#custom-alert-message').innerHTML = message; 
+            alertCont.classList.add('show'); 
+        };
         alertCont.querySelector('#custom-alert-close-btn').onclick = () => alertCont.classList.remove('show');
+        
         const showCustomConfirm = (title, message) => {
             return new Promise(resolve => {
-                confirmCont.querySelector('#custom-confirm-title').textContent = title; confirmCont.querySelector('#custom-confirm-message').textContent = message; confirmCont.classList.add('show');
-                const okBtn = confirmCont.querySelector('#custom-confirm-ok-btn'), cancelBtn = confirmCont.querySelector('#custom-confirm-cancel-btn');
-                const cleanup = (result) => { confirmCont.classList.remove('show'); okBtn.replaceWith(okBtn.cloneNode(true)); cancelBtn.replaceWith(cancelBtn.cloneNode(true)); resolve(result); };
-                okBtn.addEventListener('click', () => cleanup(true), { once: true });
-                cancelBtn.addEventListener('click', () => cleanup(false), { once: true });
+                confirmCont.querySelector('#custom-confirm-title').textContent = title; 
+                confirmCont.querySelector('#custom-confirm-message').textContent = message; 
+                confirmCont.classList.add('show');
+                const okBtn = confirmCont.querySelector('#custom-confirm-ok-btn');
+                const cancelBtn = confirmCont.querySelector('#custom-confirm-cancel-btn');
+                
+                // Clone and replace to remove old event listeners, ensuring it only fires once.
+                const newOkBtn = okBtn.cloneNode(true);
+                okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+                const newCancelBtn = cancelBtn.cloneNode(true);
+                cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+                const cleanup = (result) => { 
+                    confirmCont.classList.remove('show'); 
+                    resolve(result); 
+                };
+                newOkBtn.addEventListener('click', () => cleanup(true), { once: true });
+                newCancelBtn.addEventListener('click', () => cleanup(false), { once: true });
             });
         };
+
 
         async function sharePlatform() {
             const shareData = {
@@ -788,6 +938,50 @@
                 console.error("Share failed:", err);
             }
         }
+        
+        // --- THEME SWITCHER LOGIC ---
+        const themeToggleButton = document.getElementById('theme-toggle-btn');
+        const body = document.body;
+
+        function applyTheme(theme) {
+            const icon = themeToggleButton.querySelector('i');
+            if (theme === 'desert') {
+                body.classList.add('desert-mode');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                body.classList.remove('desert-mode');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.classList.contains('desert-mode') ? 'desert' : 'night';
+            const newTheme = currentTheme === 'desert' ? 'night' : 'desert';
+            applyTheme(newTheme);
+            localStorage.setItem('preferredTheme', newTheme); // Save user's manual choice
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('preferredTheme');
+            if (savedTheme) {
+                // Apply user's saved preference
+                applyTheme(savedTheme);
+            } else {
+                // Apply automatic theme based on time
+                const hour = new Date().getHours();
+                // Desert mode from 6 AM to 6 PM (18:00)
+                if (hour >= 6 && hour < 18) {
+                    applyTheme('desert');
+                } else {
+                    applyTheme('night');
+                }
+            }
+        }
+        
+        themeToggleButton.addEventListener('click', toggleTheme);
+        initializeTheme();
 
 
         function initTeacherApp() {
@@ -817,8 +1011,8 @@
             const setDefaultTab = () => navButtons[0].click();
             
             teacherPortal.querySelectorAll('.switch-button').forEach(btn => btn.addEventListener('click', () => {
-                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = '#21262d'; });
-                btn.classList.add('active'); btn.style.background = '#1f6feb'; currentQuestionType = btn.dataset.type;
+                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = 'var(--border-secondary)'; });
+                btn.classList.add('active'); btn.style.background = 'var(--accent-primary)'; currentQuestionType = btn.dataset.type;
                 teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq'); teacherPortal.querySelector("#essay-fields").classList.toggle('hidden', currentQuestionType !== 'essay');
             }));
 
@@ -840,13 +1034,13 @@
                     testCard.style.cssText = `flex-direction: column; align-items: stretch; padding: 12px; gap: 10px;`;
                     testCard.innerHTML = `
                         <div style="font-weight: bold; font-size: 1.1rem; text-align: right;">${test.name}</div>
-                        <div style="font-size: 0.9rem; color: #ccc; text-align: right;">${test.grade} - ${test.duration} دقيقة</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); text-align: right;">${test.grade} - ${test.duration} دقيقة</div>
                         <div class="test-countdown" data-timestamp="${test.timestamp}"></div>
                         <div style="display: flex; gap: 8px; margin-top: 10px;">
                             <button class="action-btn btn-secondary" data-action="share" title="مشاركة" style="flex-grow: 1;"><i class="fas fa-share-alt"></i></button>
                             <button class="action-btn btn-secondary" data-action="results" title="النتائج" style="flex-grow: 1;"><i class="fas fa-poll-h"></i></button>
                             <button class="action-btn btn-secondary" data-action="edit" title="تعديل" style="flex-grow: 1;"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-secondary" data-action="delete" title="حذف" style="flex-grow: 1; background:#da3633; border-color:#c82333;"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn btn-secondary btn-danger" data-action="delete" title="حذف" style="flex-grow: 1;"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
                     testCard.querySelector('[data-action="share"]').onclick = () => copyTestLink(currentUser, testId);
@@ -900,8 +1094,8 @@
                 if (!snapshot.exists()) { studentResultsContainer.innerHTML = "<p>لا توجد نتائج لهذا الاختبار بعد.</p>"; return; }
                 Object.entries(snapshot.val()).forEach(([studentName, result]) => {
                     const div = document.createElement('div'); div.className = 'list-item';
-                    const pendingIndicator = result.status === 'pending' ? `<span style="color:#ffc107; font-weight:bold; margin-inline:10px;">(قيد المراجعة)</span>` : '';
-                    div.innerHTML = `<span style="flex-grow:1; text-align: right;">الطالب: <strong>${studentName}</strong></span><span>الدرجة: <strong>${result.score}</strong></span>${pendingIndicator}<i class="fas fa-comment-dots" title="مراسلة الطالب" style="margin: 0 15px; color: #58a6ff; cursor: pointer; font-size: 1.2rem;"></i><button class="action-btn btn-secondary" data-action="details">التفاصيل</button>`;
+                    const pendingIndicator = result.status === 'pending' ? `<span style="color:var(--warning-primary); font-weight:bold; margin-inline:10px;">(قيد المراجعة)</span>` : '';
+                    div.innerHTML = `<span style="flex-grow:1; text-align: right;">الطالب: <strong>${studentName}</strong></span><span>الدرجة: <strong>${result.score}</strong></span>${pendingIndicator}<i class="fas fa-comment-dots" title="مراسلة الطالب" style="margin: 0 15px; color: var(--accent-secondary); cursor: pointer; font-size: 1.2rem;"></i><button class="action-btn btn-secondary" data-action="details">التفاصيل</button>`;
                     div.querySelector('[data-action="details"]').onclick = () => showStudentAnswerReview(studentName, testId, result);
                     div.querySelector('.fa-comment-dots').onclick = () => openChatModal(currentUser, studentName);
                     studentResultsContainer.appendChild(div);
@@ -914,7 +1108,7 @@
                 test.questions.forEach((q, index) => {
                     const studentAnswer = answers[index] || {}; let reviewHtml = '';
                     if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(35, 134, 54, 0.2)' : 'rgba(218, 54, 51, 0.2)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
-                    else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:#21262d; padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
+                    else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:var(--border-secondary); padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
                     const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;';
                     qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img src="${q.image}" style="max-width:100%;border-radius:10px;margin:10px 0; cursor:pointer;">` : ''}${reviewHtml}`;
                     reviewModalBody.appendChild(qDiv);
@@ -945,7 +1139,7 @@
                 questionsListContainer.innerHTML = questionsArray.length > 0 ? "<h3>الأسئلة المضافة:</h3>" : "";
                 questionsArray.forEach((q, i) => {
                     const d=document.createElement('div'); d.className='list-item';
-                    d.innerHTML=`<span style="flex-grow:1; text-align:right;">${i+1}. [${q.type==='mcq'?'اختياري':'مقالي'}] ${q.question ? q.question.substring(0,30) : 'سؤال بصورة'}... (${q.points} درجات)</span><div style="display:flex; gap: 5px;"><button data-index="${i}" class="action-btn btn-secondary edit-q-btn" title="تعديل"><i class="fas fa-edit"></i></button><button data-index="${i}" class="action-btn btn-secondary delete-q-btn" title="حذف" style="background:#da3633; border-color:#c82333;"><i class="fas fa-trash"></i></button></div>`;
+                    d.innerHTML=`<span style="flex-grow:1; text-align:right;">${i+1}. [${q.type==='mcq'?'اختياري':'مقالي'}] ${q.question ? q.question.substring(0,30) : 'سؤال بصورة'}... (${q.points} درجات)</span><div style="display:flex; gap: 5px;"><button data-index="${i}" class="action-btn btn-secondary edit-q-btn" title="تعديل"><i class="fas fa-edit"></i></button><button data-index="${i}" class="action-btn btn-secondary btn-danger delete-q-btn" title="حذف"><i class="fas fa-trash"></i></button></div>`;
                     questionsListContainer.appendChild(d);
                     d.querySelector('.delete-q-btn').onclick = () => { questionsArray.splice(i,1); renderQuestionsList(); };
                     d.querySelector('.edit-q-btn').onclick = () => startEditingQuestion(i);
@@ -995,7 +1189,7 @@
             
             // --- Menu Logic ---
             menuIcon.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-            document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) dropdownMenu.classList.remove('show'); });
+            document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target) && e.target.id !== 'theme-toggle-btn' && !e.target.closest('#theme-toggle-btn')) dropdownMenu.classList.remove('show'); });
             
             dropdownMenu.querySelector('#teacher-settings-btn').onclick = () => { dropdownMenu.classList.remove('show'); updateNameInput.value = currentUser; updatePasswordInput.value = ''; settingsModal.classList.add('visible'); };
             dropdownMenu.querySelector('#teacher-logout-btn').onclick = async () => { dropdownMenu.classList.remove('show'); if (await showCustomConfirm("تأكيد", "هل أنت متأكد من رغبتك في تسجيل الخروج؟")) { localStorage.clear(); sessionStorage.clear(); window.location.href = window.location.pathname; } };
@@ -1127,7 +1321,7 @@
                 if(!found) testsContainer.innerHTML='<p>لا توجد اختبارات متاحة حاليًا.</p>';
             }
 
-            function renderStudentResults(){resultsContainer.innerHTML='';const results=Object.values(takenTests).sort((a,b)=>b.timestamp-a.timestamp);if(results.length===0){resultsContainer.innerHTML='<p>لم تقم بإجراء أي اختبار بعد.</p>';return}results.forEach(r=>{const d=new Date(r.timestamp).toLocaleString('ar-EG'), pendingIndicator = r.status === 'pending' ? `<span style="color:#ffc107; font-weight:bold; font-size: 0.8rem;">(قيد المراجعة)</span>` : '';const div=document.createElement('div');div.className='test-item';div.innerHTML=`<div style="text-align:right; flex-grow:1;"><strong>${r.testName}</strong><br><small>الدرجة: <strong>${r.score}</strong> ${pendingIndicator}</small></div><small>${d}</small>`;resultsContainer.appendChild(div)})}
+            function renderStudentResults(){resultsContainer.innerHTML='';const results=Object.values(takenTests).sort((a,b)=>b.timestamp-a.timestamp);if(results.length===0){resultsContainer.innerHTML='<p>لم تقم بإجراء أي اختبار بعد.</p>';return}results.forEach(r=>{const d=new Date(r.timestamp).toLocaleString('ar-EG'), pendingIndicator = r.status === 'pending' ? `<span style="color:var(--warning-primary); font-weight:bold; font-size: 0.8rem;">(قيد المراجعة)</span>` : '';const div=document.createElement('div');div.className='test-item';div.innerHTML=`<div style="text-align:right; flex-grow:1;"><strong>${r.testName}</strong><br><small>الدرجة: <strong>${r.score}</strong> ${pendingIndicator}</small></div><small>${d}</small>`;resultsContainer.appendChild(div)})}
             
             function startTest(teacherId, testId, testData, isPractice = false) {
                 if (!testData.questions || testData.questions.length === 0) {
@@ -1201,12 +1395,12 @@
                     await set(ref(db, `results/${currentTest.teacherId}/${currentTest.id}/${currentStudent}`), resultObj);
                     takenTests[currentTest.id] = resultObj; 
                     
-                    if (hasEssays) { feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: #ffc107;"; feedbackMsg.textContent = "تم إرسال إجاباتك المقالية للمراجعة! هذه نتيجتك المبدئية."; }
-                    else { const p = totalTestPoints > 0 ? Math.round((mcqScore / totalTestPoints) * 100) : 0; const fb = p === 100 ? { t: '🥳 ممتاز!', c: '#238636' } : p >= 80 ? { t: '😊 عمل رائع!', c: '#238636' } : p >= 50 ? { t: '🙂 جيد!', c: '#ffc107', tc: '#111' } : { t: '🙁 حاول مجددًا!', c: '#da3633' }; feedbackMsg.style.background = fb.c; feedbackMsg.style.color = fb.tc || '#fff'; feedbackMsg.textContent = fb.t; }
+                    if (hasEssays) { feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: var(--warning-primary);"; feedbackMsg.textContent = "تم إرسال إجاباتك المقالية للمراجعة! هذه نتيجتك المبدئية."; }
+                    else { const p = totalTestPoints > 0 ? Math.round((mcqScore / totalTestPoints) * 100) : 0; const fb = p === 100 ? { t: '🥳 ممتاز!', c: '#238636' } : p >= 80 ? { t: '😊 عمل رائع!', c: '#238636' } : p >= 50 ? { t: '🙂 جيد!', c: 'var(--warning-primary)', tc: '#111' } : { t: '🙁 حاول مجددًا!', c: 'var(--danger-primary)' }; feedbackMsg.style.background = fb.c; feedbackMsg.style.color = fb.tc || '#fff'; feedbackMsg.textContent = fb.t; }
                 }
                 showSection(result);
             }
-            submitBtn.onclick=()=>submitTest(false);
+            submitBtn.onclick=async ()=>{ if (await showCustomConfirm('تأكيد التسليم', 'هل أنت متأكد من رغبتك في تسليم الاختبار؟')) { submitTest(false); } };
 
             function renderReview(testData, studentAnswers){
                 reviewContainer.innerHTML = '';
@@ -1223,7 +1417,7 @@
                         const txt = ans.textAnswer || '<em>لم تقدم إجابة نصية.</em>';
                         const img = ans.imageAnswer ? `<p><b>صورتك:</b></p><img src="${ans.imageAnswer}" style="max-width:80%;border-radius:8px; cursor:pointer;">` : '';
                         const model = q.modelAnswerImage ? `<p><b>الإجابة النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%;border-radius:8px; cursor:pointer;">` : '';
-                        html=`<div><p><b>إجابتك النصية:</b></p><div style="background:#21262d;padding:10px;border-radius:8px; white-space:pre-wrap;">${txt}</div>${img}${model}</div>`;
+                        html=`<div><p><b>إجابتك النصية:</b></p><div style="background:var(--border-secondary);padding:10px;border-radius:8px; white-space:pre-wrap;">${txt}</div>${img}${model}</div>`;
                     }
                     const qDiv = document.createElement('div');
                     qDiv.className = 'list-item';
@@ -1305,12 +1499,58 @@
 
         function copyTestLink(teacherId, testId) { const link = `${window.location.origin}${window.location.pathname}#test/${encodeURIComponent(teacherId)}/${encodeURIComponent(testId)}`; navigator.clipboard.writeText(link).then(() => { showCustomAlert('تم النسخ', 'تم نسخ رابط الاختبار بنجاح!'); }); }
         
-        const imageViewerModal = document.getElementById('image-viewer-modal'); const modalImage = imageViewerModal.querySelector('.image-modal-content'); const modalDownloadBtn = imageViewerModal.querySelector('.image-modal-download-btn');
-        function openImageViewer(src) { if (!src || src.endsWith('#') || !src.startsWith('data:image')) return; modalImage.src = src; modalDownloadBtn.href = src; imageViewerModal.classList.add('visible'); }
-        function closeImageViewer() { imageViewerModal.classList.remove('visible'); setTimeout(() => { modalImage.src = ''; }, 300); }
+        // --- Enhanced Image Viewer with Zoom/Pan ---
+        const imageViewerModal = document.getElementById('image-viewer-modal');
+        const imageWrapper = document.getElementById('image-viewer-content-wrapper');
+        const modalImage = imageViewerModal.querySelector('.image-modal-content');
+        const modalDownloadBtn = imageViewerModal.querySelector('.image-modal-download-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+
+        let scale = 1, panning = false, start = { x: 0, y: 0 }, transform = { x: 0, y: 0 };
+
+        function setTransform() { modalImage.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${scale})`; }
+        function resetZoom() { scale = 1; transform = { x: 0, y: 0 }; setTransform(); }
+
+        function openImageViewer(src) {
+            if (!src || src.endsWith('#') || !src.startsWith('data:image')) return;
+            resetZoom();
+            modalImage.src = src;
+            modalDownloadBtn.href = src;
+            imageViewerModal.classList.add('visible');
+        }
+
+        function closeImageViewer() {
+            imageViewerModal.classList.remove('visible');
+            setTimeout(() => { modalImage.src = ''; resetZoom(); }, 300);
+        }
+
+        imageWrapper.onwheel = function(e) {
+            e.preventDefault();
+            const rect = imageWrapper.getBoundingClientRect();
+            const xs = (e.clientX - rect.left - transform.x) / scale;
+            const ys = (e.clientY - rect.top - transform.y) / scale;
+            const delta = -e.deltaY;
+            (delta > 0) ? (scale *= 1.1) : (scale /= 1.1);
+            scale = Math.min(Math.max(1, scale), 10);
+            transform.x = e.clientX - rect.left - xs * scale;
+            transform.y = e.clientY - rect.top - ys * scale;
+            if (scale === 1) transform = { x: 0, y: 0 };
+            setTransform();
+        }
+
+        imageWrapper.onpointerdown = function(e) { if (scale > 1) { e.preventDefault(); start = { x: e.clientX - transform.x, y: e.clientY - transform.y }; panning = true; imageWrapper.style.cursor = 'grabbing'; } }
+        imageWrapper.onpointerup = function() { panning = false; imageWrapper.style.cursor = 'grab'; }
+        imageWrapper.onpointerleave = function() { panning = false; imageWrapper.style.cursor = 'grab'; }
+        imageWrapper.onpointermove = function(e) { if (panning) { e.preventDefault(); transform.x = e.clientX - start.x; transform.y = e.clientY - start.y; setTransform(); } }
+        
+        zoomInBtn.onclick = () => { scale = Math.min(scale * 1.2, 10); setTransform(); };
+        zoomOutBtn.onclick = () => { scale = Math.max(scale / 1.2, 1); if (scale === 1) transform = {x: 0, y: 0}; setTransform(); };
+
         document.addEventListener('click', (e) => { if (e.target.tagName === 'IMG' && e.target.closest('.portal-container, .modal-content')) { if (e.target.src && e.target.src.startsWith('data:image')) { e.preventDefault(); openImageViewer(e.target.src); } } });
         imageViewerModal.querySelector('.modal-close-btn').addEventListener('click', closeImageViewer);
         imageViewerModal.addEventListener('click', (e) => { if (e.target === imageViewerModal) closeImageViewer(); });
+        
         
         const textChatModal = document.getElementById('text-chat-modal'), chatModalTitle = document.getElementById('chat-modal-title'), chatModalBody = document.getElementById('chat-modal-body'), messageInput = document.getElementById('chat-message-input');
         const sendMessageBtn = document.getElementById('send-chat-message-btn'), speechBtn = document.getElementById('speech-to-text-btn');
