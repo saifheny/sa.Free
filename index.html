@@ -833,8 +833,6 @@
     <!-- ======== Universal Modals ======== -->
     <div id="image-viewer-modal" class="image-modal-overlay">
         <div class="image-viewer-controls">
-            <button id="zoom-in-btn" class="icon-btn" title="تكبير"><i class="fas fa-plus"></i></button>
-            <button id="zoom-out-btn" class="icon-btn" title="تصغير"><i class="fas fa-minus"></i></button>
         </div>
         <button class="modal-close-btn">&times;</button>
         <a href="#" class="image-modal-download-btn" download="image.jpg"><i class="fas fa-download"></i></a>
@@ -1541,11 +1539,18 @@
         const modalDownloadBtn = imageViewerModal.querySelector('.image-modal-download-btn');
 
         let scale = 1, panning = false, start = { x: 0, y: 0 }, transform = { x: 0, y: 0 };
-        let initialDistance = null; // For pinch-to-zoom
+        let initialDistance = null, lastTap = 0;
 
         function setTransform() { modalImage.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${scale})`; }
-        function resetZoom() { scale = 1; transform = { x: 0, y: 0 }; setTransform(); }
         
+        function resetZoom() { 
+            scale = 1; 
+            transform = { x: 0, y: 0 }; 
+            modalImage.style.transition = 'transform 0.2s ease-out';
+            setTransform(); 
+            setTimeout(() => modalImage.style.transition = 'none', 200);
+        }
+
         function getDistance(p1, p2) { return Math.sqrt(Math.pow(p2.clientX - p1.clientX, 2) + Math.pow(p2.clientY - p1.clientY, 2)); }
 
         function openImageViewer(src) {
@@ -1561,68 +1566,120 @@
             setTimeout(() => { modalImage.src = ''; resetZoom(); }, 300);
         }
 
-        imageWrapper.onwheel = function(e) {
+        imageWrapper.addEventListener('wheel', (e) => {
             e.preventDefault();
             const rect = imageWrapper.getBoundingClientRect();
             const xs = (e.clientX - rect.left - transform.x) / scale;
             const ys = (e.clientY - rect.top - transform.y) / scale;
             const delta = -e.deltaY;
-            const newScale = delta > 0 ? scale * 1.1 : scale / 1.1;
+            const newScale = delta > 0 ? scale * 1.2 : scale / 1.2;
             const clampedScale = Math.min(Math.max(1, newScale), 10);
-            transform.x += (e.clientX - rect.left) - (xs * clampedScale + transform.x);
-            transform.y += (e.clientY - rect.top) - (ys * clampedScale + transform.y);
+            
+            transform.x -= xs * (clampedScale - scale);
+            transform.y -= ys * (clampedScale - scale);
+
             scale = clampedScale;
             if (scale === 1) transform = { x: 0, y: 0 };
+            
+            modalImage.style.transition = 'none'; // Prevent transition during wheel zoom
             setTransform();
-        }
+        }, { passive: false });
 
-        imageWrapper.onpointerdown = function(e) { 
-            if (e.pointerType === 'mouse' || e.touches?.length === 1) {
-                e.preventDefault(); 
-                start = { x: e.clientX - transform.x, y: e.clientY - transform.y }; 
-                panning = true; 
-                imageWrapper.style.cursor = 'grabbing'; 
+        imageWrapper.addEventListener('pointerdown', (e) => {
+            const pointers = e.touches || [e];
+            if (pointers.length === 1) {
+                e.preventDefault();
+                start = { x: pointers[0].clientX - transform.x, y: pointers[0].clientY - transform.y };
+                panning = true;
+                imageWrapper.style.cursor = 'grabbing';
+                modalImage.style.transition = 'none';
             }
-            if (e.touches?.length === 2) {
-                initialDistance = getDistance(e.touches[0], e.touches[1]);
+            if (pointers.length === 2) {
+                panning = false;
+                initialDistance = getDistance(pointers[0], pointers[1]);
             }
-        }
-        imageWrapper.onpointerup = function(e) { 
-            panning = false; 
-            imageWrapper.style.cursor = 'grab'; 
-            if (e.touches?.length < 2) initialDistance = null;
-        }
-        imageWrapper.onpointerleave = function() { panning = false; imageWrapper.style.cursor = 'grab'; initialDistance = null;}
-        imageWrapper.onpointermove = function(e) { 
-            if (panning) { 
-                e.preventDefault(); 
-                transform.x = e.clientX - start.x; 
-                transform.y = e.clientY - start.y; 
-                setTransform(); 
+        });
+        
+        imageWrapper.addEventListener('pointerup', (e) => {
+            panning = false;
+            imageWrapper.style.cursor = 'grab';
+            initialDistance = null;
+        });
+
+        imageWrapper.addEventListener('pointerleave', () => {
+            panning = false;
+            imageWrapper.style.cursor = 'grab';
+            initialDistance = null;
+        });
+        
+        imageWrapper.addEventListener('pointermove', (e) => {
+            const pointers = e.touches || [e];
+            if (panning && pointers.length === 1) {
+                e.preventDefault();
+                transform.x = pointers[0].clientX - start.x;
+                transform.y = pointers[0].clientY - start.y;
+                setTransform();
             }
-            if (e.touches?.length === 2 && initialDistance) {
-                const newDist = getDistance(e.touches[0], e.touches[1]);
+            if (pointers.length === 2 && initialDistance) {
+                 e.preventDefault();
+                const newDist = getDistance(pointers[0], pointers[1]);
                 const scaleMultiplier = newDist / initialDistance;
                 const newScale = Math.min(Math.max(1, scale * scaleMultiplier), 10);
                 
-                // You might want to zoom towards the center of the pinch
-                // This part is complex, for simplicity, we zoom to center
                 const rect = imageWrapper.getBoundingClientRect();
-                const pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                const pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                const pinchCenterX = (pointers[0].clientX + pointers[1].clientX) / 2;
+                const pinchCenterY = (pointers[0].clientY + pointers[1].clientY) / 2;
 
                 const xs = (pinchCenterX - rect.left - transform.x) / scale;
                 const ys = (pinchCenterY - rect.top - transform.y) / scale;
 
-                transform.x += (pinchCenterX - rect.left) - (xs * newScale + transform.x);
-                transform.y += (pinchCenterY - rect.top) - (ys * newScale + transform.y);
+                transform.x -= xs * (newScale - scale);
+                transform.y -= ys * (newScale - scale);
 
                 scale = newScale;
                 initialDistance = newDist;
+                modalImage.style.transition = 'none';
                 setTransform();
             }
-        }
+        });
         
+        imageWrapper.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            modalImage.style.transition = 'transform 0.3s ease-out';
+            if (scale > 1) {
+                resetZoom();
+            } else {
+                const rect = imageWrapper.getBoundingClientRect();
+                const xs = (e.clientX - rect.left - transform.x) / scale;
+                const ys = (e.clientY - rect.top - transform.y) / scale;
+                scale = 3;
+                transform.x -= xs * (scale - 1);
+                transform.y -= ys * (scale - 1);
+                setTransform();
+            }
+        });
+        
+        imageWrapper.addEventListener('touchend', (e) => {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastTap < 300) { // Double tap
+                e.preventDefault();
+                modalImage.style.transition = 'transform 0.3s ease-out';
+                if (scale > 1) {
+                    resetZoom();
+                } else {
+                    const rect = imageWrapper.getBoundingClientRect();
+                    const touch = e.changedTouches[0];
+                    const xs = (touch.clientX - rect.left - transform.x) / scale;
+                    const ys = (touch.clientY - rect.top - transform.y) / scale;
+                    scale = 3; // Zoom in to scale 3
+                    transform.x -= xs * (scale - 1);
+                    transform.y -= ys * (scale - 1);
+                    setTransform();
+                }
+            }
+            lastTap = currentTime;
+        });
+
         document.addEventListener('click', (e) => { if (e.target.tagName === 'IMG' && e.target.closest('.portal-container, .modal-content')) { if (e.target.src && e.target.src.startsWith('data:image')) { e.preventDefault(); openImageViewer(e.target.src); } } });
         imageViewerModal.querySelector('.modal-close-btn').addEventListener('click', closeImageViewer);
         imageViewerModal.addEventListener('click', (e) => { if (e.target === imageViewerModal) closeImageViewer(); });
