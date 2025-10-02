@@ -45,37 +45,26 @@
         }
 
         .desert-mode {
-            --bg-primary: #fdf6e3;
+            --bg-primary: #fdf6e3; /* Solarized Light Base */
             --bg-secondary: #f5eeda;
             --bg-tertiary: #eee8d5;
             --border-primary: #d3cbbd;
             --border-secondary: #e6e0d2;
-            --text-primary: #2c2622;
+            --text-primary: #2c2622; /* Very Dark Brown/Black */
             --text-secondary: #8a7a66;
-            --accent-primary: #d2691e;
+            --accent-primary: #d2691e; /* Terracotta / Chocolate */
             --accent-primary-gradient: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
             --accent-primary-border: #a84300;
             --accent-secondary: #d35400;
-            --warning-primary: #b58900;
+            --success-gradient: linear-gradient(180deg, #28a745 0%, #218838 100%);
+            --success-border: #1e7e34;
+            --danger-primary: #dc3545;
+            --danger-border: #c82333;
+            --warning-primary: #b58900; /* Solarized Yellow */
             --shadow-color-heavy: rgba(88, 76, 60, 0.3);
             --shadow-color-light: rgba(88, 76, 60, 0.2);
-        }
-        
-        .mountain-mode {
-            --bg-primary: #1a2b27;
-            --bg-secondary: #233a34;
-            --bg-tertiary: #13211d;
-            --border-primary: #3c514b;
-            --border-secondary: #2e443e;
-            --text-primary: #d4e0dd;
-            --text-secondary: #8a9e98;
-            --accent-primary: #26a69a; /* Teal */
-            --accent-primary-gradient: linear-gradient(180deg, #26a69a 0%, #00897b 100%);
-            --accent-primary-border: #00695c;
-            --accent-secondary: #4db6ac;
-            --warning-primary: #ffa726; /* Orange */
-            --shadow-color-heavy: rgba(0,0,0,0.6);
-            --shadow-color-light: rgba(0,0,0,0.5);
+            --inset-shadow-light: rgba(0,0,0,0.05);
+            --inset-shadow-dark: rgba(255,255,255,0.8);
         }
         
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -339,7 +328,7 @@
             text-overflow: ellipsis;
             text-shadow: 0 1px 2px #000;
         }
-        .desert-mode .test-name, .mountain-mode .test-name { text-shadow: none; }
+        .desert-mode .test-name { text-shadow: none; }
         .test-expiry {
             font-size: 0.75rem;
             color: var(--warning-primary);
@@ -377,7 +366,7 @@
             background-position: 15px center;
             transition: all 0.3s ease-in-out;
         }
-        .desert-mode #search-bar, .mountain-mode #search-bar {
+        .desert-mode #search-bar {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23584c3c' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
         }
         #search-bar:focus {
@@ -393,8 +382,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-            gap: 10px;
-            flex-wrap: wrap;
         }
         .dashboard-header-controls .header-buttons {
             display: flex;
@@ -432,6 +419,7 @@
             backdrop-filter: blur(10px); z-index: 3000;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+            touch-action: none; /* Prevent default touch actions like scrolling */
         }
         .image-modal-overlay.visible { opacity: 1; visibility: visible; }
         #image-viewer-content-wrapper {
@@ -448,23 +436,15 @@
             pointer-events: none; /* Let wrapper handle events */
         }
         .image-viewer-controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 3010;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .image-viewer-controls .icon-btn, .image-modal-download-btn {
-            background: rgba(40, 40, 40, 0.8);
-            color: #fff; border: none;
-            width: 45px; height: 45px; font-size: 18px;
-            display: flex; align-items: center; justify-content: center;
+            display: none; /* Hidden as per user request */
         }
         .image-modal-download-btn {
             position: absolute; top: 20px; right: 20px; z-index: 3010;
             border-radius: 50%; text-decoration: none;
+            background: rgba(40, 40, 40, 0.8);
+            color: #fff; border: none;
+            width: 45px; height: 45px; font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
         }
         
         /* --- Custom Dialogs (Alerts/Confirms) --- */
@@ -491,37 +471,49 @@
         .custom-dialog h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
         .custom-dialog p { font-size: 1rem; color: var(--text-secondary); line-height: 1.6; }
         .custom-dialog .dialog-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
+        
+        /* --- New Dialog Button Styles --- */
         .dialog-buttons button {
-            box-shadow: none !important;
-            border: none !important;
+            flex-grow: 1;
             font-weight: 800 !important;
             font-size: 1rem !important;
             padding: 12px 20px !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease !important;
-        }
-        .dialog-buttons .btn-primary {
-            background: var(--accent-primary-gradient);
+            border: none;
+            border-radius: 10px;
             color: #fff;
+            cursor: pointer;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.15s ease-out;
         }
-        .dialog-buttons .btn-primary:hover {
-             box-shadow: 0 0 15px -2px var(--accent-primary) !important;
-             transform: translateY(-2px);
+        .dialog-buttons button.btn-primary {
+            background: var(--accent-primary-gradient);
+            border-bottom: 4px solid var(--accent-primary-border);
+            box-shadow: 0 4px 10px -2px var(--accent-primary);
         }
-        .dialog-buttons .btn-secondary {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 2px solid var(--border-primary) !important;
+        .dialog-buttons button.btn-primary:hover {
+            transform: translateY(-2px);
+            border-bottom-width: 6px;
+            box-shadow: 0 6px 15px -2px var(--accent-primary);
         }
-        .dialog-buttons .btn-secondary:hover {
-             background: var(--border-secondary);
-             color: var(--text-primary);
-             transform: translateY(-2px);
+        .dialog-buttons button.btn-primary:active {
+            transform: translateY(1px);
+            border-bottom-width: 3px;
+            box-shadow: 0 2px 5px -2px var(--accent-primary);
         }
-
+        .dialog-buttons button.btn-secondary {
+            background: var(--border-secondary);
+            color: var(--text-primary);
+            border-bottom: 4px solid var(--bg-tertiary);
+        }
+        .dialog-buttons button.btn-secondary:hover {
+            transform: translateY(-2px);
+            border-bottom-width: 6px;
+            background: var(--border-primary);
+        }
+        .dialog-buttons button.btn-secondary:active {
+            transform: translateY(1px);
+            border-bottom-width: 3px;
+        }
         
         @keyframes dialog-pop-in { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes icon-bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
@@ -591,35 +583,6 @@
              color: var(--bg-primary);
         }
         
-        /* --- Theme Switcher --- */
-        .theme-switcher {
-            display: flex;
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-primary);
-            border-radius: 99px;
-            padding: 4px;
-        }
-        .theme-switcher .theme-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 16px;
-        }
-        .theme-switcher .theme-btn:hover {
-            color: var(--text-primary);
-        }
-        .theme-switcher .theme-btn.active {
-            background-color: var(--accent-primary);
-            color: #fff;
-            box-shadow: 0 2px 8px -2px var(--accent-primary);
-            transform: scale(1.1);
-        }
-
         /* Animations & Responsiveness */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -659,11 +622,7 @@
     <div id="teacher-portal" class="portal-container hidden">
         <div class="portal-content">
             <div class="header-icons">
-                 <div class="theme-switcher">
-                    <button class="theme-btn" data-theme="night" title="الوضع الليلي"><i class="fas fa-moon"></i></button>
-                    <button class="theme-btn" data-theme="desert" title="الوضع الصحراوي"><i class="fas fa-sun"></i></button>
-                    <button class="theme-btn" data-theme="mountain" title="وضع الجبال"><i class="fas fa-mountain-sun"></i></button>
-                </div>
+                <button class="icon-btn theme-toggle-btn" title="تبديل المظهر"><i class="fas fa-sun"></i></button>
                 <div class="header-menu-container">
                     <div id="teacher-menu-icon" class="icon-btn" title="القائمة"><i class="fas fa-ellipsis-v"></i><span class="notification-badge"></span></div>
                     <div id="teacher-dropdown-menu" class="header-dropdown-menu">
@@ -774,7 +733,8 @@
          <div class="portal-content">
              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <h1 style="font-size:1.8rem; margin:0;"><i class="fas fa-graduation-cap"></i> منصة الاختبارات</h1>
-                <div class="header-icons" style="position: static;">
+                <div class="header-icons" style="position: static; display: flex; gap: 10px;">
+                     <button class="icon-btn theme-toggle-btn" title="تبديل المظهر"><i class="fas fa-sun"></i></button>
                      <div class="header-menu-container">
                         <div id="student-menu-icon" class="icon-btn" title="القائمة"><i class="fas fa-ellipsis-v"></i><span class="notification-badge"></span></div>
                         <div id="student-dropdown-menu" class="header-dropdown-menu">
@@ -809,11 +769,6 @@
                     <div class="dashboard-header-controls">
                         <h2>الاختبارات المتاحة</h2>
                         <div class="header-buttons">
-                             <div class="theme-switcher">
-                                <button class="theme-btn" data-theme="night" title="الوضع الليلي"><i class="fas fa-moon"></i></button>
-                                <button class="theme-btn" data-theme="desert" title="الوضع الصحراوي"><i class="fas fa-sun"></i></button>
-                                <button class="theme-btn" data-theme="mountain" title="وضع الجبال"><i class="fas fa-mountain-sun"></i></button>
-                            </div>
                              <button id="refresh-tests-btn" class="icon-btn" title="تحديث"><i class="fas fa-sync-alt"></i></button>
                              <button id="show-search-btn" class="icon-btn" title="بحث"><i class="fas fa-search"></i></button>
                         </div>
@@ -919,7 +874,7 @@
             <h3 id="custom-alert-title"></h3>
             <p id="custom-alert-message"></p>
             <div class="dialog-buttons">
-                <button id="custom-alert-close-btn" class="btn-primary"><i class="fas fa-check"></i>موافق</button>
+                <button id="custom-alert-close-btn" class="btn-primary">موافق</button>
             </div>
         </div>
     </div>
@@ -929,8 +884,8 @@
             <h3 id="custom-confirm-title"></h3>
             <p id="custom-confirm-message"></p>
             <div class="dialog-buttons">
-                <button id="custom-confirm-cancel-btn" class="btn-secondary"><i class="fas fa-times"></i>إلغاء</button>
-                <button id="custom-confirm-ok-btn" class="btn-primary"><i class="fas fa-check"></i>تأكيد</button>
+                <button id="custom-confirm-cancel-btn" class="btn-secondary">إلغاء</button>
+                <button id="custom-confirm-ok-btn" class="btn-primary">تأكيد</button>
             </div>
         </div>
     </div>
@@ -986,6 +941,7 @@
                 const okBtn = confirmCont.querySelector('#custom-confirm-ok-btn');
                 const cancelBtn = confirmCont.querySelector('#custom-confirm-cancel-btn');
                 
+                // Clone and replace to remove old event listeners, ensuring it only fires once.
                 const newOkBtn = okBtn.cloneNode(true);
                 okBtn.parentNode.replaceChild(newOkBtn, okBtn);
                 const newCancelBtn = cancelBtn.cloneNode(true);
@@ -1020,34 +976,46 @@
         }
         
         // --- THEME SWITCHER LOGIC ---
-        const themeButtons = document.querySelectorAll('.theme-btn');
+        const themeToggleButtons = document.querySelectorAll('.theme-toggle-btn');
         const body = document.body;
 
         function applyTheme(theme) {
-            body.classList.remove('desert-mode', 'mountain-mode');
-            if (theme === 'desert') {
-                body.classList.add('desert-mode');
-            } else if (theme === 'mountain') {
-                body.classList.add('mountain-mode');
-            }
-            
-            themeButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.theme === theme);
+            themeToggleButtons.forEach(button => {
+                const icon = button.querySelector('i');
+                if (theme === 'desert') {
+                    body.classList.add('desert-mode');
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                } else {
+                    body.classList.remove('desert-mode');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
             });
-            localStorage.setItem('preferredTheme', theme);
         }
 
-        themeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                applyTheme(button.dataset.theme);
-            });
-        });
+        function toggleTheme() {
+            const currentTheme = body.classList.contains('desert-mode') ? 'desert' : 'night';
+            const newTheme = currentTheme === 'desert' ? 'night' : 'desert';
+            applyTheme(newTheme);
+            localStorage.setItem('preferredTheme', newTheme); // Save user's manual choice
+        }
 
         function initializeTheme() {
-            const savedTheme = localStorage.getItem('preferredTheme') || 'night';
-            applyTheme(savedTheme);
+            const savedTheme = localStorage.getItem('preferredTheme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                const hour = new Date().getHours();
+                if (hour >= 6 && hour < 18) {
+                    applyTheme('desert');
+                } else {
+                    applyTheme('night');
+                }
+            }
         }
         
+        themeToggleButtons.forEach(button => button.addEventListener('click', toggleTheme));
         initializeTheme();
 
 
@@ -1256,7 +1224,7 @@
             
             // --- Menu Logic ---
             menuIcon.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-            document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target) && !e.target.closest('.theme-switcher')) dropdownMenu.classList.remove('show'); });
+            document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target) && !e.target.closest('.theme-toggle-btn')) dropdownMenu.classList.remove('show'); });
             
             dropdownMenu.querySelector('#teacher-settings-btn').onclick = () => { dropdownMenu.classList.remove('show'); updateNameInput.value = currentUser; updatePasswordInput.value = ''; settingsModal.classList.add('visible'); };
             dropdownMenu.querySelector('#teacher-logout-btn').onclick = async () => { dropdownMenu.classList.remove('show'); if (await showCustomConfirm("تأكيد", "هل أنت متأكد من رغبتك في تسجيل الخروج؟")) { localStorage.clear(); sessionStorage.clear(); window.location.href = window.location.pathname; } };
@@ -1439,7 +1407,7 @@
             
             window.saveAnswer=(idx,val,type)=>{if(type==='mcq')answers[idx]={type:'mcq',answer:parseInt(val)};else if(type==='essay-text'){if(!answers[idx])answers[idx]={type:'essay'};answers[idx].textAnswer=val}};
             window.handleEssayImageUpload=async(idx,input)=>{const file=input.files[0];if(file){const b64=await getBase64(file);if(!answers[idx])answers[idx]={type:'essay'};answers[idx].imageAnswer=b64;input.previousElementSibling.innerHTML=`<i class="fas fa-check-circle"></i> تم الرفع!`}};
-            function saveCurrentAnswer(){const q=currentTest.questions[qIndex];if(q.type==='mcq'){const c=questionsDisplay.querySelector(`input[name="question-${qIndex}"]:checked`);if(c)answers[qIndex]={type:'mcq',answer:parseInt(c.value)}}else{const t=questionsDisplay.querySelector(`#text-answer-${qIndex}`).value;if(t.trim()!==''||(answers[qIndex]&&answers[qIndex].imageAnswer)){if(!answers[qIndex])answers[idx]={type:'essay'};answers[qIndex].textAnswer=t}}}
+            function saveCurrentAnswer(){const q=currentTest.questions[qIndex];if(q.type==='mcq'){const c=questionsDisplay.querySelector(`input[name="question-${qIndex}"]:checked`);if(c)answers[qIndex]={type:'mcq',answer:parseInt(c.value)}}else{const t=questionsDisplay.querySelector(`#text-answer-${qIndex}`).value;if(t.trim()!==''||(answers[qIndex]&&answers[qIndex].imageAnswer)){if(!answers[qIndex])answers[qIndex]={type:'essay'};answers[qIndex].textAnswer=t}}}
             nextQBtn.onclick=()=>{if(qIndex<currentTest.questions.length-1){saveCurrentAnswer();qIndex++;renderQuestion(qIndex)}};
             prevQBtn.onclick=()=>{if(qIndex>0){saveCurrentAnswer();qIndex--;renderQuestion(qIndex)}};
             
@@ -1531,7 +1499,7 @@
             
             // --- Menu Logic ---
             menuIcon.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-            document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)  && !e.target.closest('.theme-switcher')) dropdownMenu.classList.remove('show'); });
+            document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target) && !e.target.closest('.theme-toggle-btn')) dropdownMenu.classList.remove('show'); });
             
             dropdownMenu.querySelector('#student-settings-btn').onclick = () => { dropdownMenu.classList.remove('show'); updateNameInput.value = currentStudent; updatePasswordInput.value = ''; settingsModal.classList.add('visible'); };
             dropdownMenu.querySelector('#student-logout-btn').onclick = async () => { dropdownMenu.classList.remove('show'); if (await showCustomConfirm("تأكيد", "هل أنت متأكد من رغبتك في تسجيل الخروج؟")) { localStorage.clear(); sessionStorage.clear(); window.location.href = window.location.pathname; } };
@@ -1571,13 +1539,14 @@
         const imageWrapper = document.getElementById('image-viewer-content-wrapper');
         const modalImage = imageViewerModal.querySelector('.image-modal-content');
         const modalDownloadBtn = imageViewerModal.querySelector('.image-modal-download-btn');
-        const zoomInBtn = document.getElementById('zoom-in-btn');
-        const zoomOutBtn = document.getElementById('zoom-out-btn');
 
         let scale = 1, panning = false, start = { x: 0, y: 0 }, transform = { x: 0, y: 0 };
+        let initialDistance = null; // For pinch-to-zoom
 
         function setTransform() { modalImage.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${scale})`; }
         function resetZoom() { scale = 1; transform = { x: 0, y: 0 }; setTransform(); }
+        
+        function getDistance(p1, p2) { return Math.sqrt(Math.pow(p2.clientX - p1.clientX, 2) + Math.pow(p2.clientY - p1.clientY, 2)); }
 
         function openImageViewer(src) {
             if (!src || src.endsWith('#') || !src.startsWith('data:image')) return;
@@ -1598,22 +1567,62 @@
             const xs = (e.clientX - rect.left - transform.x) / scale;
             const ys = (e.clientY - rect.top - transform.y) / scale;
             const delta = -e.deltaY;
-            (delta > 0) ? (scale *= 1.1) : (scale /= 1.1);
-            scale = Math.min(Math.max(1, scale), 10);
-            transform.x = e.clientX - rect.left - xs * scale;
-            transform.y = e.clientY - rect.top - ys * scale;
+            const newScale = delta > 0 ? scale * 1.1 : scale / 1.1;
+            const clampedScale = Math.min(Math.max(1, newScale), 10);
+            transform.x += (e.clientX - rect.left) - (xs * clampedScale + transform.x);
+            transform.y += (e.clientY - rect.top) - (ys * clampedScale + transform.y);
+            scale = clampedScale;
             if (scale === 1) transform = { x: 0, y: 0 };
             setTransform();
         }
 
-        imageWrapper.onpointerdown = function(e) { if (scale > 1) { e.preventDefault(); start = { x: e.clientX - transform.x, y: e.clientY - transform.y }; panning = true; imageWrapper.style.cursor = 'grabbing'; } }
-        imageWrapper.onpointerup = function() { panning = false; imageWrapper.style.cursor = 'grab'; }
-        imageWrapper.onpointerleave = function() { panning = false; imageWrapper.style.cursor = 'grab'; }
-        imageWrapper.onpointermove = function(e) { if (panning) { e.preventDefault(); transform.x = e.clientX - start.x; transform.y = e.clientY - start.y; setTransform(); } }
-        
-        zoomInBtn.onclick = () => { scale = Math.min(scale * 1.2, 10); setTransform(); };
-        zoomOutBtn.onclick = () => { scale = Math.max(scale / 1.2, 1); if (scale === 1) transform = {x: 0, y: 0}; setTransform(); };
+        imageWrapper.onpointerdown = function(e) { 
+            if (e.pointerType === 'mouse' || e.touches?.length === 1) {
+                e.preventDefault(); 
+                start = { x: e.clientX - transform.x, y: e.clientY - transform.y }; 
+                panning = true; 
+                imageWrapper.style.cursor = 'grabbing'; 
+            }
+            if (e.touches?.length === 2) {
+                initialDistance = getDistance(e.touches[0], e.touches[1]);
+            }
+        }
+        imageWrapper.onpointerup = function(e) { 
+            panning = false; 
+            imageWrapper.style.cursor = 'grab'; 
+            if (e.touches?.length < 2) initialDistance = null;
+        }
+        imageWrapper.onpointerleave = function() { panning = false; imageWrapper.style.cursor = 'grab'; initialDistance = null;}
+        imageWrapper.onpointermove = function(e) { 
+            if (panning) { 
+                e.preventDefault(); 
+                transform.x = e.clientX - start.x; 
+                transform.y = e.clientY - start.y; 
+                setTransform(); 
+            }
+            if (e.touches?.length === 2 && initialDistance) {
+                const newDist = getDistance(e.touches[0], e.touches[1]);
+                const scaleMultiplier = newDist / initialDistance;
+                const newScale = Math.min(Math.max(1, scale * scaleMultiplier), 10);
+                
+                // You might want to zoom towards the center of the pinch
+                // This part is complex, for simplicity, we zoom to center
+                const rect = imageWrapper.getBoundingClientRect();
+                const pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 
+                const xs = (pinchCenterX - rect.left - transform.x) / scale;
+                const ys = (pinchCenterY - rect.top - transform.y) / scale;
+
+                transform.x += (pinchCenterX - rect.left) - (xs * newScale + transform.x);
+                transform.y += (pinchCenterY - rect.top) - (ys * newScale + transform.y);
+
+                scale = newScale;
+                initialDistance = newDist;
+                setTransform();
+            }
+        }
+        
         document.addEventListener('click', (e) => { if (e.target.tagName === 'IMG' && e.target.closest('.portal-container, .modal-content')) { if (e.target.src && e.target.src.startsWith('data:image')) { e.preventDefault(); openImageViewer(e.target.src); } } });
         imageViewerModal.querySelector('.modal-close-btn').addEventListener('click', closeImageViewer);
         imageViewerModal.addEventListener('click', (e) => { if (e.target === imageViewerModal) closeImageViewer(); });
