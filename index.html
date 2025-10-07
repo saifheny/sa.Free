@@ -169,8 +169,8 @@
         }
 
         #main-landing-page {
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 100vh; padding: 40px 20px;
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
+            min-height: 100vh; padding: 15vh 20px 5vh 20px;
             background-color: transparent; /* Make background transparent to see canvas */
             position: relative;
         }
@@ -182,10 +182,7 @@
             font-size: clamp(2.2rem, 10vw, 4.5rem);
             letter-spacing: -0.05em;
             color: #fff;
-            text-shadow: 
-                -1px -1px 0 var(--accent-primary), 1px -1px 0 var(--accent-primary),
-                -1px 1px 0 var(--accent-primary), 1px 1px 0 var(--accent-primary),
-                4px 4px 0px #000;
+            text-shadow: 3px 3px 0px #000;
             display: flex;
             margin-bottom: 20px; /* Adjusted margin */
             transform: perspective(500px) rotateX(10deg);
@@ -201,7 +198,7 @@
             color: #fff;
             text-align: center;
             margin-bottom: 40px; /* Space before buttons */
-            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
         .landing-subtitles p {
             margin: 0;
@@ -928,9 +925,8 @@
         );
     }
     void cam(inout vec3 p) {
-        float k=P>0?.001:mix(.001,6.3,fract(T*.2));
-        p.yz*=rot(-.84+move.y*6.3/MN-sin(T*.1)*.25+.75-.1/k);
-        p.xz*=rot(.42-move.x*6.3/MN+T*.2);
+        p.yz*=rot(-.84 + move.y*6.3/MN + T * .15);
+        p.xz*=rot(.42 - move.x*6.3/MN + T * .2);
     }
     vec3 blur(vec3 p) {
         vec2 uv=(FC-.5*R)/MN;
