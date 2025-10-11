@@ -279,6 +279,12 @@
             background-color: var(--bg-primary); animation: fadeIn 0.6s ease-out; color: var(--text-primary);
             overflow-y: auto; padding: 40px 20px 120px 20px;
         }
+        #teacher-portal.auth-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
         .portal-content { max-width: 600px; margin: 0 auto; }
         .portal-container .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; background: var(--border-secondary);
@@ -506,9 +512,49 @@
         .modal-body { flex-grow: 1; }
         .modal-footer { margin-top: 20px; flex-shrink: 0; }
         
-        #teacher-review-modal .modal-content {
-            max-width: 800px; /* Wider for review */
+        #teacher-review-modal .modal-content, #certificates-modal .modal-content {
+            max-width: 800px;
         }
+        #certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .certificate-item {
+            position: relative;
+        }
+        .certificate-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-primary);
+        }
+        .delete-cert-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px !important;
+            height: 25px !important;
+            padding: 0 !important;
+            font-size: 14px !important;
+            border-radius: 50% !important;
+            background-color: var(--danger-primary) !important;
+            color: #fff !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #honor-roll-container .honor-test-section {
+            margin-bottom: 30px;
+        }
+         #honor-roll-container h3 {
+            text-align: right;
+            border-bottom: 2px solid var(--border-primary);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+         }
+
 
         /* --- Image Viewer Modal --- */
         .image-modal-overlay {
@@ -800,7 +846,7 @@
     </div>
 
     <!-- ======== Main Landing Page Section ======== -->
-    <main id="main-landing-page">
+    <main id="main-landing-page" class="hidden">
         <h2 class="landing-title glass-text-effect">اختر بوابتك للتعلم</h2>
         <div class="role-selection">
             <div id="show-teacher-portal" class="glass-container glass-button">
@@ -866,7 +912,12 @@
                     </div>
                     <div id="my-tests-container"></div>
                 </div>
-                <div id="teacher-results-content" class="tab-content hidden"><h2>نتائج الطلاب</h2><select id="results-test-selector"></select><div id="student-results-container"></div></div>
+                <div id="teacher-results-content" class="tab-content hidden">
+                    <h2>نتائج الطلاب</h2>
+                    <select id="results-test-selector"></select>
+                    <div id="certificates-management-area" style="margin: 15px 0;"></div>
+                    <div id="student-results-container"></div>
+                </div>
                 <div id="teacher-create-test-content" class="tab-content hidden">
                     <h2 id="create-edit-title">إنشاء اختبار جديد</h2>
                     <label for="test-name">اسم الاختبار:</label><input type="text" id="test-name" />
@@ -876,6 +927,7 @@
                     <div class="checkbox-container"><input type="checkbox" id="prevent-go-back-checkbox"><label for="prevent-go-back-checkbox">منع الطالب من الرجوع للخلف</label></div>
                     <div class="checkbox-container"><input type="checkbox" id="shuffle-questions-checkbox"><label for="shuffle-questions-checkbox">ترتيب الأسئلة عشوائيًا</label></div>
                     <div class="checkbox-container"><input type="checkbox" id="fateful-test-checkbox"><label for="fateful-test-checkbox">اختبار مصيري (أمان عالي)</label></div>
+                    <div class="checkbox-container"><input type="checkbox" id="enable-certificates-checkbox"><label for="enable-certificates-checkbox">تفعيل قسم الشهادات (قائمة الشرف)</label></div>
                     <hr/><h3>إضافة سؤال جديد</h3>
                     <div style="display: flex; border: 1px solid var(--border-primary); border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
                         <button class="switch-button active" data-type="mcq" style="flex:1; padding:10px; background: var(--accent-primary); border:none; color: #fff; cursor: pointer; transition: all 0.3s ease;">سؤال اختياري</button>
@@ -897,7 +949,7 @@
                         <label for="question-points" style="margin: 0; flex-shrink: 0;">درجات السؤال:</label>
                         <input type="number" id="question-points" min="1" placeholder="1" style="margin: 0; width: 80px;">
                         <button id="add-question-btn" class="btn-secondary" style="margin: 0; flex-grow: 1;">إضافة سؤال للقائمة</button>
-                        <button id="cancel-question-edit-btn" class="btn-secondary hidden" style="margin: 0; width: auto; background: #5a6268; border-color: #495057;">إلغاء التعديل</button>
+                        <button id="cancel-question-edit-btn" class="btn-secondary hidden" style="margin: 0; width: auto; background-color: #5a6268; border-color: #495057;">إلغاء التعديل</button>
                     </div>
                     <div id="questions-list-container" style="margin-top: 15px;"></div>
                     <button id="save-test-btn" class="btn-primary" style="margin-top: 20px; background: var(--success-gradient); border-bottom-color: var(--success-border);">حفظ الاختبار</button>
@@ -927,6 +979,18 @@
                 <button id="teacher-update-btn" class="btn-primary" style="margin-top: 10px;">تحديث الحساب</button>
             </div>
         </div>
+        <div id="certificates-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="modal-close-btn">&times;</button>
+                <h2>إدارة شهادات التقدير</h2>
+                <label for="cert-upload-input" class="file-input-label"><i class="fas fa-upload"></i> <span>اختر صور الشهادات</span></label>
+                <input type="file" id="cert-upload-input" accept="image/*" multiple class="hidden">
+                <button id="upload-certs-btn" class="btn-primary" style="margin-top: 15px;">رفع الصور المختارة</button>
+                <hr>
+                <h3>الشهادات المرفوعة حاليًا</h3>
+                <div id="certificates-grid"></div>
+            </div>
+        </div>
         <nav class="bottom-nav hidden" id="teacher-bottom-nav">
             <button class="nav-btn active" data-target="teacher-tests-content"><i class="fas fa-file-alt"></i><span>الاختبارات</span></button>
             <button class="nav-btn" data-target="teacher-results-content"><i class="fas fa-poll-h"></i><span>النتائج</span></button>
@@ -937,8 +1001,7 @@
     <!-- ======== Student Portal Section (Initially Hidden) ======== -->
     <div id="student-portal" class="portal-container hidden">
          <div class="portal-content">
-             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1 style="font-size:1.8rem; margin:0;"><i class="fas fa-graduation-cap"></i> منصة الاختبارات</h1>
+             <div style="display:flex; justify-content:flex-end; align-items:center; margin-bottom:20px;">
                 <div class="header-icons" style="position: static; display: flex; gap: 10px;">
                      <button class="icon-btn theme-toggle-btn" title="تبديل المظهر"><i class="fas fa-sun"></i></button>
                      <div class="header-menu-container">
@@ -983,6 +1046,10 @@
                     <div id="available-tests-container"></div>
                 </div>
                 <div class="tab-content hidden" id="student-results-content"><h2>نتائجي السابقة</h2><div id="my-student-results-container-wrapper"><div id="my-student-results-container"></div></div></div>
+                <div class="tab-content hidden" id="student-honor-roll-content">
+                    <h2><i class="fas fa-trophy"></i> قائمة الشرف</h2>
+                    <div id="honor-roll-container"></div>
+                </div>
             </section>
             <section id="take-test-section" class="hidden">
                 <h2 id="current-test-title"></h2>
@@ -1033,6 +1100,7 @@
          <nav class="bottom-nav hidden" id="student-bottom-nav">
             <button class="nav-btn active" data-target="student-tests-content"><i class="fas fa-book-open"></i><span>الاختبارات</span></button>
             <button class="nav-btn" data-target="student-results-content"><i class="fas fa-poll-h"></i><span>نتائجي</span></button>
+            <button class="nav-btn" data-target="student-honor-roll-content"><i class="fas fa-trophy"></i><span>قائمة الشرف</span></button>
         </nav>
     </div>
     
@@ -1140,6 +1208,7 @@
         const app = initializeApp(firebaseConfig);
         getAnalytics(app);
         const db = getDatabase(app);
+        const appUrl = "https://apk.e-droid.net/apk/app3760290-c4w5f2.apk?v=5";
 
         const mainLandingPage = document.getElementById('main-landing-page');
         const teacherPortal = document.getElementById('teacher-portal');
@@ -1151,7 +1220,6 @@
         
         const getBase64 = (file) => new Promise((resolve, reject) => { const reader=new FileReader();reader.readAsDataURL(file);reader.onload=()=>resolve(reader.result);reader.onerror=e=>reject(e) });
         
-        // --- Enhanced Dialog Logic ---
         const alertCont = document.getElementById('custom-alert-container');
         const confirmCont = document.getElementById('custom-confirm-container');
         const appInstallPrompt = document.getElementById('app-install-prompt-modal');
@@ -1173,7 +1241,6 @@
                 const okBtn = confirmCont.querySelector('#custom-confirm-ok-btn');
                 const cancelBtn = confirmCont.querySelector('#custom-confirm-cancel-btn');
                 
-                // Clone and replace to remove old event listeners, ensuring it only fires once.
                 const newOkBtn = okBtn.cloneNode(true);
                 okBtn.parentNode.replaceChild(newOkBtn, okBtn);
                 const newCancelBtn = cancelBtn.cloneNode(true);
@@ -1190,24 +1257,18 @@
 
 
         async function sharePlatform() {
-            const shareData = {
-                title: 'منصة الاختبارات الذكية',
-                text: 'اكتشف بوابة التعلم الذكي التي تدمج التكنولوجيا بالتعليم!',
-                url: window.location.origin + window.location.pathname,
-            };
             try {
                 if (navigator.share) {
-                    await navigator.share(shareData);
+                    await navigator.share({ text: `تفضل رابط التطبيق: ${appUrl}` });
                 } else {
-                    await navigator.clipboard.writeText(shareData.url);
-                    showCustomAlert('تم النسخ', 'تم نسخ رابط المنصة بنجاح!');
+                    await navigator.clipboard.writeText(appUrl);
+                    showCustomAlert('تم النسخ', 'تم نسخ رابط التطبيق بنجاح!');
                 }
             } catch (err) {
                 console.error("Share failed:", err);
             }
         }
         
-        // --- THEME SWITCHER LOGIC ---
         const themeToggleButtons = document.querySelectorAll('.theme-toggle-btn');
         const body = document.body;
 
@@ -1230,7 +1291,7 @@
             const currentTheme = body.classList.contains('desert-mode') ? 'desert' : 'night';
             const newTheme = currentTheme === 'desert' ? 'night' : 'desert';
             applyTheme(newTheme);
-            localStorage.setItem('preferredTheme', newTheme); // Save user's manual choice
+            localStorage.setItem('preferredTheme', newTheme);
         }
 
         function initializeTheme() {
@@ -1259,31 +1320,41 @@
             const resultsTestSelector = teacherPortal.querySelector("#results-test-selector"), studentResultsContainer = teacherPortal.querySelector("#student-results-container");
             const createTestSection = teacherPortal.querySelector('#teacher-create-test-content'), testNameInput = teacherPortal.querySelector("#test-name"), testGradeSelect = teacherPortal.querySelector("#test-grade"), testDurationInput = teacherPortal.querySelector("#test-duration");
             const preventGoBackCheckbox = teacherPortal.querySelector("#prevent-go-back-checkbox"), shuffleQuestionsCheckbox = teacherPortal.querySelector('#shuffle-questions-checkbox'), fatefulTestCheckbox = document.getElementById('fateful-test-checkbox');
+            const certificatesCheckbox = document.getElementById('enable-certificates-checkbox');
             const questionText = teacherPortal.querySelector("#question-text"), optionInputs = teacherPortal.querySelectorAll(".option-input"), correctAnswerInput = teacherPortal.querySelector("#correct-answer"), questionPointsInput = teacherPortal.querySelector("#question-points");
             const questionsListContainer = teacherPortal.querySelector("#questions-list-container"), questionImageInput = teacherPortal.querySelector("#question-image-input"), modelAnswerImageInput = teacherPortal.querySelector("#model-answer-image-input");
             const addQuestionBtn = teacherPortal.querySelector('#add-question-btn'), cancelQuestionEditBtn = teacherPortal.querySelector('#cancel-question-edit-btn'), saveTestBtn = teacherPortal.querySelector('#save-test-btn'), cancelTestEditBtn = teacherPortal.querySelector('#cancel-test-edit-btn');
             const reviewModal = teacherPortal.querySelector('#teacher-review-modal'), reviewModalBody = teacherPortal.querySelector('#review-modal-body'), reviewModalTitle = teacherPortal.querySelector('#review-modal-title'), reviewModalFooter = teacherPortal.querySelector('#review-modal-footer'), finalizeGradesBtn = teacherPortal.querySelector('#finalize-grades-btn');
             const updateNameInput = teacherPortal.querySelector('#teacher-update-name'), updatePasswordInput = teacherPortal.querySelector('#teacher-update-password'), updateBtn = teacherPortal.querySelector('#teacher-update-btn');
             const refreshBtn = teacherPortal.querySelector('#teacher-refresh-btn');
+            const certsModal = document.getElementById('certificates-modal'), certsGrid = document.getElementById('certificates-grid'), uploadCertsBtn = document.getElementById('upload-certs-btn'), certUploadInput = document.getElementById('cert-upload-input');
+            let currentCertsTestId = null;
 
             let currentUser = null, myTests = {}, questionsArray = [], currentQuestionImageBase64 = null, currentModelAnswerImageBase64 = null, currentQuestionType = 'mcq', currentEditingTestId = null, currentEditingQuestionIndex = -1;
             
             const loggedInUser = localStorage.getItem('loggedInTeacher');
             if (loggedInUser) { currentUser = loggedInUser; showSection(dashboardSection); updateDashboard(); } else { showSection(loginSection); }
 
-            function showSection(section) { allSections.forEach(s=>s.classList.add('hidden')); if(section) section.classList.remove('hidden'); bottomNav.classList.toggle('hidden', !section || section.id !== 'teacher-dashboard-section'); };
+            function showSection(section) { 
+                allSections.forEach(s=>s.classList.add('hidden')); 
+                if(section) section.classList.remove('hidden'); 
+                bottomNav.classList.toggle('hidden', !section || section.id !== 'teacher-dashboard-section'); 
+                teacherPortal.classList.toggle('auth-view', section === loginSection || section === registerSection);
+            };
             const showLoadingSpinner = (container) => { container.innerHTML = `<div class="spinner"></div>`; };
             const navButtons = teacherPortal.querySelectorAll('.nav-btn');
             navButtons.forEach(button => { button.addEventListener('click', () => { navButtons.forEach(btn=>btn.classList.remove('active')); teacherPortal.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden')); button.classList.add('active'); teacherPortal.querySelector(`#${button.dataset.target}`).classList.remove('hidden'); if(button.dataset.target === 'teacher-create-test-content' && !currentEditingTestId) resetCreateFormState(); }); });
             const setDefaultTab = () => navButtons[0].click();
             
-            teacherPortal.querySelectorAll('.switch-button').forEach(btn => btn.addEventListener('click', () => {
-                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = 'var(--border-secondary)'; });
-                btn.classList.add('active'); btn.style.background = 'var(--accent-primary)'; currentQuestionType = btn.dataset.type;
-                teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq'); teacherPortal.querySelector("#essay-fields").classList.toggle('hidden', currentQuestionType !== 'essay');
+            teacherPortal.querySelectorAll('.switch-button').forEach(btn => btn.addEventListener('click', (e) => {
+                teacherPortal.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = 'var(--border-secondary)'; b.style.color = 'var(--text-primary)'; });
+                e.target.classList.add('active'); e.target.style.background = 'var(--accent-primary)'; e.target.style.color = '#fff';
+                currentQuestionType = e.target.dataset.type;
+                teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq');
+                teacherPortal.querySelector("#essay-fields").classList.toggle('hidden', currentQuestionType !== 'essay');
             }));
 
-            const clearQuestionForm = () => { questionText.value=""; questionImageInput.value=""; modelAnswerImageInput.value=""; currentQuestionImageBase64=null; currentModelAnswerImageBase64=null; teacherPortal.querySelectorAll('.image-preview-container').forEach(c=>c.classList.add('hidden')); teacherPortal.querySelectorAll('.image-preview').forEach(i=>i.src='#'); optionInputs.forEach(i=>i.value=""); correctAnswerInput.value=""; questionPointsInput.value = ""; currentEditingQuestionIndex = -1; addQuestionBtn.textContent = 'إضافة سؤال للقائمة'; cancelQuestionEditBtn.classList.add('hidden'); };
+            const clearQuestionForm = () => { questionText.value=""; questionImageInput.value=""; modelAnswerImageInput.value=""; currentQuestionImageBase64=null; currentModelAnswerImageBase64=null; teacherPortal.querySelectorAll('.image-preview-container').forEach(c=>{c.classList.add('hidden'); c.querySelector('img').src = '#'}); optionInputs.forEach(i=>i.value=""); correctAnswerInput.value=""; questionPointsInput.value = ""; currentEditingQuestionIndex = -1; addQuestionBtn.textContent = 'إضافة سؤال للقائمة'; cancelQuestionEditBtn.classList.add('hidden'); };
             
             async function updateDashboard() { if(!currentUser) return; teacherNameSpan.textContent = currentUser; menuIcon.classList.remove('hidden'); setDefaultTab(); showLoadingSpinner(myTestsContainer); const testsRef = ref(db, `tests/${currentUser}`); onValue(testsRef, (snapshot) => { myTests = snapshot.exists() ? snapshot.val() : {}; renderMyTests(); populateResultsSelector(); }); initChatSystem(currentUser, 'teacher'); }
             
@@ -1310,7 +1381,7 @@
                             <button class="action-btn btn-secondary btn-danger" data-action="delete" title="حذف" style="flex-grow: 1;"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
-                    testCard.querySelector('[data-action="share"]').onclick = () => copyTestLink(currentUser, testId);
+                    testCard.querySelector('[data-action="share"]').onclick = () => shareTest(test.name);
                     testCard.querySelector('[data-action="results"]').onclick = () => { navButtons[1].click(); resultsTestSelector.value = testId; loadStudentResultsForTest(testId); };
                     testCard.querySelector('[data-action="edit"]').onclick = () => startEditingTest(testId, test);
                     testCard.querySelector('[data-action="delete"]').onclick = async () => { if (await showCustomConfirm("تأكيد الحذف", "هل أنت متأكد من حذف هذا الاختبار نهائيًا؟ سيتم حذف جميع نتائج الطلاب المرتبطة به.")) deleteTest(testId); };
@@ -1337,7 +1408,7 @@
                     });
                 };
                 update();
-                countdownInterval = setInterval(update, 60000); // Update every minute
+                countdownInterval = setInterval(update, 60000);
             }
 
             async function deleteTest(testId) { try { await remove(ref(db, `tests/${currentUser}/${testId}`)); await remove(ref(db, `results/${currentUser}/${testId}`)); showCustomAlert("نجاح", "تم حذف الاختبار بنجاح."); } catch (e) { showCustomAlert("خطأ", "حدث خطأ أثناء حذف الاختبار."); } }
@@ -1346,19 +1417,29 @@
                 navButtons[2].click(); currentEditingTestId = testId;
                 createTestSection.querySelector('#create-edit-title').textContent = "تعديل الاختبار"; saveTestBtn.textContent = "تحديث الاختبار"; cancelTestEditBtn.classList.remove('hidden');
                 testNameInput.value = testData.name; testGradeSelect.value = testData.grade; testDurationInput.value = testData.duration;
-                preventGoBackCheckbox.checked = !!testData.preventGoBack; shuffleQuestionsCheckbox.checked = !!testData.shuffle; fatefulTestCheckbox.checked = !!testData.fateful;
+                preventGoBackCheckbox.checked = !!testData.preventGoBack; shuffleQuestionsCheckbox.checked = !!testData.shuffle; fatefulTestCheckbox.checked = !!testData.fateful; certificatesCheckbox.checked = !!testData.certificates;
                 questionsArray = [...(testData.questions || [])]; renderQuestionsList();
             }
 
-            function resetCreateFormState() { currentEditingTestId = null; createTestSection.querySelector('#create-edit-title').textContent = "إنشاء اختبار جديد"; saveTestBtn.textContent = "حفظ الاختبار"; cancelTestEditBtn.classList.add('hidden'); testNameInput.value = ""; testGradeSelect.value = ""; testDurationInput.value = ""; preventGoBackCheckbox.checked=false; shuffleQuestionsCheckbox.checked=false; fatefulTestCheckbox.checked=false; questionsArray = []; renderQuestionsList(); clearQuestionForm(); }
+            function resetCreateFormState() { currentEditingTestId = null; createTestSection.querySelector('#create-edit-title').textContent = "إنشاء اختبار جديد"; saveTestBtn.textContent = "حفظ الاختبار"; cancelTestEditBtn.classList.add('hidden'); testNameInput.value = ""; testGradeSelect.value = ""; testDurationInput.value = ""; preventGoBackCheckbox.checked=false; shuffleQuestionsCheckbox.checked=false; fatefulTestCheckbox.checked=false; certificatesCheckbox.checked=false; questionsArray = []; renderQuestionsList(); clearQuestionForm(); }
             cancelTestEditBtn.onclick = resetCreateFormState;
 
             async function loadStudentResultsForTest(testId) {
-                if (!testId) { studentResultsContainer.innerHTML = ""; return; }
+                const certsManagementContainer = document.getElementById('certificates-management-area');
+                certsManagementContainer.innerHTML = '';
+                studentResultsContainer.innerHTML = "";
+                if (!testId) return;
+
+                const testData = myTests[testId];
+                if (testData && testData.certificates) {
+                    certsManagementContainer.innerHTML = `<button id="manage-certs-btn" class="btn-secondary" style="width: auto; padding: 10px 20px;">إدارة شهادات التقدير</button>`;
+                    document.getElementById('manage-certs-btn').onclick = () => openCertificatesModal(testId);
+                }
+
                 showLoadingSpinner(studentResultsContainer);
                 const snapshot = await get(ref(db, `results/${currentUser}/${testId}`));
-                studentResultsContainer.innerHTML = "";
                 if (!snapshot.exists()) { studentResultsContainer.innerHTML = "<p>لا توجد نتائج لهذا الاختبار بعد.</p>"; return; }
+                studentResultsContainer.innerHTML = "";
                 Object.entries(snapshot.val()).forEach(([studentName, result]) => {
                     const div = document.createElement('div'); div.className = 'list-item';
                     const pendingIndicator = result.status === 'pending' ? `<span style="color:var(--warning-primary); font-weight:bold; margin-inline:10px;">(قيد المراجعة)</span>` : '';
@@ -1376,7 +1457,8 @@
                     const studentAnswer = answers[index] || {}; let reviewHtml = '';
                     if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(35, 134, 54, 0.2)' : 'rgba(218, 54, 51, 0.2)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
                     else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:var(--border-secondary); padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
-                    const qDiv = document.createElement('div'); qDiv.className = 'list-item'; qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;';
+                    const qDiv = document.createElement('div'); qDiv.className = 'list-item';
+                    qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;';
                     qDiv.innerHTML = `<h4 style="margin-bottom:10px;">س ${index+1} (${q.points || 1} درجات): ${q.question}</h4>${q.image ? `<img class="question-image-preview" src="${q.image}">` : ''}${reviewHtml}`;
                     reviewModalBody.appendChild(qDiv);
                 });
@@ -1413,33 +1495,99 @@
                 });
             };
 
-            const startEditingQuestion = (index) => { const q = questionsArray[index]; if (!q) return; currentEditingQuestionIndex = index; questionText.value = q.question; questionPointsInput.value = q.points; addQuestionBtn.textContent = "تحديث السؤال"; cancelQuestionEditBtn.classList.remove('hidden'); };
+            const startEditingQuestion = (index) => {
+                const q = questionsArray[index];
+                if (!q) return;
+                currentEditingQuestionIndex = index;
+                questionText.value = q.question || '';
+                questionPointsInput.value = q.points || 1;
+                
+                const typeButton = teacherPortal.querySelector(`.switch-button[data-type="${q.type}"]`);
+                if(typeButton) typeButton.click();
+
+                currentQuestionImageBase64 = q.image || null;
+                const qImgPreviewContainer = questionImageInput.nextElementSibling;
+                if (q.image) {
+                    qImgPreviewContainer.querySelector('img').src = q.image;
+                    qImgPreviewContainer.classList.remove('hidden');
+                } else {
+                    qImgPreviewContainer.classList.add('hidden');
+                }
+
+                if (q.type === 'mcq') {
+                    optionInputs.forEach((input, i) => input.value = q.options[i] || '');
+                    correctAnswerInput.value = q.correct || '';
+                } else if (q.type === 'essay') {
+                    currentModelAnswerImageBase64 = q.modelAnswerImage || null;
+                    const mImgPreviewContainer = modelAnswerImageInput.nextElementSibling;
+                     if (q.modelAnswerImage) {
+                        mImgPreviewContainer.querySelector('img').src = q.modelAnswerImage;
+                        mImgPreviewContainer.classList.remove('hidden');
+                    } else {
+                        mImgPreviewContainer.classList.add('hidden');
+                    }
+                }
+
+                addQuestionBtn.textContent = "تحديث السؤال";
+                cancelQuestionEditBtn.classList.remove('hidden');
+                questionText.scrollIntoView({ behavior: 'smooth' });
+            };
             cancelQuestionEditBtn.onclick = clearQuestionForm;
 
             addQuestionBtn.onclick = () => {
-                const q = questionText.value.trim(), points = parseInt(questionPointsInput.value) || 1;
-                if (!q && !currentQuestionImageBase64) { showCustomAlert("خطأ", "يرجى كتابة نص السؤال أو إرفاق صورة له على الأقل."); return; }
+                const q = questionText.value.trim(), points = parseInt(questionPointsInput.value);
+                if ((!q && !currentQuestionImageBase64) || !points || points < 1) { showCustomAlert("خطأ", "يرجى كتابة نص السؤال أو إرفاق صورة، وتحديد درجة صحيحة للسؤال."); return; }
+                
                 let questionData = { question: q, type: currentQuestionType, image: currentQuestionImageBase64, points: points };
+                
                 if (currentQuestionType === 'mcq') {
                     const opts = Array.from(optionInputs).map(i => i.value.trim()), correct = parseInt(correctAnswerInput.value);
-                    if (opts.some(o => o === "") || !correct || correct < 1 || correct > 4) { showCustomAlert("خطأ", "يرجى ملء الخيارات الأربعة وتحديد الإجابة الصحيحة (1-4)."); return; }
+                    if (opts.some(o => o === "")) { showCustomAlert("خطأ", "يرجى ملء جميع الخيارات الأربعة."); return; }
+                    if (!correct || correct < 1 || correct > 4) { showCustomAlert("خطأ", "يرجى تحديد رقم الإجابة الصحيحة (من 1 إلى 4)."); return; }
                     questionData = { ...questionData, options: opts, correct };
-                } else { questionData.modelAnswerImage = currentModelAnswerImageBase64; }
-                if (currentEditingQuestionIndex > -1) questionsArray[currentEditingQuestionIndex] = questionData; else questionsArray.push(questionData);
-                renderQuestionsList(); clearQuestionForm();
+                } else { 
+                    questionData.modelAnswerImage = currentModelAnswerImageBase64; 
+                }
+                
+                if (currentEditingQuestionIndex > -1) {
+                    questionsArray[currentEditingQuestionIndex] = questionData;
+                } else {
+                    questionsArray.push(questionData);
+                }
+                
+                renderQuestionsList(); 
+                clearQuestionForm();
             };
 
-            saveTestBtn.onclick = async (e) => {
+            saveTestBtn.onclick = (e) => {
                 const button = e.target, originalText = button.textContent;
-                button.disabled = true; button.textContent = "جاري الحفظ...";
-                const n=testNameInput.value.trim(),g=testGradeSelect.value,d=testDurationInput.value.trim(),p=preventGoBackCheckbox.checked, s=shuffleQuestionsCheckbox.checked, f=fatefulTestCheckbox.checked;
-                if(!n||!g||!d||questionsArray.length===0){ showCustomAlert("خطأ", "يرجى ملء تفاصيل الاختبار وإضافة سؤال واحد على الأقل."); button.disabled = false; button.textContent = originalText; return; }
-                const testData = { name:n, grade:g, duration:parseInt(d), preventGoBack:p, shuffle: s, fateful: f, questions:questionsArray, timestamp:Date.now() };
-                try {
-                    if (currentEditingTestId) await set(ref(db, `tests/${currentUser}/${currentEditingTestId}`), testData); else await push(ref(db, `tests/${currentUser}`), testData);
-                    showCustomAlert("نجاح", `تم ${currentEditingTestId ? 'تحديث' : 'حفظ'} الاختبار بنجاح!`);
-                    resetCreateFormState(); setDefaultTab();
-                } catch(error) { showCustomAlert("خطأ", "حدث خطأ أثناء الحفظ."); } finally { button.disabled = false; button.textContent = originalText; }
+                const n = testNameInput.value.trim(), g = testGradeSelect.value, d = testDurationInput.value.trim();
+                if (!n || !g || !d || questionsArray.length === 0) {
+                    showCustomAlert("خطأ", "يرجى ملء تفاصيل الاختبار وإضافة سؤال واحد على الأقل.");
+                    return;
+                }
+                button.disabled = true;
+                button.textContent = "جاري الحفظ...";
+                window.location.href = 'go:1';
+                setTimeout(async () => {
+                    const p = preventGoBackCheckbox.checked, s = shuffleQuestionsCheckbox.checked, f = fatefulTestCheckbox.checked, c = certificatesCheckbox.checked;
+                    const testData = { name: n, grade: g, duration: parseInt(d), preventGoBack: p, shuffle: s, fateful: f, certificates: c, questions: questionsArray, timestamp: Date.now() };
+                    try {
+                        if (currentEditingTestId) {
+                            await set(ref(db, `tests/${currentUser}/${currentEditingTestId}`), testData);
+                        } else {
+                            await push(ref(db, `tests/${currentUser}`), testData);
+                        }
+                        showCustomAlert("نجاح", `تم ${currentEditingTestId ? 'تحديث' : 'حفظ'} الاختبار بنجاح!`);
+                        resetCreateFormState();
+                        setDefaultTab();
+                    } catch (error) {
+                        showCustomAlert("خطأ", "حدث خطأ أثناء الحفظ.");
+                    } finally {
+                        button.disabled = false;
+                        button.textContent = originalText;
+                    }
+                }, 5000);
             };
             
             async function authUser(name, password, isRegister) { 
@@ -1454,7 +1602,6 @@
             teacherPortal.querySelector('#teacher-login-btn').onclick = () => authUser(teacherPortal.querySelector("#teacher-login-name").value.trim(), teacherPortal.querySelector("#teacher-login-password").value.trim(), false);
             teacherPortal.querySelector('#teacher-register-btn').onclick = () => authUser(teacherPortal.querySelector("#teacher-register-name").value.trim(), teacherPortal.querySelector("#teacher-register-password").value.trim(), true);
             
-            // --- Menu Logic ---
             menuIcon.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
             document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target) && !e.target.closest('.theme-toggle-btn')) dropdownMenu.classList.remove('show'); });
             
@@ -1479,7 +1626,7 @@
                         if ((await get(ref(db, `users/${newName}`))).exists()) { showCustomAlert("خطأ", "هذا الاسم مستخدم بالفعل."); return; }
                         const oldData = (await get(ref(db, `users/${currentUser}`))).val();
                         const dataToMove = { [`users/${newName}`]: { ...oldData, ...updates }, [`users/${currentUser}`]: null };
-                        for (const path of ['tests', 'results', 'messageLimits']) {
+                        for (const path of ['tests', 'results', 'messageLimits', 'certificates']) {
                             const snap = await get(ref(db, `${path}/${currentUser}`));
                             if (snap.exists()) { dataToMove[`${path}/${newName}`] = snap.val(); dataToMove[`${path}/${currentUser}`] = null; }
                         }
@@ -1489,6 +1636,68 @@
                         setTimeout(() => window.location.href = window.location.pathname, 1500);
                     } else { await update(ref(db, `users/${currentUser}`), updates); showCustomAlert("نجاح", "تم تحديث كلمة المرور بنجاح!"); settingsModal.classList.remove('visible'); }
                 } catch (e) { showCustomAlert("خطأ", "حدث خطأ أثناء تحديث الحساب."); }
+            };
+
+            // Certificate Modal Logic
+            function openCertificatesModal(testId) {
+                currentCertsTestId = testId;
+                certUploadInput.value = ''; // Reset file input
+                loadCertificatesForManagement(testId);
+                certsModal.classList.add('visible');
+            }
+            certsModal.querySelector('.modal-close-btn').onclick = () => certsModal.classList.remove('visible');
+            
+            function loadCertificatesForManagement(testId) {
+                const certsRef = ref(db, `certificates/${currentUser}/${testId}`);
+                onValue(certsRef, (snapshot) => {
+                    certsGrid.innerHTML = '';
+                    if (snapshot.exists()) {
+                        snapshot.forEach(childSnap => {
+                            const certKey = childSnap.key;
+                            const certUrl = childSnap.val();
+                            const item = document.createElement('div');
+                            item.className = 'certificate-item';
+                            item.innerHTML = `
+                                <img src="${certUrl}" class="question-image-preview">
+                                <button class="delete-cert-btn" data-key="${certKey}">&times;</button>
+                            `;
+                            item.querySelector('.delete-cert-btn').onclick = async () => {
+                                if (await showCustomConfirm('تأكيد الحذف', 'هل أنت متأكد من حذف هذه الشهادة؟')) {
+                                    remove(ref(db, `certificates/${currentUser}/${testId}/${certKey}`));
+                                }
+                            };
+                            certsGrid.appendChild(item);
+                        });
+                    } else {
+                        certsGrid.innerHTML = '<p>لم يتم رفع أي شهادات لهذا الاختبار بعد.</p>';
+                    }
+                });
+            }
+
+            uploadCertsBtn.onclick = async () => {
+                if (!certUploadInput.files.length) {
+                    showCustomAlert('خطأ', 'الرجاء اختيار صورة واحدة على الأقل.');
+                    return;
+                }
+                uploadCertsBtn.disabled = true;
+                uploadCertsBtn.textContent = 'جاري الرفع...';
+
+                const certsRef = ref(db, `certificates/${currentUser}/${currentCertsTestId}`);
+                const promises = Array.from(certUploadInput.files).map(async (file) => {
+                    const base64 = await getBase64(file);
+                    return push(certsRef, base64);
+                });
+                
+                try {
+                    await Promise.all(promises);
+                    showCustomAlert('نجاح', 'تم رفع الشهادات بنجاح.');
+                    certUploadInput.value = '';
+                } catch (error) {
+                    showCustomAlert('خطأ', 'حدث خطأ أثناء رفع بعض الصور.');
+                } finally {
+                    uploadCertsBtn.disabled = false;
+                    uploadCertsBtn.textContent = 'رفع الصور المختارة';
+                }
             };
         }
 
@@ -1505,14 +1714,65 @@
             const refreshBtn = studentPortal.querySelector('#refresh-tests-btn');
             const backToDashboardBtn = studentPortal.querySelector('#back-to-dashboard-btn');
             const backFromReviewBtn = studentPortal.querySelector('#back-to-dashboard-from-review-btn');
+            const honorRollContainer = document.getElementById('honor-roll-container');
 
             let currentStudent=null,takenTests={},allTests={},currentTest=null,testInterval=null,totalSec=0,remainSec=0,answers=[], qIndex=0, isDeepLinkSession = false;
+
+            async function showLastSubmittedResult({ testId, teacherId }) {
+                const testRef = ref(db, `tests/${teacherId}/${testId}`);
+                const testSnap = await get(testRef);
+                if (!testSnap.exists()) {
+                    sessionStorage.removeItem('lastSubmittedTest');
+                    showSection(dashboard);
+                    loadDashboard();
+                    return;
+                }
+                currentTest = { ...testSnap.val(), id: testId, teacherId, isPractice: false };
+
+                const resultRef = ref(db, `studentResults/${currentStudent}/${testId}`);
+                const resultSnap = await get(resultRef);
+                if (!resultSnap.exists()) {
+                     sessionStorage.removeItem('lastSubmittedTest');
+                     showSection(dashboard);
+                     loadDashboard();
+                     return;
+                }
+                const resultData = resultSnap.val();
+                finalScore.textContent = `درجتك: ${resultData.score}`;
+
+                if (resultData.status === 'pending') {
+                    feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: var(--warning-primary);";
+                    feedbackMsg.textContent = "تم إرسال إجاباتك المقالية للمراجعة! هذه نتيجتك المبدئية.";
+                } else {
+                    const mcqScore = resultData.mcqScore;
+                    const totalTestPoints = resultData.totalPoints;
+                    const percentage = totalTestPoints > 0 ? (mcqScore / totalTestPoints) * 100 : 0;
+                    feedbackMsg.style.background = 'var(--bg-tertiary)';
+                    feedbackMsg.style.color = 'var(--text-primary)';
+                    feedbackMsg.style.textAlign = 'center';
+                    if (percentage < 60) {
+                        feedbackMsg.innerHTML = `
+                            <p style="margin-bottom: 10px;">يا لهوي اعمل ايه معاك تاني بقى... حاول تحسن من نفسك شويه</p>
+                            <img src="https://i.postimg.cc/HntKF5f2/download-13.png" style="max-width: 150px; border-radius: 8px;">
+                        `;
+                    } else {
+                        feedbackMsg.innerHTML = `
+                            <p style="margin-bottom: 10px;">مش بطال يلا ماشي</p>
+                            <img src="https://i.postimg.cc/2862CPvY/download-12.png" style="max-width: 150px; border-radius: 8px;">
+                        `;
+                    }
+                }
+                showSection(result);
+            }
             
             const loggedInUser = localStorage.getItem('loggedInStudent');
             if(loggedInUser){
                 currentStudent = loggedInUser;
+                const lastSubmittedJSON = sessionStorage.getItem('lastSubmittedTest');
                 const savedExamStateJSON = sessionStorage.getItem('activeExamState');
-                if (savedExamStateJSON) {
+                if (lastSubmittedJSON) {
+                    showLastSubmittedResult(JSON.parse(lastSubmittedJSON));
+                } else if (savedExamStateJSON) {
                     const savedState = JSON.parse(savedExamStateJSON);
                     if (await showCustomConfirm("استئناف الامتحان", `لديك امتحان "${savedState.currentTest.name}" غير مكتمل. هل تود استئنافه؟`)) {
                         resumeTest(savedState);
@@ -1583,7 +1843,7 @@
                     shareIcon.className = 'action-icon';
                     shareIcon.innerHTML = `<i class="fas fa-share-alt"></i>`;
                     shareIcon.title = 'مشاركة رابط الاختبار';
-                    shareIcon.onclick = (e) => { e.stopPropagation(); copyTestLink(teacherId, testId); };
+                    shareIcon.onclick = (e) => { e.stopPropagation(); shareTest(test.name); };
 
                     actionsBar.append(startOrReviewIcon, retakeIcon, teacherIcon, shareIcon);
                     
@@ -1633,7 +1893,7 @@
                 totalSec = currentTest.duration * 60;
                 answers = savedState.answers;
                 qIndex = savedState.qIndex;
-                isDeepLinkSession = savedState.isDeepLinkSession; // Restore deep link status
+                isDeepLinkSession = savedState.isDeepLinkSession;
                 
                 setupTestUI();
             }
@@ -1647,7 +1907,6 @@
                     timerDisplay.textContent = formatTime(remainSec);
                     timerProgress.style.width = ((remainSec / totalSec) * 100) + '%';
                     
-                    // Save state every second
                     sessionStorage.setItem('activeExamState', JSON.stringify({
                         currentTest, remainSec, answers, qIndex, isDeepLinkSession
                     }));
@@ -1688,7 +1947,7 @@
             prevQBtn.onclick=()=>{if(qIndex>0){saveCurrentAnswer();qIndex--;renderQuestion(qIndex)}};
             
             async function submitTest(timeUp=false){
-                sessionStorage.removeItem('activeExamState'); // Clear saved state on submission
+                sessionStorage.removeItem('activeExamState'); 
                 clearInterval(testInterval);
                 if(timeUp) showCustomAlert('انتهى الوقت!','تم تسليم إجاباتك الحالية.');
                 if(currentTest.preventGoBack) saveCurrentAnswer();
@@ -1698,7 +1957,6 @@
                 const scoreString = hasEssays ? `${mcqScore} / ${mcqTotalPoints} (مبدئي)` : `${mcqScore} / ${totalTestPoints}`;
                 finalScore.textContent = `درجتك: ${scoreString}`;
                 
-                // --- App Install Prompt Logic ---
                 const promptShown = localStorage.getItem('appInstallPromptShown');
                 if (!currentTest.isPractice && !promptShown) {
                     appInstallPrompt.classList.add('show');
@@ -1713,6 +1971,11 @@
                     await set(ref(db, `studentResults/${currentStudent}/${currentTest.id}`), resultObj); 
                     await set(ref(db, `results/${currentTest.teacherId}/${currentTest.id}/${currentStudent}`), resultObj);
                     takenTests[currentTest.id] = resultObj; 
+                    
+                    sessionStorage.setItem('lastSubmittedTest', JSON.stringify({
+                        testId: currentTest.id,
+                        teacherId: currentTest.teacherId
+                    }));
                     
                     if (hasEssays) { 
                         feedbackMsg.style.cssText = "background: rgba(255, 193, 7, 0.2); color: var(--warning-primary);"; 
@@ -1749,28 +2012,25 @@
             submitBtn.onclick=async (e)=>{ 
                 const button = e.target;
                 if (await showCustomConfirm('تأكيد التسليم', 'هل أنت متأكد من رغبتك في تسليم الاختبار؟')) { 
-                    button.disabled = true; // Prevent multiple clicks
-                    
-                    // 1. Open the link immediately
-                    window.location.href = 'go:1';
-                    
-                    // 2. Wait 5 seconds, then submit and show results
-                    setTimeout(() => {
-                        submitTest(false);
-                        button.disabled = false; // Re-enable button after submission
-                    }, 5000);
+                    button.disabled = true;
+                    submitTest(false);
+                    button.disabled = false;
                 } 
             };
             
             const handleExitTestSession = () => {
-                if (isDeepLinkSession) {
-                    localStorage.removeItem('loggedInStudent');
-                    sessionStorage.clear();
-                    window.location.href = window.location.pathname;
-                } else {
-                    showSection(dashboard);
-                    loadDashboard();
-                }
+                window.location.href = 'go:1';
+                setTimeout(() => {
+                    sessionStorage.removeItem('lastSubmittedTest');
+                    if (isDeepLinkSession) {
+                        localStorage.removeItem('loggedInStudent');
+                        sessionStorage.clear();
+                        window.location.href = window.location.pathname;
+                    } else {
+                        showSection(dashboard);
+                        loadDashboard();
+                    }
+                }, 7000);
             };
 
             function renderReview(testData, studentAnswers){
@@ -1823,9 +2083,66 @@
                     handleExitTestSession();
                 }
             }
+            
+            async function loadHonorRoll() {
+                showLoading(honorRollContainer);
+                const testsSnap = await get(ref(db, 'tests'));
+                const certsSnap = await get(ref(db, 'certificates'));
+                
+                honorRollContainer.innerHTML = '';
+                let foundAny = false;
+
+                if (testsSnap.exists() && certsSnap.exists()) {
+                    const allTests = testsSnap.val();
+                    const allCerts = certsSnap.val();
+                    
+                    for (const teacherId in allTests) {
+                        for (const testId in allTests[teacherId]) {
+                            const test = allTests[teacherId][testId];
+                            if (test.certificates && allCerts[teacherId] && allCerts[teacherId][testId]) {
+                                foundAny = true;
+                                const testCerts = allCerts[teacherId][testId];
+                                const testSection = document.createElement('div');
+                                testSection.className = 'honor-test-section';
+                                testSection.innerHTML = `<h3>${test.name}</h3>`;
+                                
+                                const grid = document.createElement('div');
+                                grid.id = 'certificates-grid';
+                                
+                                for(const certKey in testCerts) {
+                                    const certUrl = testCerts[certKey];
+                                    const item = document.createElement('div');
+                                    item.className = 'certificate-item';
+                                    item.innerHTML = `<img src="${certUrl}" class="question-image-preview">`;
+                                    grid.appendChild(item);
+                                }
+                                testSection.appendChild(grid);
+                                honorRollContainer.appendChild(testSection);
+                            }
+                        }
+                    }
+                }
+                
+                if (!foundAny) {
+                    honorRollContainer.innerHTML = '<p>لا توجد شهادات تقدير متاحة للعرض حاليًا.</p>';
+                }
+            }
+            
             const formatTime=s=>{const m=Math.floor(s/60),r=s%60;return`${m.toString().padStart(2,'0')}:${r.toString().padStart(2,'0')}`};
             
-            const navButtons=studentPortal.querySelectorAll('.nav-btn');navButtons.forEach(b=>{b.addEventListener('click',()=>{navButtons.forEach(btn=>btn.classList.remove('active'));studentPortal.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));b.classList.add('active');studentPortal.querySelector(`#${b.dataset.target}`).classList.remove('hidden')})});
+            const navButtons=studentPortal.querySelectorAll('.nav-btn');
+            navButtons.forEach(b=>{
+                b.addEventListener('click',()=>{
+                    navButtons.forEach(btn=>btn.classList.remove('active'));
+                    studentPortal.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));
+                    b.classList.add('active');
+                    const targetId = b.dataset.target;
+                    studentPortal.querySelector(`#${targetId}`).classList.remove('hidden');
+                    if (targetId === 'student-honor-roll-content') {
+                        loadHonorRoll();
+                    }
+                })
+            });
             const setDefaultTab=()=>navButtons[0].click();
             studentPortal.querySelector('#student-register-btn').onclick=()=>authUser(studentPortal.querySelector('#student-register-name').value.trim(),studentPortal.querySelector('#student-register-password').value.trim(),true);
             studentPortal.querySelector('#student-login-btn').onclick=()=>authUser(studentPortal.querySelector('#student-login-name').value.trim(),studentPortal.querySelector('#student-login-password').value.trim(),false);
@@ -1847,7 +2164,6 @@
             });
             searchBar.addEventListener('input',e=>renderAvailableTests(e.target.value));
             
-            // --- Menu Logic ---
             menuIcon.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
             document.addEventListener('click', (e) => { if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target) && !e.target.closest('.theme-toggle-btn')) dropdownMenu.classList.remove('show'); });
             
@@ -1882,9 +2198,22 @@
             };
         }
 
-        function copyTestLink(teacherId, testId) { const link = `${window.location.origin}${window.location.pathname}#test/${encodeURIComponent(teacherId)}/${encodeURIComponent(testId)}`; navigator.clipboard.writeText(link).then(() => { showCustomAlert('تم النسخ', 'تم نسخ رابط الاختبار بنجاح!'); }); }
+        async function shareTest(testName) {
+            const shareText = `ابحث بهذا الاسم: ${testName}\nوهذا رابط التطبيق إذا لم يكن عندك: ${appUrl}`;
+            try {
+                if (navigator.share) {
+                    await navigator.share({ text: shareText });
+                } else {
+                    await navigator.clipboard.writeText(shareText);
+                    showCustomAlert('تم النسخ', 'تم نسخ بيانات الاختبار بنجاح!');
+                }
+            } catch (err) {
+                console.error("Share failed:", err);
+                await navigator.clipboard.writeText(shareText);
+                showCustomAlert('تم النسخ', 'فشلت المشاركة، ولكن تم نسخ البيانات بنجاح!');
+            }
+        }
         
-        // --- Enhanced Image Viewer with Zoom/Pan ---
         const imageViewerModal = document.getElementById('image-viewer-modal');
         const imageWrapper = document.getElementById('image-viewer-content-wrapper');
         const modalImage = imageViewerModal.querySelector('.image-modal-content');
@@ -1906,7 +2235,7 @@
         function getDistance(p1, p2) { return Math.sqrt(Math.pow(p2.clientX - p1.clientX, 2) + Math.pow(p2.clientY - p1.clientY, 2)); }
 
         function openImageViewer(src) {
-            if (!src || src.endsWith('#')) return; // Allow any valid image source (Data URL or regular URL)
+            if (!src || src.endsWith('#')) return;
             resetZoom();
             modalImage.src = src;
             modalDownloadBtn.href = src;
@@ -1933,7 +2262,7 @@
             scale = clampedScale;
             if (scale === 1) transform = { x: 0, y: 0 };
             
-            modalImage.style.transition = 'none'; // Prevent transition during wheel zoom
+            modalImage.style.transition = 'none';
             setTransform();
         }, { passive: false });
 
@@ -2013,7 +2342,7 @@
         
         imageWrapper.addEventListener('touchend', (e) => {
             const currentTime = new Date().getTime();
-            if (currentTime - lastTap < 300) { // Double tap
+            if (currentTime - lastTap < 300) {
                 e.preventDefault();
                 modalImage.style.transition = 'transform 0.3s ease-out';
                 if (scale > 1) {
@@ -2023,7 +2352,7 @@
                     const touch = e.changedTouches[0];
                     const xs = (touch.clientX - rect.left - transform.x) / scale;
                     const ys = (touch.clientY - rect.top - transform.y) / scale;
-                    scale = 3; // Zoom in to scale 3
+                    scale = 3;
                     transform.x -= xs * (scale - 1);
                     transform.y -= ys * (scale - 1);
                     setTransform();
@@ -2032,7 +2361,7 @@
             lastTap = currentTime;
         });
 
-        document.addEventListener('click', (e) => { if (e.target.tagName === 'IMG' && e.target.closest('.portal-container, .modal-content')) { if (e.target.src && e.target.src.startsWith('data:image')) { e.preventDefault(); openImageViewer(e.target.src); } } });
+        document.addEventListener('click', (e) => { if (e.target.tagName === 'IMG' && e.target.closest('.portal-container, .modal-content')) { if (e.target.src && (e.target.src.startsWith('data:image') || e.target.src.includes('firebase'))) { e.preventDefault(); openImageViewer(e.target.src); } } });
         imageViewerModal.querySelector('.modal-close-btn').addEventListener('click', closeImageViewer);
         imageViewerModal.addEventListener('click', (e) => { if (e.target === imageViewerModal) closeImageViewer(); });
         
@@ -2184,7 +2513,6 @@
             textChatModal.classList.remove('visible'); activeChatPartnerId = null; if (chatMessagesListener) off(chatMessagesListener, 'value');
         };
 
-        // --- Slogan Widget Data Loader ---
         async function loadSloganWidgetData() {
             const sloganImage = document.getElementById('slogan-image');
             const sloganText = document.getElementById('slogan-text');
@@ -2206,23 +2534,16 @@
             }
         }
 
-        // --- Initial Load with Deep Link and Random Background Logic ---
         const handleInitialLoad = () => {
             const savedTeacher = localStorage.getItem('loggedInTeacher');
             const savedStudent = localStorage.getItem('loggedInStudent');
-
-            // Hide all portals by default to prevent flashing content
-            mainLandingPage.classList.add('hidden');
-            teacherPortal.classList.add('hidden');
-            studentPortal.classList.add('hidden');
-
+            
             if(window.location.hash.startsWith('#test/')){
                 const parts = window.location.hash.split('/');
                 if(parts.length === 3) {
                     sessionStorage.setItem('deepLinkTest',JSON.stringify({teacherId:decodeURIComponent(parts[1]),testId:decodeURIComponent(parts[2])}));
                     history.pushState("", document.title, window.location.pathname + window.location.search);
                 }
-                
                 studentPortal.classList.remove('hidden'); 
                 initStudentApp();
                 return;
@@ -2245,7 +2566,6 @@
 
         handleInitialLoad();
 
-        // --- Slogan Widget Click Handler ---
         const sloganWidget = document.getElementById('slogan-widget');
         if (sloganWidget) {
             sloganWidget.addEventListener('click', () => {
