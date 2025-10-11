@@ -33,7 +33,13 @@
             --accent-primary-gradient: linear-gradient(180deg, #3081f7 0%, #1f6feb 100%);
             --accent-primary-border: #1158c7;
             --accent-secondary: #58a6ff;
-            --success-gradient: linear-gradient(180deg, #238636 0%, #1a6328 100%);
+            --success-color: #238636;
+            --success-glow: rgba(35, 134, 54, 0.5);
+            --success-bg: rgba(35, 134, 54, 0.2);
+            --danger-color: #da3633;
+            --danger-glow: rgba(218, 54, 51, 0.5);
+            --danger-bg: rgba(218, 54, 51, 0.2);
+            --success-gradient: linear-gradient(180deg, var(--success-color) 0%, #1a6328 100%);
             --success-border: #134b1f;
             --danger-primary: #da3633;
             --danger-border: #c82333;
@@ -61,7 +67,9 @@
             --accent-primary-gradient: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
             --accent-primary-border: #a84300;
             --accent-secondary: #d35400;
-            --success-gradient: linear-gradient(180deg, #28a745 0%, #218838 100%);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --success-gradient: linear-gradient(180deg, var(--success-color) 0%, #218838 100%);
             --success-border: #1e7e34;
             --danger-primary: #dc3545;
             --danger-border: #c82333;
@@ -83,6 +91,7 @@
             text-align: center;
             overflow-x: hidden;
             transition: background-color 0.4s, color 0.4s;
+            padding: 0 10px; /* Add side padding */
         }
         .hidden { display: none !important; }
         .no-select { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
@@ -287,7 +296,7 @@
             padding-top: 0;
         }
         .portal-content { 
-            max-width: 700px; 
+            max-width: 800px; /* Increased max-width */
             margin: 0 auto; 
             padding: 120px 20px 40px 20px; /* Adjusted top padding for both headers */
         } 
@@ -359,7 +368,7 @@
         .portal-header-controls h1 {
             font-size: 0.9rem;
             margin: 0;
-            text-align: right;
+            text-align: center; /* Center the welcome message */
             flex-grow: 1;
             color: var(--text-secondary);
         }
@@ -381,6 +390,8 @@
         }
         
         /* --- Modern Refresh/Search Buttons --- */
+        .header-buttons .icon-btn { background-color: #000000; color: #ffffff;}
+        .header-buttons .icon-btn:hover { background-color: #222222; }
         #refresh-tests-btn.loading i { animation: spin 1s linear infinite; }
         #show-search-btn i { transition: transform 0.3s ease; }
         #show-search-btn.active i { transform: rotate(90deg); color: var(--accent-secondary); }
@@ -418,9 +429,30 @@
              border-radius: 12px; 
              overflow: hidden; 
              margin-bottom: 20px;
-             gap: 5px; /* Space between buttons */
              padding: 5px;
+             gap: 5px;
         }
+        #mcq-fields .option-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        #mcq-fields .option-input {
+            margin-bottom: 0;
+            flex-grow: 1;
+        }
+        #mcq-fields .correct-answer-selector {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+        #mcq-fields .correct-answer-selector.selected {
+            color: var(--success-color);
+            transform: scale(1.2);
+        }
+
 
         /* --- Student Portal --- */
         .student-test-item-container {
@@ -586,39 +618,30 @@
         .modal-body { flex-grow: 1; }
         .modal-footer { margin-top: 20px; flex-shrink: 0; }
         
-        #teacher-review-modal .modal-content, #certificates-modal .modal-content {
-            max-width: 800px;
-        }
-        #certificates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .certificate-item {
-            position: relative;
-        }
-        .certificate-item img {
-            width: 100%;
-            height: auto;
+        #teacher-review-modal .modal-content { max-width: 800px; }
+       
+        /* --- Answer Review Highlighting --- */
+        .review-option {
+            padding: 10px;
             border-radius: 8px;
+            margin-bottom: 5px;
             border: 1px solid var(--border-primary);
+            background: var(--bg-secondary);
+            text-align: right;
         }
-        .delete-cert-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 25px !important;
-            height: 25px !important;
-            padding: 0 !important;
-            font-size: 14px !important;
-            border-radius: 50% !important;
-            background-color: var(--danger-primary) !important;
-            color: #fff !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .review-option.correct-answer-highlight {
+            background: var(--success-bg);
+            border-color: var(--success-color);
+            color: var(--text-primary);
+            box-shadow: 0 0 10px var(--success-glow);
         }
+        .review-option.incorrect-answer-highlight {
+            background: var(--danger-bg);
+            border-color: var(--danger-color);
+            color: var(--text-primary);
+            text-decoration: line-through;
+        }
+
 
         /* --- Image Viewer Modal --- */
         .image-modal-overlay {
@@ -965,6 +988,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         @media (max-width: 767px) {
+            body { padding: 0 5px; }
             .landing-title { font-size: 2.2rem; }
             .glass-content { font-size: 1.2rem; padding: 1.2rem 2rem; }
             .role-selection { flex-direction: column; }
@@ -1059,9 +1083,14 @@
             </section>
             <section id="teacher-dashboard-section" class="hidden">
                 <div id="teacher-tests-content" class="tab-content">
-                    <div class="tab-content-header">
+                    <div class="dashboard-header-controls">
                         <h2>اختباراتي المنشأة</h2>
+                         <div class="header-buttons">
+                             <button id="teacher-refresh-btn" class="icon-btn" title="تحديث"><i class="fas fa-sync-alt"></i></button>
+                             <button id="teacher-show-search-btn" class="icon-btn" title="بحث"><i class="fas fa-search"></i></button>
+                        </div>
                     </div>
+                     <input type="text" id="teacher-search-bar" placeholder="ابحث عن اختبار..." class="hidden" style="margin-bottom:20px;"/>
                     <div id="my-tests-container"></div>
                 </div>
                 <div id="teacher-results-content" class="tab-content hidden">
@@ -1093,9 +1122,11 @@
                         <label for="question-image-input" class="file-input-label"><i class="fas fa-image"></i> <span>إرفاق صورة للسؤال (اختياري)</span></label>
                         <input type="file" id="question-image-input" accept="image/*" class="hidden" /><div class="image-preview-container hidden"><img class="image-preview" src="#" alt="معاينة" /></div>
                         <div id="mcq-fields">
-                            <label>خيارات الإجابة (4):</label>
-                            <input type="text" class="option-input" placeholder="الخيار 1" /><input type="text" class="option-input" placeholder="الخيار 2" /><input type="text" class="option-input" placeholder="الخيار 3" /><input type="text" class="option-input" placeholder="الخيار 4" />
-                            <label for="correct-answer">رقم الإجابة الصحيحة (1 - 4):</label><input type="number" id="correct-answer" min="1" max="4" />
+                            <label>خيارات الإجابة (حدد الصحيحة):</label>
+                            <div class="option-container"><input type="text" class="option-input" placeholder="الخيار 1" /><i class="fas fa-check-circle correct-answer-selector" data-index="1"></i></div>
+                            <div class="option-container"><input type="text" class="option-input" placeholder="الخيار 2" /><i class="fas fa-check-circle correct-answer-selector" data-index="2"></i></div>
+                            <div class="option-container"><input type="text" class="option-input" placeholder="الخيار 3" /><i class="fas fa-check-circle correct-answer-selector" data-index="3"></i></div>
+                            <div class="option-container"><input type="text" class="option-input" placeholder="الخيار 4" /><i class="fas fa-check-circle correct-answer-selector" data-index="4"></i></div>
                         </div>
                         <div id="essay-fields" class="hidden">
                             <label for="model-answer-image-input" class="file-input-label"><i class="fas fa-file-image"></i> <span>إرفاق صورة إجابة نموذجية (اختياري)</span></label>
@@ -1482,17 +1513,20 @@
             const createContent = document.getElementById('teacher-create-content');
             const createTestSection = teacherPortal.querySelector('#teacher-create-test-content'), testNameInput = teacherPortal.querySelector("#test-name"), testGradeSelect = teacherPortal.querySelector("#test-grade"), testDurationInput = teacherPortal.querySelector("#test-duration");
             const preventGoBackCheckbox = teacherPortal.querySelector("#prevent-go-back-checkbox"), shuffleQuestionsCheckbox = teacherPortal.querySelector('#shuffle-questions-checkbox'), fatefulTestCheckbox = document.getElementById('fateful-test-checkbox');
-            const questionText = teacherPortal.querySelector("#question-text"), optionInputs = teacherPortal.querySelectorAll(".option-input"), correctAnswerInput = teacherPortal.querySelector("#correct-answer"), questionPointsInput = teacherPortal.querySelector("#question-points");
+            const questionText = teacherPortal.querySelector("#question-text"), optionInputs = teacherPortal.querySelectorAll(".option-input"), questionPointsInput = teacherPortal.querySelector("#question-points");
             const questionsListContainer = teacherPortal.querySelector("#questions-list-container"), questionImageInput = teacherPortal.querySelector("#question-image-input"), modelAnswerImageInput = teacherPortal.querySelector("#model-answer-image-input");
             const addQuestionBtn = teacherPortal.querySelector('#add-question-btn'), cancelQuestionEditBtn = teacherPortal.querySelector('#cancel-question-edit-btn'), saveTestBtn = teacherPortal.querySelector('#save-test-btn'), cancelTestEditBtn = teacherPortal.querySelector('#cancel-test-edit-btn');
             const reviewModal = teacherPortal.querySelector('#teacher-review-modal'), reviewModalBody = teacherPortal.querySelector('#review-modal-body'), reviewModalTitle = teacherPortal.querySelector('#review-modal-title'), reviewModalFooter = teacherPortal.querySelector('#review-modal-footer'), finalizeGradesBtn = teacherPortal.querySelector('#finalize-grades-btn');
             const updateNameInput = teacherPortal.querySelector('#teacher-update-name'), updatePasswordInput = teacherPortal.querySelector('#teacher-update-password'), updateBtn = teacherPortal.querySelector('#teacher-update-btn');
-            const refreshBtn = teacherPortal.querySelector('#teacher-refresh-btn');
+            const teacherRefreshBtn = document.getElementById('teacher-refresh-btn');
+            const teacherShowSearchBtn = document.getElementById('teacher-show-search-btn');
+            const teacherSearchBar = document.getElementById('teacher-search-bar');
             const createAssessmentSection = document.getElementById('teacher-create-assessment-content');
             const saveAssessmentBtn = document.getElementById('save-assessment-btn');
             const assessmentImageInput = document.getElementById('assessment-image-input');
             const assessmentText = document.getElementById('assessment-text');
             let currentAssessmentImageBase64 = null;
+            let currentCorrectAnswer = 0;
 
 
             let currentUser = null, myTests = {}, questionsArray = [], currentQuestionImageBase64 = null, currentModelAnswerImageBase64 = null, currentQuestionType = 'mcq', currentEditingTestId = null, currentEditingQuestionIndex = -1;
@@ -1515,9 +1549,17 @@
             
             createContent.querySelectorAll('.switch-button-container .switch-button').forEach(btn => btn.addEventListener('click', (e) => {
                 const container = e.target.parentElement;
-                container.querySelectorAll('.switch-button').forEach(b => { b.classList.remove('active'); b.style.background = 'var(--border-secondary)'; b.style.color = 'var(--text-primary)'; });
-                e.target.classList.add('active'); e.target.style.background = 'var(--accent-primary)'; e.target.style.color = '#fff';
-                
+                // Deactivate all buttons in the same container first
+                container.querySelectorAll('.switch-button').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'var(--border-secondary)';
+                    b.style.color = 'var(--text-primary)';
+                });
+                // Activate the clicked button
+                e.target.classList.add('active');
+                e.target.style.background = 'var(--accent-primary)';
+                e.target.style.color = '#fff';
+
                 if (container.id === 'question-type-switcher') {
                      currentQuestionType = e.target.dataset.type;
                      teacherPortal.querySelector("#mcq-fields").classList.toggle('hidden', currentQuestionType !== 'mcq');
@@ -1529,20 +1571,46 @@
                 }
             }));
 
-            const clearQuestionForm = () => { questionText.value=""; questionImageInput.value=""; modelAnswerImageInput.value=""; currentQuestionImageBase64=null; currentModelAnswerImageBase64=null; teacherPortal.querySelectorAll('.image-preview-container').forEach(c=>{c.classList.add('hidden'); c.querySelector('img').src = '#'}); optionInputs.forEach(i=>i.value=""); correctAnswerInput.value=""; questionPointsInput.value = ""; currentEditingQuestionIndex = -1; addQuestionBtn.textContent = 'إضافة سؤال للقائمة'; cancelQuestionEditBtn.classList.add('hidden'); };
+            const mcqFields = document.getElementById('mcq-fields');
+            mcqFields.addEventListener('click', (e) => {
+                if (e.target.classList.contains('correct-answer-selector')) {
+                    mcqFields.querySelectorAll('.correct-answer-selector').forEach(sel => sel.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                    currentCorrectAnswer = parseInt(e.target.dataset.index);
+                }
+            });
+
+            const clearQuestionForm = () => { questionText.value=""; questionImageInput.value=""; modelAnswerImageInput.value=""; currentQuestionImageBase64=null; currentModelAnswerImageBase64=null; teacherPortal.querySelectorAll('.image-preview-container').forEach(c=>{c.classList.add('hidden'); c.querySelector('img').src = '#'}); optionInputs.forEach(i=>i.value=""); mcqFields.querySelectorAll('.correct-answer-selector').forEach(sel => sel.classList.remove('selected')); currentCorrectAnswer=0; questionPointsInput.value = ""; currentEditingQuestionIndex = -1; addQuestionBtn.textContent = 'إضافة سؤال للقائمة'; cancelQuestionEditBtn.classList.add('hidden'); };
             
             async function updateDashboard() { if(!currentUser) return; teacherNameSpan.textContent = currentUser; setDefaultTab(); showLoadingSpinner(myTestsContainer); const testsRef = ref(db, `tests/${currentUser}`); onValue(testsRef, (snapshot) => { myTests = snapshot.exists() ? snapshot.val() : {}; renderMyTests(); populateResultsSelector(); }); initChatSystem(currentUser, 'teacher'); }
             
-            refreshBtn.onclick = updateDashboard;
+            teacherRefreshBtn.onclick = updateDashboard;
+            teacherShowSearchBtn.addEventListener('click', () => {
+                teacherSearchBar.classList.toggle('hidden');
+                teacherShowSearchBtn.classList.toggle('active');
+                if (!teacherSearchBar.classList.contains('hidden')) {
+                    teacherSearchBar.focus();
+                } else {
+                    renderMyTests('');
+                    teacherSearchBar.value = '';
+                }
+            });
+            teacherSearchBar.addEventListener('input', e => renderMyTests(e.target.value));
 
-            function renderMyTests() {
+
+            function renderMyTests(filter = '') {
                 myTestsContainer.innerHTML = "";
                 if (countdownInterval) clearInterval(countdownInterval);
                 const activeTests = Object.entries(myTests).filter(([id, test]) => (Date.now() - test.timestamp < 48 * 60 * 60 * 1000));
                 
                 if (activeTests.length === 0) { myTestsContainer.innerHTML = "<p>لم تقم بإنشاء أي اختبارات نشطة.</p>"; return; }
                 
+                let found = false;
                 activeTests.sort((a,b) => b[1].timestamp - a[1].timestamp).forEach(([testId, test]) => {
+                    const searchStr = `${test.name}${test.grade}`.toLowerCase();
+                    if(filter && !searchStr.includes(filter.toLowerCase())) return;
+                    found = true;
+
                     const testCard = document.createElement('div'); testCard.className = 'list-item';
                     testCard.style.cssText = `flex-direction: column; align-items: stretch; padding: 12px; gap: 10px;`;
                     testCard.innerHTML = `
@@ -1563,6 +1631,9 @@
                     myTestsContainer.appendChild(testCard);
                 });
 
+                if (!found && filter) {
+                     myTestsContainer.innerHTML = "<p>لا توجد نتائج مطابقة لبحثك.</p>";
+                }
                 startCountdownTimers();
             }
 
@@ -1622,7 +1693,19 @@
                 if (result.status === 'pending' && test.questions.some(q => q.type === 'essay')) reviewModalFooter.classList.remove('hidden');
                 test.questions.forEach((q, index) => {
                     const studentAnswer = answers[index] || {}; let reviewHtml = '';
-                    if (q.type === 'mcq') { const isCorrect = studentAnswer.answer === q.correct; reviewHtml = `<div style="background: ${isCorrect ? 'rgba(35, 134, 54, 0.2)' : 'rgba(218, 54, 51, 0.2)'}; padding: 10px; border-radius: 8px;"><b>إجابته:</b> ${studentAnswer.answer ? q.options[studentAnswer.answer - 1] : '<i>لم يجب</i>'}<br><b>الصحيحة:</b> ${q.options[q.correct - 1]}</div>`; } 
+                    if (q.type === 'mcq') { 
+                        reviewHtml = '<div>' + q.options.map((option, i) => {
+                            const optionNum = i + 1;
+                            let classes = 'review-option';
+                            if (optionNum === parseInt(q.correct)) {
+                                classes += ' correct-answer-highlight';
+                            }
+                            if (studentAnswer.answer && parseInt(studentAnswer.answer) === optionNum && optionNum !== parseInt(q.correct)) {
+                                classes += ' incorrect-answer-highlight';
+                            }
+                            return `<div class="${classes}">${option}</div>`;
+                        }).join('') + '</div>';
+                    } 
                     else { const studentText = studentAnswer.textAnswer || '<em>لم يقدم إجابة نصية.</em>', studentImage = studentAnswer.imageAnswer ? `<p><b>صورته:</b></p><img src="${studentAnswer.imageAnswer}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : '', modelImage = q.modelAnswerImage ? `<p><b>النموذجية:</b></p><img src="${q.modelAnswerImage}" style="max-width:80%; border-radius:8px; cursor:pointer;">` : ''; let gradingInput = (result.status === 'pending') ? `<div style="margin-top:15px; text-align: left; display:flex; align-items:center; gap:10px;"><label for="grade-q-${index}" style="margin:0;"><b>ضع الدرجة:</b></label><input type="number" id="grade-q-${index}" data-question-index="${index}" class="essay-grade-input" min="0" max="${q.points || 1}" style="width:80px; margin:0;"><span>/ ${q.points || 1}</span></div>` : `<p><b>الدرجة النهائية للسؤال:</b> ${studentAnswer.pointsAwarded || 0}/${q.points || 1}</p>`; reviewHtml = `<div><p><b>إجابته النصية:</b></p><div style="background:var(--border-secondary); padding:10px; border-radius:8px; white-space: pre-wrap;">${studentText}</div>${studentImage}${modelImage}${gradingInput}</div>`; }
                     const qDiv = document.createElement('div'); qDiv.className = 'list-item';
                     qDiv.style.cssText = 'flex-direction: column; align-items: flex-start;';
@@ -1684,7 +1767,10 @@
 
                 if (q.type === 'mcq') {
                     optionInputs.forEach((input, i) => input.value = q.options[i] || '');
-                    correctAnswerInput.value = q.correct || '';
+                    currentCorrectAnswer = q.correct || 0;
+                    mcqFields.querySelectorAll('.correct-answer-selector').forEach(sel => {
+                        sel.classList.toggle('selected', parseInt(sel.dataset.index) === currentCorrectAnswer);
+                    });
                 } else if (q.type === 'essay') {
                     currentModelAnswerImageBase64 = q.modelAnswerImage || null;
                     const mImgPreviewContainer = modelAnswerImageInput.nextElementSibling;
@@ -1709,10 +1795,10 @@
                 let questionData = { question: q, type: currentQuestionType, image: currentQuestionImageBase64, points: points };
                 
                 if (currentQuestionType === 'mcq') {
-                    const opts = Array.from(optionInputs).map(i => i.value.trim()), correct = parseInt(correctAnswerInput.value);
+                    const opts = Array.from(optionInputs).map(i => i.value.trim());
                     if (opts.some(o => o === "")) { showCustomAlert("خطأ", "يرجى ملء جميع الخيارات الأربعة."); return; }
-                    if (!correct || correct < 1 || correct > 4) { showCustomAlert("خطأ", "يرجى تحديد رقم الإجابة الصحيحة (من 1 إلى 4)."); return; }
-                    questionData = { ...questionData, options: opts, correct };
+                    if (currentCorrectAnswer === 0) { showCustomAlert("خطأ", "يرجى تحديد الإجابة الصحيحة بالضغط على علامة الصح."); return; }
+                    questionData = { ...questionData, options: opts, correct: currentCorrectAnswer };
                 } else { 
                     questionData.modelAnswerImage = currentModelAnswerImageBase64; 
                 }
@@ -2227,12 +2313,19 @@
                     const ans = studentAnswers[i] || {};
                     let html='';
                     if (q.type === 'mcq') {
-                        // **BUG FIX:** Ensure comparison is between numbers
-                        const isCorrect = ans.answer && parseInt(ans.answer) === parseInt(q.correct);
-                        html=`<div style="background:${isCorrect ? 'rgba(35, 134, 54, 0.2)' : 'rgba(218, 54, 51, 0.2)'}; padding:10px; border-radius:8px;">
-                            <b>إجابتك:</b> ${ans.answer ? q.options[ans.answer-1] : '<i>لم تجب</i>'}<br>
-                            <b>الإجابة الصحيحة:</b> ${q.options[q.correct-1]}
-                        </div>`;
+                        html = '<div>' + q.options.map((option, idx) => {
+                            const optionNum = idx + 1;
+                            let classes = 'review-option';
+                            // Check if this option is the correct answer
+                            if (optionNum === parseInt(q.correct)) {
+                                classes += ' correct-answer-highlight';
+                            }
+                            // Check if this option was the student's incorrect answer
+                            if (ans.answer && parseInt(ans.answer) === optionNum && parseInt(ans.answer) !== parseInt(q.correct)) {
+                                classes += ' incorrect-answer-highlight';
+                            }
+                            return `<div class="${classes}">${option}</div>`;
+                        }).join('') + '</div>';
                     } else { // Essay
                         const txt = ans.textAnswer || '<em>لم تقدم إجابة نصية.</em>';
                         const img = ans.imageAnswer ? `<p><b>صورتك:</b></p><img src="${ans.imageAnswer}" style="max-width:80%;border-radius:8px; cursor:pointer;">` : '';
