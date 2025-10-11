@@ -2460,6 +2460,9 @@
 
             function initGroupChat() {
                 const groupChatRef = ref(db, 'groupChat');
+                // Clean old messages first, then listen for new ones
+                cleanupOldMessages(groupChatRef);
+                
                 onValue(groupChatRef, (snapshot) => {
                     groupChatBody.innerHTML = '';
                     if (snapshot.exists()) {
@@ -2700,6 +2703,24 @@
 
         let currentUserId, currentUserType, recognition;
         let activeChatPartnerId = null, chatMessagesListener = null;
+        
+        // --- NEW: Function to clean old messages ---
+        async function cleanupOldMessages(messagesRef) {
+            const snapshot = await get(messagesRef);
+            if (snapshot.exists()) {
+                const updates = {};
+                const cutoff = Date.now() - (24 * 60 * 60 * 1000); // 24 hours ago
+                snapshot.forEach(child => {
+                    if (child.val().timestamp < cutoff) {
+                        updates[child.key] = null;
+                    }
+                });
+                if (Object.keys(updates).length > 0) {
+                    await update(messagesRef, updates);
+                }
+            }
+        }
+
 
         function initChatSystem(userId, userType) {
             currentUserId = userId; currentUserType = userType; initSpeechRecognition();
@@ -2764,32 +2785,33 @@
             else { document.getElementById('message-limit-text').textContent = ''; sendMessageBtn.disabled = false; messageInput.disabled = false; }
 
             const chatId = [userId, partnerId].sort().join('_');
+            const messagesRef = ref(db, `chats/${chatId}/messages`);
+
+            // --- Clean old messages before listening ---
+            await cleanupOldMessages(messagesRef);
+
             const metadataRef = ref(db, `chats/${chatId}/metadata/hasUnread/${userId}`);
             await set(metadataRef, null);
             
-            const messagesRef = query(ref(db, `chats/${chatId}/messages`), orderByChild('timestamp'));
-            chatMessagesListener = onValue(messagesRef, (snapshot) => {
+            const orderedMessagesRef = query(messagesRef, orderByChild('timestamp'));
+            chatMessagesListener = onValue(orderedMessagesRef, (snapshot) => {
                 chatModalBody.innerHTML = '';
                 if (snapshot.exists()) {
-                    const now = Date.now();
-                    const expiryPeriod = 48 * 60 * 60 * 1000;
                     let messageFound = false;
                     snapshot.forEach(child => {
                         const msg = child.val();
-                        if (now - msg.timestamp < expiryPeriod) {
-                             messageFound = true;
-                             const msgDiv = document.createElement('div');
-                             msgDiv.className = `chat-message ${msg.sender === currentUserId ? 'sent' : 'received'}`;
-                             const time = new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-                             msgDiv.innerHTML = `<span>${msg.text}</span><span class="msg-time">${time}</span>`;
-                             chatModalBody.appendChild(msgDiv);
-                        }
+                        messageFound = true;
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = `chat-message ${msg.sender === currentUserId ? 'sent' : 'received'}`;
+                        const time = new Date(msg.timestamp).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                        msgDiv.innerHTML = `<span>${msg.text}</span><span class="msg-time">${time}</span>`;
+                        chatModalBody.appendChild(msgDiv);
                     });
                     
                     if(messageFound) {
                         chatModalBody.scrollTop = chatModalBody.scrollHeight;
                     } else {
-                        chatModalBody.innerHTML = '<p>لا توجد رسائل حديثة. ابدأ المحادثة!</p>';
+                        chatModalBody.innerHTML = '<p>لا توجد رسائل. ابدأ المحادثة!</p>';
                     }
 
                 } else { chatModalBody.innerHTML = '<p>ابدأ المحادثة!</p>'; }
