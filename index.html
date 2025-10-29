@@ -3,215 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع متطور</title>
+    <title>مراجعات مجانية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
-        :root {
-            --primary-color: #00a8e8;
-            --background-color: #f0f2f5;
-            --nav-background: rgba(255, 255, 255, 0.1);
-            --nav-border: rgba(255, 255, 255, 0.2);
-            --text-color: #333;
-            --text-color-light: #fff;
-        }
-
+        /* CSS Code */
         body {
             font-family: 'Cairo', sans-serif;
+            background: #f0f2f5;
+            color: #333;
             margin: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            overflow: hidden; /* لإخفاء أي تجاوز للمحتوى */
+            padding: 20px;
+            perspective: 1000px;
         }
 
-        #background-wrap {
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .subject-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 200px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.5s, box-shadow 0.5s;
+            transform-style: preserve-3d;
+            animation: fadeInUp 1s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-10px) rotateY(10deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .subject-card i {
+            font-size: 4rem;
+            color: #007bff;
+            margin-bottom: 20px;
+            transition: transform 0.5s;
+        }
+
+        .subject-card:hover i {
+            transform: scale(1.1);
+        }
+
+        .subject-card h3 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .video-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            animation: rise 15s infinite ease-in;
-            bottom: -150px;
-        }
-        
-        @keyframes rise {
-            0% {
-                transform: translateY(0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: translateY(-120vh);
-                opacity: 0;
-            }
-        }
-        
-        /* Navigation Styles */
-        .glass-nav {
-            background: var(--nav-background);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--nav-border);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            padding: 15px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            position: fixed; /* تغيير أساسي لجعله يطفو */
-            z-index: 1001; /* للتأكد من أنه فوق كل شيء */
-        }
-
-        .nav-link {
-            color: var(--text-color-light);
-            text-decoration: none;
-            font-size: 24px;
-            transition: transform 0.3s ease, color 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-link:hover {
-            transform: scale(1.2);
-            color: var(--primary-color);
-        }
-
-        main {
-            width: 100%;
-            height: 100vh;
-            position: relative; /* ليكون مرجعًا للـ loader */
-        }
-        
-        #content-frame {
-            border: none;
-            width: 100%;
-            height: 100%; /* يملأ الشاشة بالكامل */
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        #loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid var(--primary-color);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 2s linear infinite;
+            background: rgba(0,0,0,0.8);
             display: none;
-            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        .video-player {
+            position: relative;
+            width: 80%;
+            max-width: 900px;
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
         }
 
-        /* Mobile Styles - Footer */
-        @media (max-width: 768px) {
-            .glass-nav {
-                bottom: 0;
-                left: 10px;
-                right: 10px;
-                border-radius: 20px;
-                margin-bottom: 10px;
+        .video-player iframe {
+            width: 100%;
+            height: 500px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 3rem;
+            color: #fff;
+            background: #ff0000;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* Desktop Styles - Sidebar */
-        @media (min-width: 769px) {
-            .glass-nav {
-                flex-direction: column;
-                width: 80px;
-                height: auto; /* ارتفاع تلقائي ليناسب الأيقونات */
-                top: 50%; /* في منتصف الشاشة عمودياً */
-                left: 15px; /* على اليسار مع مسافة صغيرة */
-                transform: translateY(-50%); /* لضبط التوسيط العمودي */
-                border-radius: 20px;
-                justify-content: center;
-                gap: 30px;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div id="background-wrap"></div>
 
-    <nav class="glass-nav">
-        <a href="https://saifheny.github.io/Tests/" class="nav-link" data-link>
-            <i class="fas fa-vial"></i>
-        </a>
-        <a href="https://saifheny.github.io/Educational.platform/" class="nav-link" data-link>
-            <i class="fas fa-graduation-cap"></i>
-        </a>
-        <a href="https://saifheny.github.io/Summaries/" class="nav-link" data-link>
+    <header>
+        <h1>شاهد الفيديوهات المجانية بدون انقطاع للمراجعة المجانية</h1>
+    </header>
+
+    <div class="container">
+        <!-- Arabic -->
+        <div class="subject-card" data-video-id="yLsFjDz9nPs">
             <i class="fas fa-book-open"></i>
-        </a>
-    </nav>
+            <h3>عربي</h3>
+        </div>
+        <!-- English -->
+        <div class="subject-card" data-video-id="al4o3kXqAXY">
+            <i class="fas fa-language"></i>
+            <h3>انجليزي</h3>
+        </div>
+        <!-- Integrated Science -->
+        <div class="subject-card" data-video-id="yzGY6MrLsdM">
+            <i class="fas fa-flask"></i>
+            <h3>علوم متكاملة</h3>
+        </div>
+        <!-- Philosophy -->
+        <div class="subject-card" data-video-id="yofOMy5m0tc">
+            <i class="fas fa-brain"></i>
+            <h3>فلسفة</h3>
+        </div>
+        <!-- History -->
+        <div class="subject-card" data-video-id="4BvTzDS9mfw">
+            <i class="fas fa-landmark"></i>
+            <h3>تاريخ</h3>
+        </div>
+        <!-- Mathematics -->
+        <div class="subject-card" data-video-id="44EMc3DwzgM">
+            <i class="fas fa-calculator"></i>
+            <h3>رياضيات</h3>
+        </div>
+    </div>
 
-    <main>
-        <div id="loader"></div>
-        <iframe id="content-frame" src="https://saifheny.github.io/Tests/"></iframe>
-    </main>
+    <!-- Video Player Overlay -->
+    <div class="video-overlay" id="video-overlay">
+        <div class="video-player">
+            <span class="close-btn" id="close-btn">&times;</span>
+            <iframe id="youtube-player" width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const links = document.querySelectorAll(".nav-link[data-link]");
-            const contentFrame = document.getElementById("content-frame");
-            const loader = document.getElementById("loader");
+        // JavaScript Code
+        document.addEventListener('DOMContentLoaded', () => {
+            const subjectCards = document.querySelectorAll('.subject-card');
+            const videoOverlay = document.getElementById('video-overlay');
+            const closeBtn = document.getElementById('close-btn');
+            const youtubePlayer = document.getElementById('youtube-player');
 
-            // Load initial content
-            const initialUrl = links[0].getAttribute("href");
-            if (initialUrl) {
-                contentFrame.src = initialUrl;
-            }
-
-            links.forEach(link => {
-                link.addEventListener("click", e => {
-                    e.preventDefault();
-                    const url = link.getAttribute("href");
-                    
-                    if (contentFrame.src !== url) {
-                        loader.style.display = 'block';
-                        contentFrame.style.opacity = '0.5';
-                        contentFrame.src = url;
-                    }
+            subjectCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const videoId = card.getAttribute('data-video-id');
+                    // The embed URL works for both live streams and regular videos with autoplay
+                    youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                    videoOverlay.style.display = 'flex';
                 });
             });
 
-            contentFrame.addEventListener('load', () => {
-                loader.style.display = 'none';
-                contentFrame.style.opacity = '1';
-            });
-            
-            // Bubbles background effect
-            const background = document.getElementById('background-wrap');
-            const bubbleCount = 25;
-
-            for (let i = 0; i < bubbleCount; i++) {
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                const size = Math.random() * 80 + 20 + 'px';
-                bubble.style.width = size;
-                bubble.style.height = size;
-                bubble.style.left = Math.random() * 100 + '%';
-                bubble.style.animationDuration = Math.random() * 8 + 7 + 's';
-                bubble.style.animationDelay = Math.random() * 5 + 's';
-                background.appendChild(bubble);
+            // Function to close the video player
+            function closePlayer() {
+                videoOverlay.style.display = 'none';
+                // Stop the video by clearing the src attribute
+                youtubePlayer.src = '';
             }
+
+            closeBtn.addEventListener('click', closePlayer);
+
+            // Close the player if the user clicks on the overlay background
+            videoOverlay.addEventListener('click', (e) => {
+                if (e.target === videoOverlay) {
+                    closePlayer();
+                }
+            });
         });
     </script>
 </body>
