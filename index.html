@@ -3,218 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مراجعات مجانية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>منصة سيف المتطورة (تطبيق متكامل)</title>
+    <!-- تضمين مكتبة Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
-        /* CSS Code */
+        /* ==================================== */
+        /* 1. التصميم العام والـ Viewport */
+        /* ==================================== */
         body {
-            font-family: 'Cairo', sans-serif;
-            background: #f0f2f5;
-            color: #333;
+            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 20px;
-            perspective: 1000px;
+            padding: 0;
+            background-color: #f4f7f9; 
+            height: 100vh; 
+            overflow: hidden; 
         }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 1s;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            color: #007bff;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .subject-card {
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            width: 200px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.5s, box-shadow 0.5s;
-            transform-style: preserve-3d;
-            animation: fadeInUp 1s;
-        }
-
-        .subject-card:hover {
-            transform: translateY(-10px) rotateY(10deg);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
-
-        .subject-card i {
-            font-size: 4rem;
-            color: #007bff;
-            margin-bottom: 20px;
-            transition: transform 0.5s;
-        }
-
-        .subject-card:hover i {
-            transform: scale(1.1);
-        }
-
-        .subject-card h3 {
-            font-size: 1.5rem;
-            margin: 0;
-        }
-
-        .video-overlay {
-            position: fixed;
+        
+        #content-frame {
+            position: absolute; 
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
+            height: calc(100vh - 60px); 
+            border: none;
+            z-index: 10; 
+            transition: all 0.3s ease-in-out; 
+        }
+
+        /* ==================================== */
+        /* 2. الشريط السفلي (تم تركه كما هو) */
+        /* ==================================== */
+        .bottom-bar {
+            position: fixed; 
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: space-around;
             align-items: center;
+            background-color: rgba(255, 255, 255, 0.95); 
+            box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.18); 
+            backdrop-filter: blur(18px); 
+            -webkit-backdrop-filter: blur(18px); 
             z-index: 1000;
         }
 
-        .video-player {
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #555; 
+            font-size: 1.4rem; 
             position: relative;
-            width: 80%;
-            max-width: 900px;
-            background: #000;
-            padding: 20px;
+            padding: 5px 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            width: 60px; 
+            height: 50px;
+        }
+
+        .nav-item.active i {
+            color: #007bff; 
+            z-index: 2; 
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 42px; 
+            height: 42px;
+            background-color: rgba(0, 123, 255, 0.15); 
+            border-radius: 50%;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active::before {
+            content: attr(data-name);
+            position: absolute;
+            top: -40px; 
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 1;
+            transform: scale(1) translateY(-10px); 
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 123, 255, 0.5);
+        }
+        
+        .nav-item.active {
+             transform: translateY(-8px); 
+        }
+
+        /* ==================================== */
+        /* 3. فقاعة الذكاء الاصطناعي (AI Bubble) */
+        /* ==================================== */
+        .ai-toggle-button {
+            position: fixed;
+            right: 20px; 
+            bottom: 80px; 
+            width: 55px; 
+            height: 55px;
+            border-radius: 50%;
+            background-color: #ffc107; 
+            color: #333;
+            border: none;
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.7); 
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.2s ease, opacity 0.3s ease;
+        }
+
+        .ai-bubble {
+            position: fixed;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease-out; 
+            /* الوضع المصغر الافتراضي */
+            width: 350px; 
+            height: 500px; 
+            right: 20px;
+            bottom: 145px; 
+        }
+
+        /* حالة التكبير (ملء الشاشة) */
+        .ai-bubble.maximized {
+            width: calc(100vw - 40px); /* عرض الشاشة - هامش */
+            height: calc(100vh - 80px); /* ارتفاع الشاشة - الشريط السفلي - هامش */
+            right: 20px;
+            bottom: 70px; /* فوق الشريط مباشرة */
             border-radius: 10px;
         }
 
-        .video-player iframe {
-            width: 100%;
-            height: 500px;
+        /* حالة الإخفاء */
+        .ai-bubble.closed {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.7) translateY(50px);
         }
 
-        .close-btn {
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            font-size: 3rem;
-            color: #fff;
-            background: #ff0000;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+        .ai-header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            /* لمسة جمالية لتشجيع التحريك (رغم أن JS التحريك غير مضافة هنا) */
+            cursor: grab; 
+        }
+
+        .ai-header-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
             cursor: pointer;
-            line-height: 1;
+            margin-left: 10px;
+        }
+        
+        .ai-bubble iframe {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        /* تحسين الاستجابة على شاشات الهواتف (للوضع المصغر) */
+        @media (max-width: 768px) {
+            .ai-bubble:not(.maximized) { /* طبق فقط عندما لا يكون مكبراً */
+                width: 95vw; 
+                height: 70vh; 
+                right: 2.5vw; 
+                bottom: 80px;
             }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>شاهد الفيديوهات المجانية بدون انقطاع للمراجعة المجانية</h1>
-    </header>
+    <!-- الإطار الرئيسي الذي سيحمل محتوى الصفحات الأربع -->
+    <iframe id="content-frame" 
+            src="https://saif1230876657.github.io/SA.ai/" 
+            title="Main Content Frame"></iframe>
 
-    <div class="container">
-        <!-- Arabic -->
-        <div class="subject-card" data-video-id="yLsFjDz9nPs">
-            <i class="fas fa-book-open"></i>
-            <h3>عربي</h3>
+    <!-- --------------------------------------- -->
+    <!-- الشريط السفلي (Bottom Bar) -->
+    <!-- --------------------------------------- -->
+    <nav class="bottom-bar">
+        <div class="nav-item active" data-name="سيف AI" data-url="https://saif1230876657.github.io/SA.ai/">
+            <i class="fas fa-magic"></i> 
         </div>
-        <!-- English -->
-        <div class="subject-card" data-video-id="al4o3kXqAXY">
-            <i class="fas fa-language"></i>
-            <h3>انجليزي</h3>
+        <div class="nav-item" data-name="تعليم" data-url="https://saifheny.github.io/Educational.platform/">
+            <i class="fas fa-book-open"></i> 
         </div>
-        <!-- Integrated Science -->
-        <div class="subject-card" data-video-id="yzGY6MrLsdM">
-            <i class="fas fa-flask"></i>
-            <h3>علوم متكاملة</h3>
+        <div class="nav-item" data-name="برمجة" data-url="https://saifheny.github.io/Code-Masters/">
+            <i class="fas fa-laptop-code"></i> 
         </div>
-        <!-- Philosophy -->
-        <div class="subject-card" data-video-id="yofOMy5m0tc">
-            <i class="fas fa-brain"></i>
-            <h3>فلسفة</h3>
+        <div class="nav-item" data-name="اختبارات" data-url="https://saifheny.github.io/Tests/">
+            <i class="fas fa-spell-check"></i> 
         </div>
-        <!-- History -->
-        <div class="subject-card" data-video-id="4BvTzDS9mfw">
-            <i class="fas fa-landmark"></i>
-            <h3>تاريخ</h3>
-        </div>
-        <!-- Mathematics -->
-        <div class="subject-card" data-video-id="44EMc3DwzgM">
-            <i class="fas fa-calculator"></i>
-            <h3>رياضيات</h3>
-        </div>
-    </div>
+    </nav>
+    
+    <!-- --------------------------------------- -->
+    <!-- فقاعة الذكاء الاصطناعي الجانبية (AI Bubble) -->
+    <!-- --------------------------------------- -->
+    <button id="ai-toggle-button" class="ai-toggle-button">
+        <i class="fas fa-brain"></i>
+    </button>
 
-    <!-- Video Player Overlay -->
-    <div class="video-overlay" id="video-overlay">
-        <div class="video-player">
-            <span class="close-btn" id="close-btn">&times;</span>
-            <iframe id="youtube-player" width="560" height="315" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div id="ai-bubble" class="ai-bubble closed">
+        <div class="ai-header">
+            <span>سيف AI</span>
+            <div class="ai-header-controls">
+                <!-- زر التكبير والتصغير -->
+                <button id="maximize-btn" onclick="toggleMaximize()">
+                    <i class="fas fa-expand"></i> 
+                </button>
+                <!-- زر الإغلاق -->
+                <button class="ai-close-btn" onclick="toggleAIBubble(false)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         </div>
+        <!-- iframe لعرض محتوى سيف AI بشكل مصغر -->
+        <iframe id="ai-frame" src="https://saif1230876657.github.io/SA.ai/" frameborder="0"></iframe>
     </div>
 
     <script>
-        // JavaScript Code
-        document.addEventListener('DOMContentLoaded', () => {
-            const subjectCards = document.querySelectorAll('.subject-card');
-            const videoOverlay = document.getElementById('video-overlay');
-            const closeBtn = document.getElementById('close-btn');
-            const youtubePlayer = document.getElementById('youtube-player');
+        // ====================================
+        // 4. التفاعل والمنطق (JavaScript)
+        // ====================================
 
-            subjectCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const videoId = card.getAttribute('data-video-id');
-                    // The embed URL works for both live streams and regular videos with autoplay
-                    youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-                    videoOverlay.style.display = 'flex';
-                });
-            });
+        const contentFrame = document.getElementById('content-frame');
+        const navItems = document.querySelectorAll('.nav-item');
+        const aiButton = document.getElementById('ai-toggle-button');
+        const aiBubble = document.getElementById('ai-bubble');
+        const maximizeBtn = document.getElementById('maximize-btn');
+        const saifAILinkIdentifier = 'SA.ai/';
 
-            // Function to close the video player
-            function closePlayer() {
-                videoOverlay.style.display = 'none';
-                // Stop the video by clearing the src attribute
-                youtubePlayer.src = '';
-            }
+        // 1. وظيفة تحديث الإطار الرئيسي وتعيين النشاط في الشريط السفلي
+        function loadContent(url, targetItem) {
+            contentFrame.src = url; 
+            
+            navItems.forEach(item => item.classList.remove('active'));
+            targetItem.classList.add('active');
 
-            closeBtn.addEventListener('click', closePlayer);
+            setupAIToggle(url);
+            toggleMaximize(false); // إعادة الفقاعة إلى وضعها المصغر عند التنقل
+        }
 
-            // Close the player if the user clicks on the overlay background
-            videoOverlay.addEventListener('click', (e) => {
-                if (e.target === videoOverlay) {
-                    closePlayer();
-                }
+        // 2. ربط عناصر الشريط السفلي بوظيفة loadContent
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                loadContent(url, this);
             });
         });
+
+        // 3. وظيفة التحكم في فقاعة الذكاء الاصطناعي (فتح/إغلاق)
+        function toggleAIBubble(show) {
+            if (show) {
+                aiBubble.classList.remove('closed');
+                aiButton.style.opacity = '0'; 
+            } else {
+                aiBubble.classList.add('closed');
+                aiButton.style.opacity = '1'; 
+                toggleMaximize(false); // تأكد من إعادتها إلى المصغر قبل الإغلاق
+            }
+        }
+
+        // 4. وظيفة التحكم في زر وفقاعة الذكاء الاصطناعي بناءً على الصفحة
+        function setupAIToggle(currentUrl) {
+            if (currentUrl.includes(saifAILinkIdentifier)) {
+                aiButton.style.display = 'none';
+                toggleAIBubble(false); 
+            } else {
+                aiButton.style.display = 'block';
+            }
+        }
+        
+        // 5. وظيفة التكبير/التصغير
+        function toggleMaximize(forceMaximize = null) {
+            const isMaximized = aiBubble.classList.contains('maximized');
+            const icon = maximizeBtn.querySelector('i');
+
+            let shouldMaximize = (forceMaximize !== null) ? forceMaximize : !isMaximized;
+
+            if (shouldMaximize) {
+                aiBubble.classList.add('maximized');
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress'); // أيقونة التصغير
+            } else {
+                aiBubble.classList.remove('maximized');
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand'); // أيقونة التكبير
+            }
+        }
+
+        // 6. تهيئة المكونات عند تحميل الصفحة
+        window.onload = function() {
+            // تعيين الصفحة الافتراضية (سيف AI) في البداية
+            const initialUrl = contentFrame.src;
+            const initialItem = document.querySelector(`.nav-item[data-url*="${saifAILinkIdentifier}"]`);
+            
+            if (initialItem) {
+                 navItems.forEach(item => item.classList.remove('active'));
+                 initialItem.classList.add('active');
+            }
+            setupAIToggle(initialUrl);
+
+            // ربط زر AI بوظيفة الفتح
+            aiButton.onclick = () => toggleAIBubble(true);
+        };
     </script>
 </body>
 </html>
