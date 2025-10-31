@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة سيف المتطورة (تطبيق متكامل)</title>
+    <title>منصة سيف المتطورة (تطبيق محكم)</title>
     <!-- تضمين مكتبة Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
         /* ==================================== */
-        /* 1. التصميم العام والـ Viewport */
+        /* 1. التصميم العام والحاجز المحكم */
         /* ==================================== */
         body {
             font-family: 'Arial', sans-serif;
@@ -17,14 +17,16 @@
             padding: 0;
             background-color: #f4f7f9; 
             height: 100vh; 
-            overflow: hidden; 
+            overflow: hidden; /* منع أي تمدد خارج محيط الشاشة */
         }
         
+        /* الإطار الرئيسي (المحتوى) - حاجز الشريط السفلي */
         #content-frame {
             position: absolute; 
             top: 0;
             left: 0;
             width: 100%;
+            /* الارتفاع المحكم: كامل الشاشة (100vh) مطروحاً منه ارتفاع الشريط السفلي (60px) */
             height: calc(100vh - 60px); 
             border: none;
             z-index: 10; 
@@ -32,7 +34,7 @@
         }
 
         /* ==================================== */
-        /* 2. الشريط السفلي (تم تركه كما هو) */
+        /* 2. الشريط السفلي (Bottom Bar) */
         /* ==================================== */
         .bottom-bar {
             position: fixed; 
@@ -43,6 +45,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
+            /* تصميم الزجاج/المتطور */
             background-color: rgba(255, 255, 255, 0.95); 
             box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.18); 
             backdrop-filter: blur(18px); 
@@ -50,6 +53,7 @@
             z-index: 1000;
         }
 
+        /* تنسيقات الأيقونات والدائرة (تم الاحتفاظ بها) */
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -64,7 +68,7 @@
             width: 60px; 
             height: 50px;
         }
-
+        
         .nav-item.active i {
             color: #007bff; 
             z-index: 2; 
@@ -134,23 +138,13 @@
             display: flex;
             flex-direction: column;
             transition: all 0.4s ease-out; 
-            /* الوضع المصغر الافتراضي */
+            /* الوضع المصغر الثابت */
             width: 350px; 
             height: 500px; 
             right: 20px;
             bottom: 145px; 
         }
 
-        /* حالة التكبير (ملء الشاشة) */
-        .ai-bubble.maximized {
-            width: calc(100vw - 40px); /* عرض الشاشة - هامش */
-            height: calc(100vh - 80px); /* ارتفاع الشاشة - الشريط السفلي - هامش */
-            right: 20px;
-            bottom: 70px; /* فوق الشريط مباشرة */
-            border-radius: 10px;
-        }
-
-        /* حالة الإخفاء */
         .ai-bubble.closed {
             opacity: 0;
             visibility: hidden;
@@ -165,8 +159,7 @@
             background-color: #007bff;
             color: white;
             font-weight: bold;
-            /* لمسة جمالية لتشجيع التحريك (رغم أن JS التحريك غير مضافة هنا) */
-            cursor: grab; 
+            cursor: default; /* إلغاء حركة السحب */
         }
 
         .ai-header-controls button {
@@ -175,7 +168,6 @@
             color: white;
             font-size: 1rem;
             cursor: pointer;
-            margin-left: 10px;
         }
         
         .ai-bubble iframe {
@@ -184,10 +176,9 @@
             border: none;
         }
 
-
         /* تحسين الاستجابة على شاشات الهواتف (للوضع المصغر) */
         @media (max-width: 768px) {
-            .ai-bubble:not(.maximized) { /* طبق فقط عندما لا يكون مكبراً */
+            .ai-bubble { 
                 width: 95vw; 
                 height: 70vh; 
                 right: 2.5vw; 
@@ -232,10 +223,7 @@
         <div class="ai-header">
             <span>سيف AI</span>
             <div class="ai-header-controls">
-                <!-- زر التكبير والتصغير -->
-                <button id="maximize-btn" onclick="toggleMaximize()">
-                    <i class="fas fa-expand"></i> 
-                </button>
+                <!-- تم إزالة زر التكبير/التصغير -->
                 <!-- زر الإغلاق -->
                 <button class="ai-close-btn" onclick="toggleAIBubble(false)">
                     <i class="fas fa-times"></i>
@@ -255,7 +243,6 @@
         const navItems = document.querySelectorAll('.nav-item');
         const aiButton = document.getElementById('ai-toggle-button');
         const aiBubble = document.getElementById('ai-bubble');
-        const maximizeBtn = document.getElementById('maximize-btn');
         const saifAILinkIdentifier = 'SA.ai/';
 
         // 1. وظيفة تحديث الإطار الرئيسي وتعيين النشاط في الشريط السفلي
@@ -266,7 +253,6 @@
             targetItem.classList.add('active');
 
             setupAIToggle(url);
-            toggleMaximize(false); // إعادة الفقاعة إلى وضعها المصغر عند التنقل
         }
 
         // 2. ربط عناصر الشريط السفلي بوظيفة loadContent
@@ -285,7 +271,6 @@
             } else {
                 aiBubble.classList.add('closed');
                 aiButton.style.opacity = '1'; 
-                toggleMaximize(false); // تأكد من إعادتها إلى المصغر قبل الإغلاق
             }
         }
 
@@ -298,26 +283,8 @@
                 aiButton.style.display = 'block';
             }
         }
-        
-        // 5. وظيفة التكبير/التصغير
-        function toggleMaximize(forceMaximize = null) {
-            const isMaximized = aiBubble.classList.contains('maximized');
-            const icon = maximizeBtn.querySelector('i');
 
-            let shouldMaximize = (forceMaximize !== null) ? forceMaximize : !isMaximized;
-
-            if (shouldMaximize) {
-                aiBubble.classList.add('maximized');
-                icon.classList.remove('fa-expand');
-                icon.classList.add('fa-compress'); // أيقونة التصغير
-            } else {
-                aiBubble.classList.remove('maximized');
-                icon.classList.remove('fa-compress');
-                icon.classList.add('fa-expand'); // أيقونة التكبير
-            }
-        }
-
-        // 6. تهيئة المكونات عند تحميل الصفحة
+        // 5. تهيئة المكونات عند تحميل الصفحة
         window.onload = function() {
             // تعيين الصفحة الافتراضية (سيف AI) في البداية
             const initialUrl = contentFrame.src;
