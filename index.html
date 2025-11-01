@@ -3,40 +3,93 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>تطبيق سحابي متقدم (Firebase)</title>
+<title>⚡ VerseNet</title>
 
 <!-- خط القاهرة و Font Awesome للآيقونات -->
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <style>
   /* ====== المتغيرات والتنسيقات الأساسية ====== */
   :root {
-    --background-color: #000000; /* الخلفية سوداء جداً */
-    --primary-accent: #ffc107; /* الذهبي (بدلاً من الأزرق، لتلبية طلب اللون الذهبي) */
-    --primary-accent-dark: #b8860b;
-    --sky-blue-like: #00bfff; /* لون الإعجاب */
+    --background-color: #000000;
+    --primary-color: #00bcd4; /* سماوي افتراضي */
+    --primary-accent: #00bcd4;
+    --primary-accent-dark: #008c9e;
+    --sky-blue-like: #00bfff;
     --glass-bg-light: rgba(255, 255, 255, 0.07); 
     --glass-bg-dark: rgba(255, 255, 255, 0.03); 
     --text-color-primary: #eee; 
-    --text-color-secondary: var(--primary-accent);
+    --text-color-secondary: var(--primary-color);
     --border-radius-main: 1.5rem; 
     --border-radius-small: 1rem; 
     --skeleton-bg: #222;
     --delete-color: #ff4d4f;
     --dislike-color: #808080;
   }
+
+  /* تأثير الخلفية السائلة المتحركة */
+  @keyframes liquidMove {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.03; }
+    25% { transform: translate(10px, -15px) scale(1.1); opacity: 0.05; }
+    50% { transform: translate(-15px, 10px) scale(0.9); opacity: 0.04; }
+    75% { transform: translate(5px, 15px) scale(1.05); opacity: 0.06; }
+    100% { transform: translate(0, 0) scale(1); opacity: 0.03; }
+  }
+
+  .liquid-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-color);
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .liquid-effect {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 40%;
+    background: rgba(255, 255, 255, 0.03);
+    filter: blur(60px);
+    animation: liquidMove 20s infinite linear;
+  }
+
+  .liquid-effect:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .liquid-effect:nth-child(2) {
+    top: 60%;
+    left: 70%;
+    animation-delay: -5s;
+  }
+
+  .liquid-effect:nth-child(3) {
+    top: 30%;
+    left: 50%;
+    animation-delay: -10s;
+  }
+
+  .liquid-effect:nth-child(4) {
+    top: 80%;
+    left: 20%;
+    animation-delay: -15s;
+  }
+
   body { 
     margin: 0; 
     padding: 0; 
     background: var(--background-color); 
     font-family: 'Cairo', sans-serif; 
     color: var(--text-color-primary); 
-    /* تأثير الماء الأبيض الخفيف كخلفية */
-    background-image: radial-gradient(circle at top left, rgba(255, 255, 255, 0.03) 0%, transparent 50%), 
-                      radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
-    background-size: 100% 100%;
-    background-attachment: fixed;
     transition: background 0.5s ease;
+    overflow-x: hidden;
   }
   
   /* ====== الشاشة الرئيسية والتسجيل ====== */
@@ -50,13 +103,62 @@
   .gender-selection label { cursor: pointer; display: flex; align-items: center; gap: 0.5rem; background: var(--glass-bg-dark); padding: 0.5rem 1rem; border-radius: var(--border-radius-main); transition: background 0.3s; }
   .gender-selection label:hover { background: rgba(255, 255, 255, 0.15); }
   .gender-selection input[type="radio"]:checked + i { color: var(--primary-accent); }
+
+  /* اختيار الألوان */
+  .color-selection { display: flex; gap: 1rem; margin-top: 0.5rem; }
+  .color-option { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+  .color-option:hover { transform: scale(1.1); }
+  .color-option.active { border-color: white; transform: scale(1.1); }
   
   /* ====== رأس التطبيق والمنشورات ====== */
-  header { position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 1rem 0; margin: 0 -1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; z-index: 10; width: calc(100% + 2rem); box-sizing: border-box; }
-  header > * { margin-right: 1rem; margin-left: 0; }
-  header #user-icon { cursor: pointer; }
+  header { 
+    position: sticky; 
+    top: 0; 
+    background: rgba(0,0,0,0.8); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    padding: 1rem 0; 
+    margin: 0 -1rem 1.5rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    z-index: 10; 
+    width: calc(100% + 2rem); 
+    box-sizing: border-box; 
+  }
+  
+  .header-left { display: flex; align-items: center; gap: 0.75rem; }
+  .header-center { flex: 1; text-align: center; }
+  
+  .platform-name {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--primary-accent);
+    text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+    letter-spacing: 1px;
+    background: linear-gradient(145deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9));
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--border-radius-main);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 
+                0 4px 10px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .platform-name::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
+  
+  #user-icon { cursor: pointer; }
   #user-icon { width: 44px; height: 44px; border-radius: 50%; background-color: #444; font-weight: 700; font-size: 1.3rem; color: var(--primary-accent); display: flex; justify-content: center; align-items: center; user-select: none; flex-shrink: 0; border: 2px solid var(--primary-accent); }
-  header h1 { margin: 0; padding: 0.3rem 1.2rem; border-radius: var(--border-radius-main); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: var(--primary-accent); font-weight: 800; font-size: 1.5rem; user-select: none; }
+  
   #posts { display: flex; flex-direction: column; gap: 1.5rem; }
   .post { background: var(--glass-bg-light); border-radius: var(--border-radius-main); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 1rem 1.2rem 1.5rem; animation: slideDownFade 0.5s ease-out forwards; opacity: 0; position: relative; }
   @keyframes slideDownFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -88,14 +190,108 @@
   .like-dislike-group { display: flex; gap: 0.5rem; }
   
   /* ====== زر إضافة منشور (Floating Action Button) ====== */
-  #add-post-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; background: linear-gradient(145deg, var(--primary-accent), var(--primary-accent-dark)); border-radius: 50%; width: 64px; height: 64px; box-shadow: 0 6px 14px rgba(255, 193, 7, 0.7); border: none; display: flex; justify-content: center; align-items: center; color: #000; font-size: 2.8rem; transition: all 0.3s ease; cursor: pointer; user-select: none; z-index: 998; }
-  #add-post-btn:hover { box-shadow: 0 8px 22px rgba(255, 193, 7, 0.9); transform: scale(1.05); }
-  #add-post-btn .folder-icon { position: absolute; font-size: 2rem; opacity: 0.6; filter: drop-shadow(0 0 3px var(--primary-accent)); transform: translate(12px, 10px); }
+  #add-post-btn { 
+    position: fixed; 
+    bottom: 1.5rem; 
+    right: 1.5rem; 
+    background: linear-gradient(145deg, var(--primary-accent), var(--primary-accent-dark)); 
+    border-radius: 50%; 
+    width: 64px; 
+    height: 64px; 
+    box-shadow: 0 6px 14px rgba(0, 188, 212, 0.7); 
+    border: none; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    color: #000; 
+    font-size: 2.8rem; 
+    transition: all 0.3s ease; 
+    cursor: pointer; 
+    user-select: none; 
+    z-index: 998; 
+  }
+  #add-post-btn:hover { box-shadow: 0 8px 22px rgba(0, 188, 212, 0.9); transform: scale(1.05); }
   
   /* ====== الـ Modal الأساسية (لإضافة منشور) ====== */
-  #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 1rem; }
-  #modal { background: rgba(255, 193, 7, 0.05); border-radius: 2rem; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 0 20px #ffc10788; padding: 1.5rem 2rem; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 1rem; box-sizing: border-box; }
-  #modal h2 { margin: 0 0 0.3rem 0; color: var(--text-color-secondary); user-select: none; text-align: center; }
+  #modal-overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.8); 
+    backdrop-filter: blur(6px); 
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 999; 
+    padding: 1rem; 
+  }
+  
+  #upload-modal { 
+    background: rgba(0, 0, 0, 0.9); 
+    border-radius: 2rem; 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px); 
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.5); 
+    padding: 1.5rem 2rem; 
+    width: 100%; 
+    max-width: 400px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+    box-sizing: border-box; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  #upload-modal h2 { margin: 0 0 0.3rem 0; color: var(--text-color-secondary); user-select: none; text-align: center; }
+  
+  .upload-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .upload-option {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: var(--border-radius-main);
+    padding: 1.2rem;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    justify-content: center;
+  }
+  
+  .upload-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .upload-option i {
+    font-size: 1.5rem;
+  }
+  
+  #post-modal { 
+    background: rgba(0, 0, 0, 0.9); 
+    border-radius: 2rem; 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px); 
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.5); 
+    padding: 1.5rem 2rem; 
+    width: 100%; 
+    max-width: 400px; 
+    display: none;
+    flex-direction: column; 
+    gap: 1rem; 
+    box-sizing: border-box; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  #post-modal h2 { margin: 0 0 0.3rem 0; color: var(--text-color-secondary); user-select: none; text-align: center; }
   #post-title-input { padding: 0.7rem 1rem; border: none; border-radius: var(--border-radius-main); font-size: 1.1rem; outline: none; background: #222; color: #fff; }
   #choose-images-btn { padding: 0.7rem 1rem; background: var(--primary-accent); border: none; color: #000; border-radius: var(--border-radius-main); font-weight: 700; user-select: none; transition: background-color 0.3s ease; text-align: center; cursor: pointer; }
   #images-preview { display: flex; flex-wrap: wrap; gap: 6px; max-height: 150px; overflow-y: auto; }
@@ -115,8 +311,32 @@
   #load-more-btn { background: var(--primary-accent); border: none; border-radius: 1.5rem; padding: 0.7rem 2.5rem; color: #000; font-weight: bold; transition: background-color 0.3s ease; cursor: pointer; display: none; }
   
   /* ====== Comment Modal & Advanced Input (التعليقات) ====== */
-  #comment-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
-  #comment-modal { background: var(--background-color); border-top-left-radius: 2rem; border-top-right-radius: 2rem; width: 100%; max-width: 600px; height: 90vh; display: flex; flex-direction: column; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); transform: translateY(100%); transition: transform 0.3s ease-out; }
+  #comment-modal-overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(6px); 
+    display: none; 
+    justify-content: center; 
+    align-items: flex-end; 
+    z-index: 1000; 
+  }
+  
+  #comment-modal { 
+    background: var(--background-color); 
+    border-top-left-radius: 2rem; 
+    border-top-right-radius: 2rem; 
+    width: 100%; 
+    max-width: 600px; 
+    height: 70vh; 
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.5); 
+    transform: translateY(100%); 
+    transition: transform 0.3s ease-out; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
   #comment-modal-overlay.active #comment-modal { transform: translateY(0); }
   
   #comment-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
@@ -169,6 +389,15 @@
     box-sizing: border-box; 
   }
   #comment-input::placeholder { color: #888; }
+  
+  #char-count {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+  
   #send-voice-btn { 
     width: 44px; 
     height: 44px; 
@@ -203,49 +432,123 @@
   .skeleton-images { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .skeleton-img { width: 100%; height: 140px; border-radius: var(--border-radius-small); }
 
+  /* ====== Profile Modal ====== */
+  #profile-modal-overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(0,0,0,0.8); 
+    backdrop-filter: blur(6px); 
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1001; 
+    padding: 1rem; 
+  }
+  
+  #profile-modal { 
+    background: rgba(0, 0, 0, 0.9); 
+    border-radius: 2rem; 
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px); 
+    box-shadow: 0 0 20px rgba(0, 188, 212, 0.5); 
+    padding: 1.5rem 2rem; 
+    width: 100%; 
+    max-width: 400px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+    box-sizing: border-box; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .profile-section { margin-bottom: 1.5rem; }
+  .profile-section h3 { color: var(--text-color-secondary); margin-bottom: 0.8rem; }
+  .profile-input { width: 100%; padding: 0.7rem 1rem; border: none; border-radius: var(--border-radius-main); background: #222; color: #fff; font-size: 1rem; }
+  .profile-btn { background: var(--primary-accent); border: none; border-radius: var(--border-radius-main); padding: 0.7rem 1.5rem; color: #000; font-weight: bold; cursor: pointer; transition: background-color 0.3s; }
+  .profile-btn:hover { background: var(--primary-accent-dark); }
+
   /* تحسينات للشاشات الصغيرة */
   @media (max-width: 600px) {
     #app { padding: 0.5rem 0.5rem 5rem; }
     header { padding: 1rem 0.5rem; margin: 0 -0.5rem 1.5rem; width: 100%; }
-    header > * { margin-right: 0.5rem; margin-left: 0; }
+    .platform-name { font-size: 1.5rem; padding: 0.4rem 1rem; }
     .post, .skeleton-post { padding: 0.8rem 1rem 1.2rem; }
     #comment-modal-overlay { padding: 0; }
-    #comment-modal { border-radius: 1rem 1rem 0 0; }
+    #comment-modal { border-radius: 1rem 1rem 0 0; height: 80vh; }
     #comment-input-area { padding-bottom: 0.5rem; }
+    #upload-modal, #post-modal { padding: 1rem; margin: 1rem; }
   }
 </style>
 </head>
 <body>
 
+<!-- خلفية سائلة متحركة -->
+<div class="liquid-bg">
+  <div class="liquid-effect"></div>
+  <div class="liquid-effect"></div>
+  <div class="liquid-effect"></div>
+  <div class="liquid-effect"></div>
+</div>
+
 <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
 <div id="login-screen">
-  <h2>مرحباً! أنشئ حسابك</h2>
-  <input type="text" id="username-input" placeholder="اسم المستخدم (مثلاً: رائد)" maxlength="30" autocomplete="off"/>
+  <h2>مرحباً في ⚡ VerseNet</h2>
+  <input type="text" id="username-input" placeholder="اسم المستخدم" maxlength="30" autocomplete="off"/>
   <div class="gender-selection">
     <label><input type="radio" name="gender" value="male" style="display:none;" checked><i class="fas fa-mars male"></i> ذكر</label>
     <label><input type="radio" name="gender" value="female" style="display:none;"><i class="fas fa-venus female"></i> أنثى</label>
+  </div>
+  <div class="color-selection">
+    <div class="color-option active" style="background-color: #00bcd4;" data-color="#00bcd4"></div>
+    <div class="color-option" style="background-color: #ffeb3b;" data-color="#ffeb3b"></div>
+    <div class="color-option" style="background-color: #f44336;" data-color="#f44336"></div>
+    <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
   </div>
   <button id="login-btn" disabled>إنشاء حساب</button>
 </div>
 
 <!-- شاشة التطبيق الرئيسية -->
 <div id="app">
-  <header> <div id="user-icon" title="ملفي الشخصي"></div> <h1>المنشورات</h1> </header>
+  <header>
+    <div class="header-left">
+      <div id="user-icon" title="ملفي الشخصي"></div>
+    </div>
+    <div class="header-center">
+      <div class="platform-name">⚡ VerseNet</div>
+    </div>
+    <div class="header-right"></div>
+  </header>
   <section id="posts"></section>
   <div id="load-more-container">
     <button id="load-more-btn">تحميل المزيد</button>
   </div>
-  <button id="add-post-btn" aria-label="إضافة منشور جديد"> <i class="fa-regular fa-folder folder-icon"></i> <i class="fa-solid fa-plus"></i> </button>
+  <button id="add-post-btn" aria-label="إضافة منشور جديد"><i class="fa-solid fa-plus"></i></button>
 </div>
 
-<!-- Modal إضافة منشور جديد -->
+<!-- Modal اختيار نوع الرفع -->
 <div id="modal-overlay">
-  <div id="modal">
+  <div id="upload-modal">
+    <h2>إنشاء منشور جديد</h2>
+    <div class="upload-options">
+      <button class="upload-option" id="text-only-option">
+        <i class="fas fa-font"></i>
+        نص فقط
+      </button>
+      <button class="upload-option" id="image-text-option">
+        <i class="fas fa-image"></i>
+        صورة + نص
+      </button>
+    </div>
+  </div>
+  
+  <div id="post-modal">
     <h2 id="modal-title">إنشاء منشور جديد</h2>
     <input type="text" id="post-title-input" placeholder="عنوان المنشور" maxlength="100" autocomplete="off"/>
-    <label for="images-input" id="choose-images-btn" tabindex="0">اختيار صور (بحد أقصى 6)</label>
-    <input type="file" id="images-input" accept="image/*" multiple style="display:none" />
-    <div id="images-preview"></div>
+    <div id="image-upload-section" style="display: none;">
+      <label for="images-input" id="choose-images-btn" tabindex="0">اختيار صور (بحد أقصى 6)</label>
+      <input type="file" id="images-input" accept="image/*" multiple style="display:none" />
+      <div id="images-preview"></div>
+    </div>
     <button id="publish-btn" disabled>نشر</button>
   </div>
 </div>
@@ -278,26 +581,58 @@
     
     <!-- شريط إدخال التعليق المتقدم (Voice/Text) -->
     <div id="comment-input-area">
-      <div id="comment-input-container">
-        <textarea id="comment-input" placeholder="اكتب تعليقك هنا..." maxlength="250"></textarea>
+      <div id="comment-input-container" style="position: relative;">
+        <textarea id="comment-input" placeholder="اكتب تعليقك هنا..." maxlength="150"></textarea>
+        <div id="char-count">0/150</div>
       </div>
-      <!-- الزر هنا يتحول بين إرسال (سهم) وتسجيل (مايك) -->
       <button id="send-voice-btn" title="اضغط للإرسال، اضغط مطولاً للتسجيل الصوتي">
-        <i class="fas fa-paper-plane"></i>
+        <i class="fas fa-microphone"></i>
       </button>
     </div>
   </div>
 </div>
 
+<!-- Modal الملف الشخصي -->
+<div id="profile-modal-overlay">
+  <div id="profile-modal">
+    <h2>الملف الشخصي</h2>
+    
+    <div class="profile-section">
+      <h3>الاسم</h3>
+      <input type="text" class="profile-input" id="profile-username" placeholder="اسم المستخدم">
+    </div>
+    
+    <div class="profile-section">
+      <h3>الجنس</h3>
+      <div class="gender-selection">
+        <label><input type="radio" name="profile-gender" value="male" style="display:none;"><i class="fas fa-mars male"></i> ذكر</label>
+        <label><input type="radio" name="profile-gender" value="female" style="display:none;"><i class="fas fa-venus female"></i> أنثى</label>
+      </div>
+    </div>
+    
+    <div class="profile-section">
+      <h3>لون الواجهة</h3>
+      <div class="color-selection">
+        <div class="color-option" style="background-color: #00bcd4;" data-color="#00bcd4"></div>
+        <div class="color-option" style="background-color: #ffeb3b;" data-color="#ffeb3b"></div>
+        <div class="color-option" style="background-color: #f44336;" data-color="#f44336"></div>
+        <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
+      </div>
+    </div>
+    
+    <button class="profile-btn" id="save-profile-btn">حفظ التغييرات</button>
+    <button class="profile-btn" id="close-profile-btn" style="background: #555;">إلغاء</button>
+  </div>
+</div>
 
 <!-- جلب مكتبات Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-  // تهيئة Firebase (استخدم إعداداتك الخاصة هنا)
+  // تهيئة Firebase
   const firebaseConfig = {
-    apiKey: "AIzaSyAjE-2q6PONBkCin9ZN22gDp9Q8pAH9ZW8", /* استبدل هذا بـ apiKey مشروعك */
+    apiKey: "AIzaSyAjE-2q6PONBkCin9ZN22gDp9Q8pAH9ZW8",
     authDomain: "story-97cf7.firebaseapp.com",
     databaseURL: "https://story-97cf7-default-rtdb.firebaseio.com",
     projectId: "story-97cf7",
@@ -313,7 +648,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     
     const USER_ID_KEY = 'firebase_user_id';
-    const POSTS_PER_PAGE = 5; // أقصى حد 6 صور، لكن التحميل 5 منشورات في المرة
+    const USER_COLOR_KEY = 'user_color';
+    const POSTS_PER_PAGE = 5;
     const COMMENTS_PER_LOAD = 10;
     
     let currentUser = null;
@@ -323,6 +659,7 @@
     let currentPostId = null; 
     let lastLoadedCommentScore = null;
     let allCommentsLoaded = false;
+    let isTextOnlyPost = false;
 
     // عناصر DOM 
     const loginScreen = document.getElementById('login-screen');
@@ -334,7 +671,12 @@
     const loadMoreBtn = document.getElementById('load-more-btn');
     const addPostBtn = document.getElementById('add-post-btn');
     const modalOverlay = document.getElementById('modal-overlay');
+    const uploadModal = document.getElementById('upload-modal');
+    const postModal = document.getElementById('post-modal');
+    const textOnlyOption = document.getElementById('text-only-option');
+    const imageTextOption = document.getElementById('image-text-option');
     const postTitleInput = document.getElementById('post-title-input');
+    const imageUploadSection = document.getElementById('image-upload-section');
     const imagesInput = document.getElementById('images-input');
     const imagesPreview = document.getElementById('images-preview');
     const publishBtn = document.getElementById('publish-btn');
@@ -343,48 +685,97 @@
     const commentModalOverlay = document.getElementById('comment-modal-overlay');
     const closeCommentBtn = document.getElementById('close-comment-btn');
     const commentInput = document.getElementById('comment-input');
+    const charCount = document.getElementById('char-count');
     const sendVoiceBtn = document.getElementById('send-voice-btn');
     const commentsList = document.getElementById('comments-list');
     const postDetailForComment = document.getElementById('post-detail-for-comment');
     const commentCountTitle = document.getElementById('comment-count-title');
     const loadMoreCommentsBtn = document.getElementById('load-more-comments-btn');
+    const profileModalOverlay = document.getElementById('profile-modal-overlay');
+    const profileUsername = document.getElementById('profile-username');
+    const saveProfileBtn = document.getElementById('save-profile-btn');
+    const closeProfileBtn = document.getElementById('close-profile-btn');
+    const colorOptions = document.querySelectorAll('.color-option');
 
     let selectedImagesBase64 = [];
     let isRecording = false;
     let pressTimer = null;
     let postScrollTimer = null;
 
-
     // ====== دوال المساعدة ======
     function escapeHTML(str) { const p = document.createElement('p'); p.textContent = str; return p.innerHTML; }
+    
     function getGenderIcon(gender) {
         if (gender === 'male') return `<i class="fas fa-mars gender-icon male"></i>`;
         if (gender === 'female') return `<i class="fas fa-venus female gender-icon"></i>`;
         return '';
     }
-    const colorOptions = ['#ff4d4f', '#52c41a', '#faad14']; // ألوان (أحمر، أخضر، أصفر)
-    function getRandomColor() { return colorOptions[Math.floor(Math.random() * colorOptions.length)]; }
+    
+    function setThemeColor(color) {
+      document.documentElement.style.setProperty('--primary-color', color);
+      document.documentElement.style.setProperty('--primary-accent', color);
+      
+      // حساب اللون الداكن
+      const hex = color.replace('#', '');
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+      
+      const darken = (c) => Math.max(0, c - 40);
+      const darkColor = `#${darken(r).toString(16).padStart(2, '0')}${darken(g).toString(16).padStart(2, '0')}${darken(b).toString(16).padStart(2, '0')}`;
+      
+      document.documentElement.style.setProperty('--primary-accent-dark', darkColor);
+      document.documentElement.style.setProperty('--text-color-secondary', color);
+    }
 
-    // لضبط ارتفاع الـ textarea في شريط التعليقات المتقدم
-    function adjustTextareaHeight() {
-      commentInput.style.height = 'auto';
-      let scrollHeight = commentInput.scrollHeight;
-      if (scrollHeight > 100) scrollHeight = 100; 
-      commentInput.style.height = scrollHeight + 'px';
-      // تغيير أيقونة الزر عند الكتابة
-      if(commentInput.value.trim() !== '') {
-        sendVoiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-      } else if (!isRecording) {
-        sendVoiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+    function updateCharCount() {
+      const count = commentInput.value.length;
+      charCount.textContent = `${count}/150`;
+      
+      if (count > 140) {
+        charCount.style.color = '#ff4d4f';
+      } else if (count > 120) {
+        charCount.style.color = '#ffa500';
+      } else {
+        charCount.style.color = '#888';
       }
     }
 
+    // تحويل الصور إلى Base64
+    function imageToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // محاكاة تحويل الصوت إلى نص (في الواقع تحتاج لاستخدام Web Speech API أو خدمة خارجية)
+    function simulateVoiceToText() {
+      const texts = [
+        "هذا تعليق صوتي تم تحويله إلى نص",
+        "أحب هذا التطبيق كثيراً",
+        "شكراً على هذه الميزة الرائعة",
+        "الصوت يعمل بشكل جيد جداً",
+        "تجربة مستخدم رائعة"
+      ];
+      return texts[Math.floor(Math.random() * texts.length)];
+    }
 
     // ====== دوال التهيئة والتسجيل ======
     function init() {
       const userId = localStorage.getItem(USER_ID_KEY);
+      const savedColor = localStorage.getItem(USER_COLOR_KEY);
+      
+      if (savedColor) {
+        setThemeColor(savedColor);
+        document.querySelectorAll('.color-option').forEach(option => {
+          option.classList.toggle('active', option.dataset.color === savedColor);
+        });
+      }
+      
       if (userId) {
-        // عرض الهيكل العظمي للشاشة الرئيسية قبل تحميل بيانات المستخدم
         showAppSkeletons(); 
         database.ref('users/' + userId).once('value').then(snapshot => {
           if (snapshot.exists()) {
@@ -400,35 +791,49 @@
         showLogin();
       }
     }
+    
     function showLogin() { loginScreen.style.display = 'flex'; app.style.display = 'none'; }
+    
     function showApp() { 
         loginScreen.style.display = 'none'; 
         app.style.display = 'flex'; 
         updateUserIcon(currentUser.username); 
-        commentInput.addEventListener('input', adjustTextareaHeight);
-        adjustTextareaHeight();
+        commentInput.addEventListener('input', updateCharCount);
+        updateCharCount();
     }
+    
     function showAppSkeletons() {
         loginScreen.style.display = 'none';
         app.style.display = 'flex';
-        // لا نقوم بتحديث الـ userIcon هنا لأنه لا يوجد مستخدم بعد
         postsContainer.innerHTML = '';
         showSkeletons(POSTS_PER_PAGE);
     }
-    function updateUserIcon(name) { userIcon.textContent = name.trim()[0].toUpperCase(); }
+    
+    function updateUserIcon(name) { 
+      userIcon.textContent = name.trim()[0].toUpperCase(); 
+    }
+    
     function createAccount() {
       const username = usernameInput.value.trim();
       const gender = document.querySelector('input[name="gender"]:checked').value;
+      const selectedColor = document.querySelector('.color-option.active').dataset.color;
+      
       if (username.length === 0) return;
       
       loginBtn.disabled = true;
       loginBtn.textContent = 'جاري الإنشاء...';
 
       const newUserId = database.ref().child('users').push().key;
-      database.ref('users/' + newUserId).set({ username: username, gender: gender })
+      database.ref('users/' + newUserId).set({ 
+        username: username, 
+        gender: gender,
+        color: selectedColor
+      })
         .then(() => {
           localStorage.setItem(USER_ID_KEY, newUserId);
-          currentUser = { id: newUserId, username: username, gender: gender };
+          localStorage.setItem(USER_COLOR_KEY, selectedColor);
+          setThemeColor(selectedColor);
+          currentUser = { id: newUserId, username: username, gender: gender, color: selectedColor };
           showApp();
           loadPosts(true);
         })
@@ -452,7 +857,6 @@
         let postsRef = database.ref('posts').orderByChild('timestamp');
         
         if (!isInitial && lastLoadedPostTimestamp) {
-            // التحميل للأقدم من آخر timestamp تم تحميله
             postsRef = postsRef.endAt(lastLoadedPostTimestamp - 1).limitToLast(POSTS_PER_PAGE);
         } else {
             postsRef = postsRef.limitToLast(POSTS_PER_PAGE);
@@ -474,7 +878,6 @@
               return;
             }
             
-            // ترتيب المنشورات من الأحدث للأقدم
             posts.reverse();
             lastLoadedPostTimestamp = posts[posts.length - 1].timestamp;
 
@@ -515,7 +918,6 @@
         const canDelete = post.userId === currentUser.id;
         const isTextOnly = !post.images || post.images.length === 0;
 
-        // رأس المنشور
         let postHTML = `
             <div class="post-header">
                 <div class="avatar">${post.username.trim()[0].toUpperCase()}</div>
@@ -523,7 +925,6 @@
             </div>
             <div class="post-title">${escapeHTML(post.title)}</div>`;
 
-        // الصور
         if (!isTextOnly) {
             postHTML += `<div class="post-images">`;
             const imagesToShow = post.images.slice(0, 4);
@@ -538,7 +939,6 @@
             postHTML += `</div>`;
         }
 
-        // شريط التفاعلات
         postHTML += `
             <div class="post-actions">
                 <div class="like-dislike-group">
@@ -558,64 +958,27 @@
                 ${canDelete ? `<button class="action-btn delete-btn" data-post-id="${post.id}"><i class="fas fa-trash"></i> حذف</button>` : ''}
             </div>`;
         
-        // الشريط الملون للمنشورات النصية (الشرط الأخير)
         if (isTextOnly) {
-             postHTML += `<div class="text-only-post-indicator" style="background-color: ${getRandomColor()};"></div>`;
+             postHTML += `<div class="text-only-post-indicator" style="background-color: ${post.color || '#00bcd4'};"></div>`;
         }
         
         postEl.innerHTML = postHTML;
 
-        // إضافة مستمعي الأحداث للصور
         postEl.querySelectorAll('.post-images .img-wrapper').forEach(wrapper => {
             wrapper.addEventListener('click', () => openGalleryViewer(post.images, post.id));
         });
         
-        // إضافة مستمعي الأحداث للتفاعلات
         postEl.querySelectorAll('.like-btn, .dislike-btn').forEach(btn => {
             btn.addEventListener('click', () => handlePostReaction(post.id, btn.dataset.type));
         });
 
-        // إضافة مستمع الحدث للتعليقات
         postEl.querySelector('.comment-btn').addEventListener('click', (e) => openCommentModal(post.id, post.title));
 
-        // إضافة مستمع الحدث للحذف
         if(canDelete) {
             postEl.querySelector('.delete-btn').addEventListener('click', () => deletePost(post.id, post.images));
         }
         
-        // إضافة مستمع لـ Double/Triple Tap للـ Like/Dislike (كمحاكاة للطلب)
-        postEl.addEventListener('click', (e) => handleTap(post.id, e.detail));
-
         return postEl;
-    }
-    
-    // محاكاة لطلب Double/Triple Tap
-    let lastTapTime = 0;
-    let tapCount = 0;
-    let tapTimer = null;
-    function handleTap(postId, detail) {
-        const currentTime = new Date().getTime();
-        const timeDiff = currentTime - lastTapTime;
-
-        if (timeDiff < 300) { // اعتبارها نفس الضغطة إذا كان الفارق أقل من 300 مللي ثانية
-            tapCount++;
-            clearTimeout(tapTimer);
-        } else {
-            tapCount = 1;
-        }
-
-        lastTapTime = currentTime;
-
-        tapTimer = setTimeout(() => {
-            if (tapCount === 2) {
-                // ضغطة مزدوجة (Like)
-                handlePostReaction(postId, 'like');
-            } else if (tapCount === 3) {
-                // ضغطة ثلاثية (Dislike)
-                handlePostReaction(postId, 'dislike');
-            }
-            tapCount = 0; // إعادة الضبط
-        }, 300);
     }
     
     // ====== دوال تفاعلات المنشور (Like/Dislike/Delete) ======
@@ -627,24 +990,20 @@
         const userId = currentUser.id;
         const otherType = type === 'like' ? 'dislike' : 'like';
 
-        // تحديث UI فوريًا لتحقيق السرعة
         const isCurrentlyActive = document.querySelector(`#post-${postId} .${type}-btn`).classList.contains('active');
         const postEl = document.getElementById(`post-${postId}`);
         const likeCountSpan = document.getElementById(`like-count-${postId}`);
         const dislikeCountSpan = document.getElementById(`dislike-count-${postId}`);
 
         if (isCurrentlyActive) {
-            // Un-do action: Decrement count and remove active class
             if(likeCountSpan && type === 'like') likeCountSpan.textContent = parseInt(likeCountSpan.textContent) - 1;
             if(dislikeCountSpan && type === 'dislike') dislikeCountSpan.textContent = parseInt(dislikeCountSpan.textContent) - 1;
             postEl.querySelector(`.${type}-btn`).classList.remove('active');
         } else {
-            // Do action: Increment count and add active class
             if(likeCountSpan && type === 'like') likeCountSpan.textContent = parseInt(likeCountSpan.textContent) + 1;
             if(dislikeCountSpan && type === 'dislike') dislikeCountSpan.textContent = parseInt(dislikeCountSpan.textContent) + 1;
             postEl.querySelector(`.${type}-btn`).classList.add('active');
             
-            // Undo other action: Decrement other count and remove other active class
             const otherBtn = postEl.querySelector(`.${otherType}-btn`);
             if (otherBtn.classList.contains('active')) {
                 const otherCountSpan = document.getElementById(`${otherType}-count-${postId}`);
@@ -653,7 +1012,6 @@
             }
         }
 
-        // تحديث Firebase في الخلفية (Transaction لضمان دقة البيانات)
         postRef.transaction(currentPost => {
             if (currentPost) {
                 currentPost.likes = currentPost.likes || {};
@@ -661,12 +1019,10 @@
 
                 const isAlreadyActiveInDB = currentPost[`${type}s`] && currentPost[`${type}s`][userId];
                 
-                // 1. إزالة التفاعل المضاد (إن وجد)
                 if (currentPost[`${otherType}s`] && currentPost[`${otherType}s`][userId]) {
                     delete currentPost[`${otherType}s`][userId];
                 }
 
-                // 2. تطبيق التفاعل المطلوب
                 if (isAlreadyActiveInDB) {
                     delete currentPost[`${type}s`][userId];
                 } else {
@@ -679,28 +1035,22 @@
         });
     }
 
-
     function deletePost(postId, images) {
         if (!confirm('هل أنت متأكد من حذف هذا المنشور؟ سيتم حذف جميع التعليقات والبيانات المرتبطة.')) return;
 
-        // حذف المنشور
         database.ref(`posts/${postId}`).remove()
             .then(() => {
-                // حذف التعليقات المرتبطة
                 return database.ref(`comments/${postId}`).remove();
             })
             .then(() => {
-                // تحديث واجهة المستخدم
                 const postEl = document.getElementById(`post-${postId}`);
                 if (postEl) postEl.remove();
-                alert('تم حذف المنشور بنجاح.');
             })
             .catch(error => {
                 console.error("Error deleting post:", error);
                 alert("حدث خطأ أثناء حذف المنشور.");
             });
     }
-
 
     // ====== دوال نظام التعليقات ======
 
@@ -709,16 +1059,13 @@
         lastLoadedCommentScore = null;
         allCommentsLoaded = false;
         
-        // عرض تفاصيل المنشور في نافذة التعليقات
         postDetailForComment.innerHTML = `<p class="comment-post-title">${escapeHTML(postTitle)}</p>`;
         commentsList.innerHTML = `<p style="text-align:center;color:#666; padding: 1rem 0;">جارٍ تحميل التعليقات...</p>`;
         commentInput.value = '';
-        adjustTextareaHeight();
+        updateCharCount();
         
-        // تحميل التعليقات
         loadComments(postId, true);
         
-        // جلب عدد التعليقات وتحديث العنوان
         database.ref(`posts/${postId}/commentCount`).on('value', snapshot => {
             const count = snapshot.val() || 0;
             commentCountTitle.textContent = `التعليقات (${count})`;
@@ -729,6 +1076,9 @@
             commentModalOverlay.classList.add('active'); 
             commentInput.focus();
         }, 10);
+        
+        // إخفاء التعليقات عند التمرير
+        document.addEventListener('scroll', hideCommentsOnScroll);
     }
     
     function closeCommentModal() {
@@ -738,6 +1088,16 @@
         commentModalOverlay.classList.remove('active');
         setTimeout(() => { commentModalOverlay.style.display = 'none'; }, 300);
         currentPostId = null;
+        document.removeEventListener('scroll', hideCommentsOnScroll);
+    }
+    
+    function hideCommentsOnScroll() {
+        if (commentModalOverlay.style.display === 'flex') {
+            clearTimeout(postScrollTimer);
+            postScrollTimer = setTimeout(() => {
+                closeCommentModal();
+            }, 150);
+        }
     }
 
     function loadComments(postId, isInitial = false) {
@@ -746,10 +1106,8 @@
         let commentsRef = database.ref(`comments/${postId}`).orderByChild('score');
 
         if (!isInitial && lastLoadedCommentScore !== null) {
-            // التحميل للتعليقات الأقل تقييماً (score) من آخر تعليق تم تحميله 
             commentsRef = commentsRef.endAt(lastLoadedCommentScore - 0.0001).limitToLast(COMMENTS_PER_LOAD);
         } else {
-            // التحميل لـ 10 تعليقات ذات أعلى تقييم
             commentsRef = commentsRef.limitToLast(COMMENTS_PER_LOAD);
         }
 
@@ -766,10 +1124,8 @@
                 return;
             }
             
-            // الترتيب من الأعلى تقييماً للأقل
             comments.reverse();
 
-            // حفظ أقل score تم تحميله (للاستخدام في Load More)
             if (comments.length > 0) {
                 lastLoadedCommentScore = comments[comments.length - 1].score;
             }
@@ -803,9 +1159,9 @@
         const dislikeCount = Object.keys(comment.dislikes || {}).length;
         const isLiked = comment.likes && comment.likes[currentUser.id];
         const isDisliked = comment.dislikes && comment.dislikes[currentUser.id];
-        const isVoice = !!comment.isVoice; // استخدام isVoice بدلاً من voiceUrl
+        const isVoice = !!comment.isVoice;
         const canDelete = comment.userId === currentUser.id;
-        const commentTextContent = isVoice ? `(فويس تم تحويله لـ نص): ${comment.text}` : comment.text;
+        const commentTextContent = isVoice ? `(فويس): ${comment.text}` : comment.text;
 
         commentEl.innerHTML = `
             <div class="comment-header">
@@ -823,17 +1179,14 @@
                 <button class="dislike-btn ${isDisliked ? 'active' : ''}" data-comment-id="${comment.id}" data-type="dislike">
                     <i class="fas fa-thumbs-down"></i> ${dislikeCount}
                 </button>
-                <button class="reply-btn" data-comment-id="${comment.id}">رد</button>
                 ${canDelete ? `<button class="delete-comment-btn" data-comment-id="${comment.id}"><i class="fas fa-trash" style="color:var(--delete-color);"></i></button>` : ''}
             </div>
         `;
         
-        // مستمعي الإعجابات على التعليق
         commentEl.querySelectorAll('.like-btn, .dislike-btn').forEach(btn => {
             btn.addEventListener('click', () => handleCommentReaction(currentPostId, comment.id, btn.dataset.type));
         });
 
-        // مستمع حذف التعليق
         if(canDelete) {
             commentEl.querySelector('.delete-comment-btn').addEventListener('click', () => deleteComment(currentPostId, comment.id));
         }
@@ -848,7 +1201,6 @@
         const userId = currentUser.id;
         const otherType = type === 'like' ? 'dislike' : 'like';
 
-        // تحديث Firebase في الخلفية (Transaction لضمان دقة البيانات)
         commentRef.transaction(currentComment => {
             if (currentComment) {
                 currentComment.likes = currentComment.likes || {};
@@ -856,24 +1208,20 @@
 
                 const isCurrentlyActive = currentComment[`${type}s`] && currentComment[`${type}s`][userId];
                 
-                // 1. إزالة التفاعل المضاد
                 if (currentComment[`${otherType}s`] && currentComment[`${otherType}s`][userId]) {
                     delete currentComment[`${otherType}s`][userId];
                 }
 
-                // 2. تطبيق التفاعل المطلوب
                 if (isCurrentlyActive) {
                     delete currentComment[`${type}s`][userId];
                 } else {
                     currentComment[`${type}s`][userId] = true;
                 }
                 
-                // 3. تحديث score للترتيب
                 const likeCount = Object.keys(currentComment.likes).length;
                 const dislikeCount = Object.keys(currentComment.dislikes).length;
-                currentComment.score = likeCount - dislikeCount + Date.now() / 10000000000; // إضافة التايم ستامب كجزء بسيط للترتيب الزمني عند تساوي الـ Score
+                currentComment.score = likeCount - dislikeCount + Date.now() / 10000000000;
                 
-                // إعادة تحميل التعليقات لتطبيق الترتيب الجديد (بعد ثانية واحدة لضمان إرسال الترانزاكشن)
                 setTimeout(() => loadComments(postId, true), 500); 
 
                 return currentComment;
@@ -887,12 +1235,10 @@
 
         database.ref(`comments/${postId}/${commentId}`).remove()
             .then(() => {
-                // تحديث عداد التعليقات في المنشور
                 return database.ref(`posts/${postId}/commentCount`).transaction(count => (count || 0) - 1);
             })
             .then(() => {
-                //alert('تم حذف التعليق بنجاح.'); // إلغاء التنبيه لتسريع التفاعل
-                loadComments(postId, true); // إعادة تحميل التعليقات
+                loadComments(postId, true);
             })
             .catch(error => {
                 console.error("Error deleting comment:", error);
@@ -902,17 +1248,13 @@
 
     // ====== دوال الإرسال (نص وفويس) ======
     
-    // محاكاة تسجيل الفويس (الضغط المطول)
     sendVoiceBtn.addEventListener('mousedown', (e) => {
-        // إذا كان هناك نص، فسيتم إرساله عند الضغط السريع (mouseup/click)
         if (commentInput.value.trim() !== '') return;
         
         pressTimer = setTimeout(() => {
-            // بعد 500 مللي ثانية، يبدأ التسجيل (وضع الفويس)
             isRecording = true;
             sendVoiceBtn.classList.add('recording');
             sendVoiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
-            // alert('بدء التسجيل الصوتي. (تحتاج لإضافة منطق Web Audio API هنا)');
             commentInput.placeholder = 'جارٍ تسجيل الفويس... (حرر للإرسال)';
         }, 500);
     });
@@ -920,10 +1262,8 @@
     sendVoiceBtn.addEventListener('mouseup', handleSendOrStop);
     sendVoiceBtn.addEventListener('mouseleave', () => {
         if(isRecording) {
-            // إذا ترك الزر أثناء التسجيل، يعتبر إيقاف تسجيل
             handleSendOrStop();
         } else {
-            // إذا ترك الزر قبل 500 مللي ثانية (إلغاء الضغط المطول)، يتم مسح الـ pressTimer فقط
             clearTimeout(pressTimer);
         }
     });
@@ -933,37 +1273,28 @@
         const text = commentInput.value.trim();
 
         if (isRecording) {
-            // حالة إيقاف التسجيل
             isRecording = false;
             sendVoiceBtn.classList.remove('recording');
-            sendVoiceBtn.innerHTML = '<i class="fas fa-microphone"></i>'; // يعود للمايك إذا كان النص فارغاً
+            sendVoiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
             commentInput.placeholder = 'اكتب تعليقك هنا...';
             
-            // محاكاة إرسال الفويس وتحويله إلى نص (V2T)
-            const voiceText = "مرحباً! هذا التعليق الصوتي تم تحويله تلقائياً إلى نص سريع.";
+            const voiceText = simulateVoiceToText();
             submitComment(voiceText, true);
 
         } else if (text) {
-            // حالة الإرسال النصي العادي (في حالة ضغط الزر والسهم ظاهر)
             submitComment(text, false);
-        } else {
-             // حالة الضغط القصير وزر الفويس ظاهر (لا يوجد نص)
-             // alert('اضغط مطولاً للتسجيل الصوتي.'); // يمكن تفعيل هذا للتوضيح
         }
     }
     
     sendVoiceBtn.addEventListener('click', (e) => {
-        // إذا لم يتم تفعيل وضع التسجيل و كان هناك نص، يتم إرساله
         if(!isRecording && commentInput.value.trim()) {
              e.preventDefault();
              handleSendOrStop();
         }
-        // إذا لم يكن هناك نص ولم يكن وضع التسجيل مفعلاً، يتم تجاهل الضغطة القصيرة (انتظار الضغط المطول)
     });
     
-    // عند تغيير النص، يتم تحديث زر الإرسال للتحول إلى سهم
     commentInput.addEventListener('input', () => {
-        adjustTextareaHeight();
+        updateCharCount();
         if(commentInput.value.trim() !== '' && !isRecording) {
             sendVoiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
         } else if (!isRecording) {
@@ -974,7 +1305,6 @@
     function submitComment(text, isVoice = false) {
         if (!currentPostId || !text) return;
         
-        // منع الإرسال المزدوج
         if(sendVoiceBtn.disabled) return;
         sendVoiceBtn.disabled = true;
 
@@ -985,7 +1315,7 @@
             text: text,
             isVoice: isVoice,
             timestamp: firebase.database.ServerValue.TIMESTAMP,
-            score: 0 + Date.now() / 10000000000, // إضافة التايم ستامب للترتيب المبدئي
+            score: 0 + Date.now() / 10000000000,
             likes: {},
             dislikes: {},
         };
@@ -994,16 +1324,14 @@
         const newCommentRef = database.ref(commentsPath).push();
         commentData.id = newCommentRef.key;
 
-        // 1. إضافة التعليق
         newCommentRef.set(commentData)
             .then(() => {
-                // 2. تحديث عداد التعليقات في المنشور
                 return database.ref(`posts/${currentPostId}/commentCount`).transaction(count => (count || 0) + 1);
             })
             .then(() => {
                 commentInput.value = '';
-                adjustTextareaHeight();
-                loadComments(currentPostId, true); // إعادة تحميل التعليقات بالترتيب الجديد
+                updateCharCount();
+                loadComments(currentPostId, true);
             })
             .catch(error => {
                 console.error("Error submitting comment:", error);
@@ -1028,11 +1356,12 @@
         username: currentUser.username,
         gender: currentUser.gender,
         title: title,
-        images: selectedImagesBase64, 
+        images: isTextOnlyPost ? [] : selectedImagesBase64,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         likes: {},
         dislikes: {},
-        commentCount: 0 
+        commentCount: 0,
+        color: currentUser.color
       };
 
       database.ref('posts').push(newPost)
@@ -1052,12 +1381,39 @@
         });
     }
 
-    function openModal() {
-      postTitleInput.value = ''; imagesInput.value = ''; imagesPreview.innerHTML = '';
-      selectedImagesBase64 = []; publishBtn.disabled = true;
-      modalOverlay.style.display = 'flex'; postTitleInput.focus();
+    function openUploadModal() {
+      modalOverlay.style.display = 'flex';
+      uploadModal.style.display = 'flex';
+      postModal.style.display = 'none';
     }
-    function closeModal() { modalOverlay.style.display = 'none'; }
+    
+    function openPostModal(isTextOnly) {
+      isTextOnlyPost = isTextOnly;
+      uploadModal.style.display = 'none';
+      postModal.style.display = 'flex';
+      
+      postTitleInput.value = '';
+      imagesInput.value = '';
+      imagesPreview.innerHTML = '';
+      selectedImagesBase64 = [];
+      publishBtn.disabled = true;
+      
+      if (isTextOnly) {
+        imageUploadSection.style.display = 'none';
+        document.getElementById('modal-title').textContent = 'إنشاء منشور نصي';
+      } else {
+        imageUploadSection.style.display = 'block';
+        document.getElementById('modal-title').textContent = 'إنشاء منشور بصري';
+      }
+      
+      postTitleInput.focus();
+    }
+    
+    function closeModal() { 
+      modalOverlay.style.display = 'none'; 
+      uploadModal.style.display = 'flex';
+      postModal.style.display = 'none';
+    }
     
     function openGalleryViewer(imagesArray, postId) {
       const galleryContainer = document.getElementById('gallery-container');
@@ -1079,37 +1435,93 @@
       });
       galleryViewerOverlay.style.display = 'block';
     }
+    
     function closeGalleryViewer() { galleryViewerOverlay.style.display = 'none'; }
     
-    imagesInput.addEventListener('change', () => {
-      const files = Array.from(imagesInput.files).slice(0, 6); // بحد أقصى 6 صور
-      selectedImagesBase64 = []; imagesPreview.innerHTML = '';
-      if (files.length === 0) { checkPublishEnable(); return; }
-
-      let filesProcessed = 0;
-      files.forEach(file => {
-        if (!file.type.startsWith('image/')) {
-          filesProcessed++;
-          if (filesProcessed === files.length) checkPublishEnable();
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          selectedImagesBase64.push(e.target.result);
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          imagesPreview.appendChild(img);
-          filesProcessed++;
-          if (filesProcessed === files.length) checkPublishEnable();
-        };
-        reader.readAsDataURL(file);
+    function openProfileModal() {
+      profileUsername.value = currentUser.username;
+      
+      document.querySelectorAll('input[name="profile-gender"]').forEach(radio => {
+        radio.checked = radio.value === currentUser.gender;
       });
+      
+      document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.toggle('active', option.dataset.color === currentUser.color);
+      });
+      
+      profileModalOverlay.style.display = 'flex';
+    }
+    
+    function closeProfileModal() {
+      profileModalOverlay.style.display = 'none';
+    }
+    
+    function saveProfile() {
+      const newUsername = profileUsername.value.trim();
+      const newGender = document.querySelector('input[name="profile-gender"]:checked').value;
+      const newColor = document.querySelector('.color-option.active').dataset.color;
+      
+      if (newUsername.length === 0) {
+        alert('يرجى إدخال اسم مستخدم صحيح');
+        return;
+      }
+      
+      database.ref('users/' + currentUser.id).update({
+        username: newUsername,
+        gender: newGender,
+        color: newColor
+      })
+      .then(() => {
+        currentUser.username = newUsername;
+        currentUser.gender = newGender;
+        currentUser.color = newColor;
+        
+        localStorage.setItem(USER_COLOR_KEY, newColor);
+        setThemeColor(newColor);
+        updateUserIcon(newUsername);
+        
+        closeProfileModal();
+        loadPosts(true);
+      })
+      .catch(error => {
+        console.error("Error updating profile:", error);
+        alert("حدث خطأ أثناء حفظ التغييرات.");
+      });
+    }
+    
+    imagesInput.addEventListener('change', async () => {
+      const files = Array.from(imagesInput.files).slice(0, 6);
+      selectedImagesBase64 = []; 
+      imagesPreview.innerHTML = '';
+      
+      if (files.length === 0) { 
+        checkPublishEnable(); 
+        return; 
+      }
+
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        
+        try {
+          const base64 = await imageToBase64(file);
+          selectedImagesBase64.push(base64);
+          
+          const img = document.createElement('img');
+          img.src = base64;
+          imagesPreview.appendChild(img);
+        } catch (error) {
+          console.error("Error converting image to base64:", error);
+        }
+      }
+      
+      checkPublishEnable();
     });
     
     function checkPublishEnable() {
       const titleFilled = postTitleInput.value.trim().length > 0;
-      // المنشور يمكن أن يكون نصي فقط (images.length === 0) أو صور مع نص.
-      publishBtn.disabled = !titleFilled;
+      const hasImages = !isTextOnlyPost && selectedImagesBase64.length > 0;
+      const isValid = isTextOnlyPost ? titleFilled : titleFilled && hasImages;
+      publishBtn.disabled = !isValid;
     }
     
     // ====== دوال الهيكل العظمي (Skeletons) ======
@@ -1130,6 +1542,7 @@
             postsContainer.appendChild(skeletonEl);
         }
     }
+    
     function removeSkeletons() {
         const skeletons = postsContainer.querySelectorAll('.skeleton-post');
         skeletons.forEach(s => s.remove());
@@ -1138,8 +1551,8 @@
     // ====== مستمعي الأحداث الرئيسية ======
     usernameInput.addEventListener('input', () => { loginBtn.disabled = usernameInput.value.trim().length === 0; });
     loginBtn.addEventListener('click', createAccount);
-    userIcon.addEventListener('click', () => alert(`ملفك الشخصي:\nالاسم: ${currentUser.username}\nالجنس: ${currentUser.gender}`));
-    addPostBtn.addEventListener('click', openModal);
+    userIcon.addEventListener('click', openProfileModal);
+    addPostBtn.addEventListener('click', openUploadModal);
     loadMoreBtn.addEventListener('click', () => loadPosts(false));
     modalOverlay.addEventListener('click', e => (e.target === modalOverlay) && closeModal());
     galleryViewerOverlay.addEventListener('click', e => (e.target === galleryViewerOverlay) && closeGalleryViewer());
@@ -1155,12 +1568,26 @@
             handleSendOrStop();
         }
     });
+    
+    textOnlyOption.addEventListener('click', () => openPostModal(true));
+    imageTextOption.addEventListener('click', () => openPostModal(false));
+    
+    saveProfileBtn.addEventListener('click', saveProfile);
+    closeProfileBtn.addEventListener('click', closeProfileModal);
+    
+    colorOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         if (modalOverlay.style.display === 'flex') closeModal();
         if (galleryViewerOverlay.style.display === 'block') closeGalleryViewer();
         if (commentModalOverlay.style.display === 'flex') closeCommentModal();
+        if (profileModalOverlay.style.display === 'flex') closeProfileModal();
       }
     });
 
