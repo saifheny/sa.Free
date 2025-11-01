@@ -1,297 +1,1172 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة سيف المتطورة (شريط علوي مسطح)</title>
-    <!-- تضمين مكتبة Font Awesome للأيقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <style>
-        /* ==================================== */
-        /* 1. التصميم العام والخلفية */
-        /* ==================================== */
-        :root {
-            /* متغيرات الألوان */
-            --bg-color: #e0e5ec; /* لون خلفية ناعم */
-            --primary-color: #007bff; /* الأزرق الرئيسي */
-            --shadow-dark: #a3b1c6;
-            --bar-height: 50px; /* **تعديل: ارتفاع الشريط أصبح أصغر (مصغر)** */
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>تطبيق سحابي متقدم (Firebase)</title>
 
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color); 
-            height: 100vh; 
-            overflow: hidden; 
-        }
-        
-        /* الإطار الرئيسي (المحتوى) - يبدأ أسفل الشريط العلوي */
-        #content-frame {
-            position: absolute; 
-            top: var(--bar-height); /* **تعديل: يبدأ من ارتفاع الشريط العلوي** */
-            left: 0;
-            width: 100%;
-            /* الارتفاع: كامل الشاشة مطروحاً منه ارتفاع الشريط العلوي */
-            height: calc(100vh - var(--bar-height)); 
-            border: none;
-            z-index: 10; 
-            transition: all 0.3s ease-in-out; 
-        }
+<!-- خط القاهرة و Font Awesome للآيقونات -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+  /* ====== المتغيرات والتنسيقات الأساسية ====== */
+  :root {
+    --background-color: #000000; /* الخلفية سوداء جداً */
+    --primary-accent: #ffc107; /* الذهبي (بدلاً من الأزرق، لتلبية طلب اللون الذهبي) */
+    --primary-accent-dark: #b8860b;
+    --sky-blue-like: #00bfff; /* لون الإعجاب */
+    --glass-bg-light: rgba(255, 255, 255, 0.07); 
+    --glass-bg-dark: rgba(255, 255, 255, 0.03); 
+    --text-color-primary: #eee; 
+    --text-color-secondary: var(--primary-accent);
+    --border-radius-main: 1.5rem; 
+    --border-radius-small: 1rem; 
+    --skeleton-bg: #222;
+    --delete-color: #ff4d4f;
+    --dislike-color: #808080;
+  }
+  body { 
+    margin: 0; 
+    padding: 0; 
+    background: var(--background-color); 
+    font-family: 'Cairo', sans-serif; 
+    color: var(--text-color-primary); 
+    /* تأثير الماء الأبيض الخفيف كخلفية */
+    background-image: radial-gradient(circle at top left, rgba(255, 255, 255, 0.03) 0%, transparent 50%), 
+                      radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+    background-size: 100% 100%;
+    background-attachment: fixed;
+    transition: background 0.5s ease;
+  }
+  
+  /* ====== الشاشة الرئيسية والتسجيل ====== */
+  #login-screen, #app { display: none; flex-direction: column; width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; padding: 1rem 1rem 5rem; box-sizing: border-box; }
+  #login-screen { justify-content: center; align-items: center; gap: 1rem; }
+  #login-screen h2 { color: var(--text-color-secondary); text-align: center; }
+  #login-screen input[type="text"] { border: none; border-radius: var(--border-radius-main); padding: 0.7rem 1rem; font-size: 1.3rem; outline: none; background: #222; color: #fff; text-align: center; width: 90%; max-width: 350px; }
+  #login-screen button { background: var(--primary-accent); border: none; border-radius: 1.5rem; padding: 0.7rem 2.5rem; color: #000; font-weight: bold; transition: background-color 0.3s ease; cursor: pointer;}
+  #login-screen button:hover:not(:disabled) { background: var(--primary-accent-dark); }
+  .gender-selection { display: flex; gap: 1rem; margin-top: 0.5rem; }
+  .gender-selection label { cursor: pointer; display: flex; align-items: center; gap: 0.5rem; background: var(--glass-bg-dark); padding: 0.5rem 1rem; border-radius: var(--border-radius-main); transition: background 0.3s; }
+  .gender-selection label:hover { background: rgba(255, 255, 255, 0.15); }
+  .gender-selection input[type="radio"]:checked + i { color: var(--primary-accent); }
+  
+  /* ====== رأس التطبيق والمنشورات ====== */
+  header { position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 1rem 0; margin: 0 -1rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; z-index: 10; width: calc(100% + 2rem); box-sizing: border-box; }
+  header > * { margin-right: 1rem; margin-left: 0; }
+  header #user-icon { cursor: pointer; }
+  #user-icon { width: 44px; height: 44px; border-radius: 50%; background-color: #444; font-weight: 700; font-size: 1.3rem; color: var(--primary-accent); display: flex; justify-content: center; align-items: center; user-select: none; flex-shrink: 0; border: 2px solid var(--primary-accent); }
+  header h1 { margin: 0; padding: 0.3rem 1.2rem; border-radius: var(--border-radius-main); background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: var(--primary-accent); font-weight: 800; font-size: 1.5rem; user-select: none; }
+  #posts { display: flex; flex-direction: column; gap: 1.5rem; }
+  .post { background: var(--glass-bg-light); border-radius: var(--border-radius-main); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 1rem 1.2rem 1.5rem; animation: slideDownFade 0.5s ease-out forwards; opacity: 0; position: relative; }
+  @keyframes slideDownFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* ====== تنسيق رأس المنشور ====== */
+  .post-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.8rem; }
+  .post-header .avatar { width: 38px; height: 38px; background-color: var(--primary-accent); border-radius: 50%; color: #000; font-weight: 800; display: flex; justify-content: center; align-items: center; user-select: none; }
+  .post-header .username { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .gender-icon { font-size: 0.9rem; margin-left: -0.3rem; }
+  .male { color: #5dade2; } .female { color: #f1948a; }
+  
+  .post-title { background: rgba(255, 255, 255, 0.12); border-radius: var(--border-radius-main); padding: 0.8rem 1rem; font-weight: 800; font-size: 1.15rem; color: var(--text-color-secondary); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); margin-bottom: 1rem; user-select: text; line-height: 1.6; word-break: break-word; }
+  .post-images { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .post-images img { width: 100%; height: 140px; object-fit: cover; border-radius: var(--border-radius-small); cursor: pointer; }
+  .img-wrapper { position: relative; border-radius: var(--border-radius-small); overflow: hidden; }
+  .more-overlay { position: absolute; inset: 0; background-color: rgba(0,0,0,0.6); border-radius: var(--border-radius-small); color: #fff; font-size: 1.5rem; font-weight: 900; display: flex; justify-content: center; align-items: center; user-select: none; }
+  
+  /* الشريط الملون للمنشور النصي الخالص */
+  .text-only-post-indicator { height: 7px; width: 100%; border-radius: 0 0 var(--border-radius-main) var(--border-radius-main); position: absolute; bottom: 0; left: 0; transition: all 0.3s; }
 
-        /* ==================================== */
-        /* 2. الشريط العلوي (Bottom Bar سابقاً) - الآن شريط علوي مسطح ومصغر */
-        /* ==================================== */
-        .bottom-bar {
-            position: fixed; 
-            top: 0; /* **تعديل رئيسي: أصبح شريطًا علويًا** */
-            bottom: auto; 
-            left: 0;
-            width: 100%; 
-            height: var(--bar-height);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background-color: var(--bg-color); 
-            /* **تعديل: إزالة التوهج النيومورفي - ظل بسيط مسطح للتمييز** */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); 
-            z-index: 1000;
-            border-radius: 0 0 10px 10px; /* حواف سفلية مستديرة */
-            padding-bottom: 0; 
-        }
+  /* ====== شريط التفاعلات (الإعجاب، التعليق، الحذف) ====== */
+  .post-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.7rem; }
+  .action-btn { background: var(--glass-bg-dark); border: none; border-radius: 1.5rem; padding: 0.5rem 1rem; color: var(--text-color-primary); font-weight: 700; cursor: pointer; transition: background-color 0.3s; display: flex; align-items: center; gap: 0.5rem; user-select: none; }
+  .action-btn i { font-size: 1.1rem; }
+  .action-btn:hover { background: rgba(255, 255, 255, 0.15); }
+  .like-btn.active { color: var(--sky-blue-like); background: rgba(0, 191, 255, 0.2); }
+  .dislike-btn.active { color: var(--dislike-color); background: rgba(128, 128, 128, 0.2); }
+  .delete-btn { color: var(--delete-color); }
+  .like-dislike-group { display: flex; gap: 0.5rem; }
+  
+  /* ====== زر إضافة منشور (Floating Action Button) ====== */
+  #add-post-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; background: linear-gradient(145deg, var(--primary-accent), var(--primary-accent-dark)); border-radius: 50%; width: 64px; height: 64px; box-shadow: 0 6px 14px rgba(255, 193, 7, 0.7); border: none; display: flex; justify-content: center; align-items: center; color: #000; font-size: 2.8rem; transition: all 0.3s ease; cursor: pointer; user-select: none; z-index: 998; }
+  #add-post-btn:hover { box-shadow: 0 8px 22px rgba(255, 193, 7, 0.9); transform: scale(1.05); }
+  #add-post-btn .folder-icon { position: absolute; font-size: 2rem; opacity: 0.6; filter: drop-shadow(0 0 3px var(--primary-accent)); transform: translate(12px, 10px); }
+  
+  /* ====== الـ Modal الأساسية (لإضافة منشور) ====== */
+  #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 1rem; }
+  #modal { background: rgba(255, 193, 7, 0.05); border-radius: 2rem; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 0 20px #ffc10788; padding: 1.5rem 2rem; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 1rem; box-sizing: border-box; }
+  #modal h2 { margin: 0 0 0.3rem 0; color: var(--text-color-secondary); user-select: none; text-align: center; }
+  #post-title-input { padding: 0.7rem 1rem; border: none; border-radius: var(--border-radius-main); font-size: 1.1rem; outline: none; background: #222; color: #fff; }
+  #choose-images-btn { padding: 0.7rem 1rem; background: var(--primary-accent); border: none; color: #000; border-radius: var(--border-radius-main); font-weight: 700; user-select: none; transition: background-color 0.3s ease; text-align: center; cursor: pointer; }
+  #images-preview { display: flex; flex-wrap: wrap; gap: 6px; max-height: 150px; overflow-y: auto; }
+  #images-preview img { width: 60px; height: 60px; border-radius: var(--border-radius-small); object-fit: cover; }
+  #publish-btn { margin-top: 1rem; background: var(--primary-accent); border: none; color: #000; font-weight: 800; padding: 0.9rem; border-radius: 2rem; font-size: 1.2rem; cursor: pointer; user-select: none; transition: background-color 0.3s ease; }
+  #publish-btn:disabled { background: #555; color: #bbb; cursor: not-allowed; }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--shadow-dark); 
-            font-size: 1.2rem; /* **تعديل: حجم خط أصغر** */
-            position: relative;
-            padding: 5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            width: 60px; 
-            height: 40px; 
-            border-radius: 5px; 
-        }
-        
-        /* تأثير التفاعل (Hover) */
-        .nav-item:hover {
-            color: var(--primary-color);
-            transform: scale(1.05);
-        }
+  /* ====== معرض الصور (Gallery Viewer) ====== */
+  #gallery-viewer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(5px); display: none; z-index: 9999; padding: 2rem 0; box-sizing: border-box; }
+  #close-gallery-btn { position: absolute; top: 1rem; left: 1.5rem; background: none; border: none; font-size: 2.5rem; color: #aaa; cursor: pointer; transition: color 0.3s; z-index: 10; }
+  #gallery-container { width: 100%; max-width: 700px; margin: 0 auto; height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 2rem; padding: 0 1rem; box-sizing: border-box; }
+  .gallery-item { position: relative; text-align: center; }
+  .gallery-item img { max-width: 100%; border-radius: var(--border-radius-small); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+  .download-btn { position: absolute; bottom: 1rem; left: 1rem; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; text-decoration: none; transition: background 0.3s; }
+  .download-btn:hover { background: var(--primary-accent); color: #000; }
+  #load-more-container { text-align: center; margin-top: 1.5rem; }
+  #load-more-btn { background: var(--primary-accent); border: none; border-radius: 1.5rem; padding: 0.7rem 2.5rem; color: #000; font-weight: bold; transition: background-color 0.3s ease; cursor: pointer; display: none; }
+  
+  /* ====== Comment Modal & Advanced Input (التعليقات) ====== */
+  #comment-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
+  #comment-modal { background: var(--background-color); border-top-left-radius: 2rem; border-top-right-radius: 2rem; width: 100%; max-width: 600px; height: 90vh; display: flex; flex-direction: column; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); transform: translateY(100%); transition: transform 0.3s ease-out; }
+  #comment-modal-overlay.active #comment-modal { transform: translateY(0); }
+  
+  #comment-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  #comment-modal-header h3 { margin: 0; font-size: 1.2rem; color: var(--text-color-secondary); }
+  #close-comment-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+  
+  #comment-content-area { flex-grow: 1; overflow-y: auto; padding: 0 1.5rem; }
+  #post-detail-for-comment { padding: 1rem 0; background: var(--glass-bg-dark); margin: 0 -1.5rem; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  .comment-post-title { font-size: 1rem; font-weight: 700; color: var(--text-color-secondary); line-height: 1.5; }
+  
+  #comments-list { display: flex; flex-direction: column; gap: 1rem; padding: 1rem 0; }
+  .comment-item { background: var(--glass-bg-dark); border-radius: var(--border-radius-small); padding: 0.8rem 1rem; }
+  .comment-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .comment-header .username { font-weight: 700; font-size: 0.95rem; }
+  .comment-text { font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+  .comment-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.8rem; }
+  .comment-actions button { background: none; border: none; color: #bbb; cursor: pointer; padding: 0.2rem 0.5rem; border-radius: 0.5rem; transition: background 0.2s; }
+  .comment-actions button:hover { background: rgba(255, 255, 255, 0.1); }
+  .comment-actions .like-btn.active { color: var(--sky-blue-like); }
+  .comment-actions .dislike-btn.active { color: var(--dislike-color); }
+  .comment-voice-icon { color: var(--primary-accent); margin-right: 0.5rem; }
+  
+  /* ====== شريط إدخال التعليق المتقدم (Advanced Input) ====== */
+  #comment-input-area { 
+    padding: 1rem 1rem 0.5rem; 
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    display: flex; 
+    gap: 0.5rem; 
+    align-items: flex-end; 
+    position: sticky;
+    bottom: 0;
+    background: var(--background-color);
+    box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
+  }
+  
+  #comment-input-container { flex-grow: 1; background: var(--glass-bg-dark); border-radius: 2rem; display: flex; align-items: center; padding: 0.2rem 0.5rem; }
+  #comment-input { 
+    flex-grow: 1; 
+    border: none; 
+    outline: none; 
+    background: transparent; 
+    color: #fff; 
+    padding: 0.7rem 1rem; 
+    font-size: 1rem; 
+    line-height: 1.2; 
+    resize: none; 
+    overflow: hidden; 
+    min-height: 38px; 
+    max-height: 100px;
+    box-sizing: border-box; 
+  }
+  #comment-input::placeholder { color: #888; }
+  #send-voice-btn { 
+    width: 44px; 
+    height: 44px; 
+    border-radius: 50%; 
+    background: var(--primary-accent); 
+    color: #000; 
+    border: none; 
+    font-size: 1.2rem; 
+    cursor: pointer; 
+    transition: background-color 0.1s; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-shrink: 0; 
+  }
+  #send-voice-btn:active { background: var(--primary-accent-dark); }
+  #send-voice-btn.recording { 
+    background: var(--delete-color); 
+    color: white; 
+    animation: pulse 1s infinite; 
+  }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 77, 79, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); } }
 
-        /* حالة النشاط الدائمة (إزالة تأثير الانغراس/التوهج النيومورفي) */
-        .nav-item.active {
-            color: white; /* لون أبيض للأيقونة النشطة */
-            background-color: var(--primary-color); /* خلفية بلون صلب */
-            box-shadow: none; /* **إزالة الظلال الداخلية (التوهج المنغرس)** */
-            transform: scale(0.95);
-        }
+  /* ====== الهياكل العظمية (Skeletons) ====== */
+  .skeleton-post { background: var(--glass-bg-light); border-radius: var(--border-radius-main); padding: 1rem 1.2rem 1.5rem; }
+  .skeleton { background-color: var(--skeleton-bg); border-radius: 0.5rem; animation: shimmer 1.5s infinite linear; }
+  @keyframes shimmer { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+  .skeleton-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.8rem; }
+  .skeleton-avatar { width: 38px; height: 38px; border-radius: 50%; }
+  .skeleton-username { width: 100px; height: 20px; }
+  .skeleton-title { width: 80%; height: 40px; border-radius: var(--border-radius-main); margin-bottom: 1rem; }
+  .skeleton-images { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .skeleton-img { width: 100%; height: 140px; border-radius: var(--border-radius-small); }
 
-        /* إزالة الفقاعات غير الضرورية */
-        .nav-item::after, .nav-item::before {
-            content: none !important;
-        }
-
-
-        /* ==================================== */
-        /* 3. فقاعة الذكاء الاصطناعي (AI Bubble) - إزالة التوهج */
-        /* ==================================== */
-        .ai-toggle-button {
-            position: fixed;
-            right: 20px; 
-            bottom: 20px; /* موقع ثابت في الأسفل */
-            width: 55px; 
-            height: 55px;
-            border-radius: 50%;
-            background-color: var(--primary-color); 
-            color: white;
-            border: none;
-            /* **تعديل: إزالة التوهج النيومورفي والإضافي** */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25); /* ظل عائم قياسي */
-            font-size: 1.3rem;
-            cursor: pointer;
-            z-index: 999;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .ai-bubble {
-            position: fixed;
-            background-color: white; 
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.4s ease-out; 
-            width: 350px; 
-            height: 500px; 
-            right: 20px;
-            bottom: 90px; /* موقع فوق زر AI */
-        }
-
-        .ai-bubble.closed {
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(0.7) translateY(50px); 
-        }
-
-        .ai-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: bold;
-            cursor: default; 
-        }
-        
-        .ai-header-controls button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        
-        .ai-bubble iframe {
-            flex-grow: 1;
-            width: 100%;
-            border: none;
-        }
-
-        @media (max-width: 768px) {
-            .ai-bubble { 
-                width: 95vw; 
-                height: 70vh; 
-                right: 2.5vw; 
-                bottom: 80px; /* موقع على الجوال */
-            }
-        }
-    </style>
+  /* تحسينات للشاشات الصغيرة */
+  @media (max-width: 600px) {
+    #app { padding: 0.5rem 0.5rem 5rem; }
+    header { padding: 1rem 0.5rem; margin: 0 -0.5rem 1.5rem; width: 100%; }
+    header > * { margin-right: 0.5rem; margin-left: 0; }
+    .post, .skeleton-post { padding: 0.8rem 1rem 1.2rem; }
+    #comment-modal-overlay { padding: 0; }
+    #comment-modal { border-radius: 1rem 1rem 0 0; }
+    #comment-input-area { padding-bottom: 0.5rem; }
+  }
+</style>
 </head>
 <body>
 
-    <!-- الإطار الرئيسي الذي سيحمل محتوى الصفحات الأربع -->
-    <iframe id="content-frame" 
-            src="https://saif1230876657.github.io/SA.ai/" 
-            title="Main Content Frame"></iframe>
+<!-- شاشة تسجيل الدخول وإنشاء الحساب -->
+<div id="login-screen">
+  <h2>مرحباً! أنشئ حسابك</h2>
+  <input type="text" id="username-input" placeholder="اسم المستخدم (مثلاً: رائد)" maxlength="30" autocomplete="off"/>
+  <div class="gender-selection">
+    <label><input type="radio" name="gender" value="male" style="display:none;" checked><i class="fas fa-mars male"></i> ذكر</label>
+    <label><input type="radio" name="gender" value="female" style="display:none;"><i class="fas fa-venus female"></i> أنثى</label>
+  </div>
+  <button id="login-btn" disabled>إنشاء حساب</button>
+</div>
 
-    <!-- --------------------------------------- -->
-    <!-- الشريط العلوي (Bottom Bar) - بتصميم مسطح ومصغر -->
-    <!-- --------------------------------------- -->
-    <nav class="bottom-bar">
-        <div class="nav-item" data-name="سيف AI" data-url="https://saif1230876657.github.io/SA.ai/">
-            <i class="fas fa-magic"></i> 
-        </div>
-        <div class="nav-item" data-name="تعليم" data-url="https://saifheny.github.io/Educational.platform/">
-            <i class="fas fa-book-open"></i> 
-        </div>
-        <div class="nav-item" data-name="برمجة" data-url="https://saifheny.github.io/Code-Masters/">
-            <i class="fas fa-laptop-code"></i> 
-        </div>
-        <div class="nav-item" data-name="اختبارات" data-url="https://saifheny.github.io/Tests/">
-            <i class="fas fa-spell-check"></i> 
-        </div>
-    </nav>
-    
-    <!-- --------------------------------------- -->
-    <!-- فقاعة الذكاء الاصطناعي الجانبية (AI Bubble) -->
-    <!-- --------------------------------------- -->
-    <button id="ai-toggle-button" class="ai-toggle-button">
-        <i class="fas fa-brain"></i>
-    </button>
+<!-- شاشة التطبيق الرئيسية -->
+<div id="app">
+  <header> <div id="user-icon" title="ملفي الشخصي"></div> <h1>المنشورات</h1> </header>
+  <section id="posts"></section>
+  <div id="load-more-container">
+    <button id="load-more-btn">تحميل المزيد</button>
+  </div>
+  <button id="add-post-btn" aria-label="إضافة منشور جديد"> <i class="fa-regular fa-folder folder-icon"></i> <i class="fa-solid fa-plus"></i> </button>
+</div>
 
-    <div id="ai-bubble" class="ai-bubble closed">
-        <div class="ai-header">
-            <span>سيف AI</span>
-            <div class="ai-header-controls">
-                <!-- زر الإغلاق -->
-                <button class="ai-close-btn" onclick="toggleAIBubble(false)">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        <!-- iframe لعرض محتوى سيف AI بشكل مصغر -->
-        <iframe id="ai-frame" src="https://saif1230876657.github.io/SA.ai/" frameborder="0"></iframe>
+<!-- Modal إضافة منشور جديد -->
+<div id="modal-overlay">
+  <div id="modal">
+    <h2 id="modal-title">إنشاء منشور جديد</h2>
+    <input type="text" id="post-title-input" placeholder="عنوان المنشور" maxlength="100" autocomplete="off"/>
+    <label for="images-input" id="choose-images-btn" tabindex="0">اختيار صور (بحد أقصى 6)</label>
+    <input type="file" id="images-input" accept="image/*" multiple style="display:none" />
+    <div id="images-preview"></div>
+    <button id="publish-btn" disabled>نشر</button>
+  </div>
+</div>
+
+<!-- Modal معرض الصور -->
+<div id="gallery-viewer-overlay">
+  <button id="close-gallery-btn">×</button>
+  <div id="gallery-container"></div>
+</div>
+
+<!-- Modal التعليقات المتقدمة -->
+<div id="comment-modal-overlay">
+  <div id="comment-modal">
+    <div id="comment-modal-header">
+      <h3 id="comment-count-title">التعليقات (0)</h3>
+      <button id="close-comment-btn">×</button>
     </div>
+    <div id="comment-content-area">
+      <div id="post-detail-for-comment">
+        <!-- سيتم حقن تفاصيل المنشور هنا (العنوان) -->
+      </div>
+      <div id="comments-list">
+        <!-- سيتم حقن التعليقات هنا -->
+        <p style="text-align:center;color:#666; padding: 1rem 0;">جارٍ تحميل التعليقات...</p>
+      </div>
+      <div id="load-more-comments-container" style="text-align: center; padding: 1rem;">
+        <button id="load-more-comments-btn" class="action-btn" style="display:none;">تحميل المزيد من التعليقات</button>
+      </div>
+    </div>
+    
+    <!-- شريط إدخال التعليق المتقدم (Voice/Text) -->
+    <div id="comment-input-area">
+      <div id="comment-input-container">
+        <textarea id="comment-input" placeholder="اكتب تعليقك هنا..." maxlength="250"></textarea>
+      </div>
+      <!-- الزر هنا يتحول بين إرسال (سهم) وتسجيل (مايك) -->
+      <button id="send-voice-btn" title="اضغط للإرسال، اضغط مطولاً للتسجيل الصوتي">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-    <script>
-        // ====================================
-        // 4. التفاعل والمنطق (JavaScript) 
-        // ====================================
 
-        const contentFrame = document.getElementById('content-frame');
-        const navItems = document.querySelectorAll('.nav-item');
-        const aiButton = document.getElementById('ai-toggle-button');
-        const aiBubble = document.getElementById('ai-bubble');
-        const saifAILinkIdentifier = 'SA.ai/';
+<!-- جلب مكتبات Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-        // 1. وظيفة تحديث الإطار الرئيسي وتعيين النشاط الدائم
-        function loadContent(url, targetItem) {
-            contentFrame.src = url; 
-            
-            // إزالة حالة التحديد النشط من الجميع
-            navItems.forEach(item => item.classList.remove('active'));
-            
-            // تفعيل حالة التحديد الدائمة
-            targetItem.classList.add('active');
+<script>
+  // تهيئة Firebase (استخدم إعداداتك الخاصة هنا)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjE-2q6PONBkCin9ZN22gDp9Q8pAH9ZW8", /* استبدل هذا بـ apiKey مشروعك */
+    authDomain: "story-97cf7.firebaseapp.com",
+    databaseURL: "https://story-97cf7-default-rtdb.firebaseio.com",
+    projectId: "story-97cf7",
+    storageBucket: "story-97cf7.firebasestorage.app",
+    messagingSenderId: "742801388214",
+    appId: "1:742801388214:web:32a305a8057b0582c5ec17",
+    measurementId: "G-9DPPWX7CF0"
+  };
 
-            setupAIToggle(url);
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  document.addEventListener('DOMContentLoaded', () => {
+    
+    const USER_ID_KEY = 'firebase_user_id';
+    const POSTS_PER_PAGE = 5; // أقصى حد 6 صور، لكن التحميل 5 منشورات في المرة
+    const COMMENTS_PER_LOAD = 10;
+    
+    let currentUser = null;
+    let lastLoadedPostTimestamp = null;
+    let allPostsLoaded = false;
+    let isLoading = false;
+    let currentPostId = null; 
+    let lastLoadedCommentScore = null;
+    let allCommentsLoaded = false;
+
+    // عناصر DOM 
+    const loginScreen = document.getElementById('login-screen');
+    const app = document.getElementById('app');
+    const usernameInput = document.getElementById('username-input');
+    const loginBtn = document.getElementById('login-btn');
+    const userIcon = document.getElementById('user-icon');
+    const postsContainer = document.getElementById('posts');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const addPostBtn = document.getElementById('add-post-btn');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const postTitleInput = document.getElementById('post-title-input');
+    const imagesInput = document.getElementById('images-input');
+    const imagesPreview = document.getElementById('images-preview');
+    const publishBtn = document.getElementById('publish-btn');
+    const galleryViewerOverlay = document.getElementById('gallery-viewer-overlay');
+    const closeGalleryBtn = document.getElementById('close-gallery-btn');
+    const commentModalOverlay = document.getElementById('comment-modal-overlay');
+    const closeCommentBtn = document.getElementById('close-comment-btn');
+    const commentInput = document.getElementById('comment-input');
+    const sendVoiceBtn = document.getElementById('send-voice-btn');
+    const commentsList = document.getElementById('comments-list');
+    const postDetailForComment = document.getElementById('post-detail-for-comment');
+    const commentCountTitle = document.getElementById('comment-count-title');
+    const loadMoreCommentsBtn = document.getElementById('load-more-comments-btn');
+
+    let selectedImagesBase64 = [];
+    let isRecording = false;
+    let pressTimer = null;
+    let postScrollTimer = null;
+
+
+    // ====== دوال المساعدة ======
+    function escapeHTML(str) { const p = document.createElement('p'); p.textContent = str; return p.innerHTML; }
+    function getGenderIcon(gender) {
+        if (gender === 'male') return `<i class="fas fa-mars gender-icon male"></i>`;
+        if (gender === 'female') return `<i class="fas fa-venus female gender-icon"></i>`;
+        return '';
+    }
+    const colorOptions = ['#ff4d4f', '#52c41a', '#faad14']; // ألوان (أحمر، أخضر، أصفر)
+    function getRandomColor() { return colorOptions[Math.floor(Math.random() * colorOptions.length)]; }
+
+    // لضبط ارتفاع الـ textarea في شريط التعليقات المتقدم
+    function adjustTextareaHeight() {
+      commentInput.style.height = 'auto';
+      let scrollHeight = commentInput.scrollHeight;
+      if (scrollHeight > 100) scrollHeight = 100; 
+      commentInput.style.height = scrollHeight + 'px';
+      // تغيير أيقونة الزر عند الكتابة
+      if(commentInput.value.trim() !== '') {
+        sendVoiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+      } else if (!isRecording) {
+        sendVoiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+      }
+    }
+
+
+    // ====== دوال التهيئة والتسجيل ======
+    function init() {
+      const userId = localStorage.getItem(USER_ID_KEY);
+      if (userId) {
+        // عرض الهيكل العظمي للشاشة الرئيسية قبل تحميل بيانات المستخدم
+        showAppSkeletons(); 
+        database.ref('users/' + userId).once('value').then(snapshot => {
+          if (snapshot.exists()) {
+            currentUser = { id: userId, ...snapshot.val() };
+            showApp();
+            loadPosts(true);
+          } else {
+            localStorage.removeItem(USER_ID_KEY);
+            showLogin();
+          }
+        }).catch(error => { console.error("Firebase Error:", error); showLogin(); });
+      } else {
+        showLogin();
+      }
+    }
+    function showLogin() { loginScreen.style.display = 'flex'; app.style.display = 'none'; }
+    function showApp() { 
+        loginScreen.style.display = 'none'; 
+        app.style.display = 'flex'; 
+        updateUserIcon(currentUser.username); 
+        commentInput.addEventListener('input', adjustTextareaHeight);
+        adjustTextareaHeight();
+    }
+    function showAppSkeletons() {
+        loginScreen.style.display = 'none';
+        app.style.display = 'flex';
+        // لا نقوم بتحديث الـ userIcon هنا لأنه لا يوجد مستخدم بعد
+        postsContainer.innerHTML = '';
+        showSkeletons(POSTS_PER_PAGE);
+    }
+    function updateUserIcon(name) { userIcon.textContent = name.trim()[0].toUpperCase(); }
+    function createAccount() {
+      const username = usernameInput.value.trim();
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+      if (username.length === 0) return;
+      
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'جاري الإنشاء...';
+
+      const newUserId = database.ref().child('users').push().key;
+      database.ref('users/' + newUserId).set({ username: username, gender: gender })
+        .then(() => {
+          localStorage.setItem(USER_ID_KEY, newUserId);
+          currentUser = { id: newUserId, username: username, gender: gender };
+          showApp();
+          loadPosts(true);
+        })
+        .catch(error => {
+          console.error("Error creating account:", error);
+          alert("حدث خطأ أثناء إنشاء الحساب.");
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'إنشاء حساب';
+        });
+    }
+
+    // ====== دوال عرض المنشورات الرئيسية ======
+    function loadPosts(isInitial = false) {
+        if (allPostsLoaded || isLoading) return;
+        isLoading = true;
+        loadMoreBtn.disabled = true;
+        
+        if (isInitial) { postsContainer.innerHTML = ''; }
+        showSkeletons(isInitial ? POSTS_PER_PAGE : 2); 
+
+        let postsRef = database.ref('posts').orderByChild('timestamp');
+        
+        if (!isInitial && lastLoadedPostTimestamp) {
+            // التحميل للأقدم من آخر timestamp تم تحميله
+            postsRef = postsRef.endAt(lastLoadedPostTimestamp - 1).limitToLast(POSTS_PER_PAGE);
+        } else {
+            postsRef = postsRef.limitToLast(POSTS_PER_PAGE);
         }
 
-        // 2. ربط عناصر الشريط العلوي بوظيفة loadContent
-        navItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const url = this.getAttribute('data-url');
-                loadContent(url, this);
+        postsRef.once('value', (snapshot) => {
+            const posts = [];
+            snapshot.forEach(childSnapshot => {
+                posts.push({ id: childSnapshot.key, ...childSnapshot.val() });
             });
+
+            removeSkeletons();
+
+            if (posts.length === 0) {
+              allPostsLoaded = true;
+              loadMoreBtn.style.display = 'none';
+              if (isInitial) { postsContainer.innerHTML = `<p style="text-align:center;color:#555;">لا توجد منشورات حتى الآن.</p>`; }
+              isLoading = false;
+              return;
+            }
+            
+            // ترتيب المنشورات من الأحدث للأقدم
+            posts.reverse();
+            lastLoadedPostTimestamp = posts[posts.length - 1].timestamp;
+
+            if (posts.length < POSTS_PER_PAGE) {
+                allPostsLoaded = true;
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'block';
+                loadMoreBtn.disabled = false;
+            }
+            renderPosts(posts);
+            isLoading = false;
+        });
+    }
+
+    function renderPosts(posts) {
+        posts.forEach((post, index) => {
+            const existingPost = document.getElementById(`post-${post.id}`);
+            if (existingPost) return; 
+
+            setTimeout(() => {
+                const postEl = createPostElement(post);
+                postsContainer.appendChild(postEl);
+            }, index * 100);
+        });
+    }
+
+    function createPostElement(post) {
+        const postEl = document.createElement('article');
+        postEl.className = 'post';
+        postEl.id = `post-${post.id}`; 
+        
+        const likeCount = Object.keys(post.likes || {}).length;
+        const dislikeCount = Object.keys(post.dislikes || {}).length;
+        const commentCount = post.commentCount || 0;
+        const isLiked = post.likes && post.likes[currentUser.id];
+        const isDisliked = post.dislikes && post.dislikes[currentUser.id];
+        const canDelete = post.userId === currentUser.id;
+        const isTextOnly = !post.images || post.images.length === 0;
+
+        // رأس المنشور
+        let postHTML = `
+            <div class="post-header">
+                <div class="avatar">${post.username.trim()[0].toUpperCase()}</div>
+                <div class="username">${escapeHTML(post.username)} ${getGenderIcon(post.gender || 'unknown')}</div>
+            </div>
+            <div class="post-title">${escapeHTML(post.title)}</div>`;
+
+        // الصور
+        if (!isTextOnly) {
+            postHTML += `<div class="post-images">`;
+            const imagesToShow = post.images.slice(0, 4);
+
+            imagesToShow.forEach((imgStr, idx) => {
+                postHTML += `
+                    <div class="img-wrapper" data-index="${idx}">
+                        <img src="${imgStr}" alt="صورة ${idx + 1}" loading="lazy" />
+                        ${(idx === 3 && post.images.length > 4) ? `<div class="more-overlay">+${post.images.length - 4}</div>` : ''}
+                    </div>`;
+            });
+            postHTML += `</div>`;
+        }
+
+        // شريط التفاعلات
+        postHTML += `
+            <div class="post-actions">
+                <div class="like-dislike-group">
+                    <button class="action-btn like-btn ${isLiked ? 'active' : ''}" data-type="like" data-post-id="${post.id}">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span id="like-count-${post.id}">${likeCount}</span>
+                    </button>
+                    <button class="action-btn dislike-btn ${isDisliked ? 'active' : ''}" data-type="dislike" data-post-id="${post.id}">
+                        <i class="fas fa-thumbs-down"></i>
+                        <span id="dislike-count-${post.id}">${dislikeCount}</span>
+                    </button>
+                </div>
+                <button class="action-btn comment-btn" data-post-id="${post.id}" data-post-title="${escapeHTML(post.title)}">
+                    <i class="fas fa-comment"></i>
+                    <span id="comment-count-${post.id}">${commentCount}</span>
+                </button>
+                ${canDelete ? `<button class="action-btn delete-btn" data-post-id="${post.id}"><i class="fas fa-trash"></i> حذف</button>` : ''}
+            </div>`;
+        
+        // الشريط الملون للمنشورات النصية (الشرط الأخير)
+        if (isTextOnly) {
+             postHTML += `<div class="text-only-post-indicator" style="background-color: ${getRandomColor()};"></div>`;
+        }
+        
+        postEl.innerHTML = postHTML;
+
+        // إضافة مستمعي الأحداث للصور
+        postEl.querySelectorAll('.post-images .img-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('click', () => openGalleryViewer(post.images, post.id));
+        });
+        
+        // إضافة مستمعي الأحداث للتفاعلات
+        postEl.querySelectorAll('.like-btn, .dislike-btn').forEach(btn => {
+            btn.addEventListener('click', () => handlePostReaction(post.id, btn.dataset.type));
         });
 
-        // 3. وظيفة التحكم في فقاعة الذكاء الاصطناعي (فتح/إغلاق)
-        function toggleAIBubble(show) {
-            if (show) {
-                aiBubble.classList.remove('closed');
-                aiButton.style.opacity = '0'; 
-                aiButton.style.transform = 'scale(0.8)';
-            } else {
-                aiBubble.classList.add('closed');
-                aiButton.style.opacity = '1'; 
-                aiButton.style.transform = 'scale(1)';
-            }
+        // إضافة مستمع الحدث للتعليقات
+        postEl.querySelector('.comment-btn').addEventListener('click', (e) => openCommentModal(post.id, post.title));
+
+        // إضافة مستمع الحدث للحذف
+        if(canDelete) {
+            postEl.querySelector('.delete-btn').addEventListener('click', () => deletePost(post.id, post.images));
+        }
+        
+        // إضافة مستمع لـ Double/Triple Tap للـ Like/Dislike (كمحاكاة للطلب)
+        postEl.addEventListener('click', (e) => handleTap(post.id, e.detail));
+
+        return postEl;
+    }
+    
+    // محاكاة لطلب Double/Triple Tap
+    let lastTapTime = 0;
+    let tapCount = 0;
+    let tapTimer = null;
+    function handleTap(postId, detail) {
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - lastTapTime;
+
+        if (timeDiff < 300) { // اعتبارها نفس الضغطة إذا كان الفارق أقل من 300 مللي ثانية
+            tapCount++;
+            clearTimeout(tapTimer);
+        } else {
+            tapCount = 1;
         }
 
-        // 4. وظيفة التحكم في زر وفقاعة الذكاء الاصطناعي بناءً على الصفحة
-        function setupAIToggle(currentUrl) {
-            if (currentUrl.includes(saifAILinkIdentifier)) {
-                aiButton.style.display = 'none';
-                toggleAIBubble(false); 
-            } else {
-                aiButton.style.display = 'block';
-            }
-        }
+        lastTapTime = currentTime;
 
-        // 5. تهيئة المكونات عند تحميل الصفحة
-        window.onload = function() {
-            // تعيين الصفحة الافتراضية (سيف AI) في البداية
-            const initialUrl = contentFrame.src;
-            const initialItem = document.querySelector(`.nav-item[data-url*="${saifAILinkIdentifier}"]`);
+        tapTimer = setTimeout(() => {
+            if (tapCount === 2) {
+                // ضغطة مزدوجة (Like)
+                handlePostReaction(postId, 'like');
+            } else if (tapCount === 3) {
+                // ضغطة ثلاثية (Dislike)
+                handlePostReaction(postId, 'dislike');
+            }
+            tapCount = 0; // إعادة الضبط
+        }, 300);
+    }
+    
+    // ====== دوال تفاعلات المنشور (Like/Dislike/Delete) ======
+    
+    function handlePostReaction(postId, type) {
+        if (!currentUser) return;
+
+        const postRef = database.ref(`posts/${postId}`);
+        const userId = currentUser.id;
+        const otherType = type === 'like' ? 'dislike' : 'like';
+
+        // تحديث UI فوريًا لتحقيق السرعة
+        const isCurrentlyActive = document.querySelector(`#post-${postId} .${type}-btn`).classList.contains('active');
+        const postEl = document.getElementById(`post-${postId}`);
+        const likeCountSpan = document.getElementById(`like-count-${postId}`);
+        const dislikeCountSpan = document.getElementById(`dislike-count-${postId}`);
+
+        if (isCurrentlyActive) {
+            // Un-do action: Decrement count and remove active class
+            if(likeCountSpan && type === 'like') likeCountSpan.textContent = parseInt(likeCountSpan.textContent) - 1;
+            if(dislikeCountSpan && type === 'dislike') dislikeCountSpan.textContent = parseInt(dislikeCountSpan.textContent) - 1;
+            postEl.querySelector(`.${type}-btn`).classList.remove('active');
+        } else {
+            // Do action: Increment count and add active class
+            if(likeCountSpan && type === 'like') likeCountSpan.textContent = parseInt(likeCountSpan.textContent) + 1;
+            if(dislikeCountSpan && type === 'dislike') dislikeCountSpan.textContent = parseInt(dislikeCountSpan.textContent) + 1;
+            postEl.querySelector(`.${type}-btn`).classList.add('active');
             
-            if (initialItem) {
-                 // جعل سيف AI هو العنصر الوحيد الذي يبقى نشطاً عند التحميل فقط
-                 initialItem.classList.add('active');
+            // Undo other action: Decrement other count and remove other active class
+            const otherBtn = postEl.querySelector(`.${otherType}-btn`);
+            if (otherBtn.classList.contains('active')) {
+                const otherCountSpan = document.getElementById(`${otherType}-count-${postId}`);
+                if(otherCountSpan) otherCountSpan.textContent = parseInt(otherCountSpan.textContent) - 1;
+                otherBtn.classList.remove('active');
             }
-            setupAIToggle(initialUrl);
+        }
 
-            // ربط زر AI بوظيفة الفتح
-            aiButton.onclick = () => toggleAIBubble(true);
+        // تحديث Firebase في الخلفية (Transaction لضمان دقة البيانات)
+        postRef.transaction(currentPost => {
+            if (currentPost) {
+                currentPost.likes = currentPost.likes || {};
+                currentPost.dislikes = currentPost.dislikes || {};
+
+                const isAlreadyActiveInDB = currentPost[`${type}s`] && currentPost[`${type}s`][userId];
+                
+                // 1. إزالة التفاعل المضاد (إن وجد)
+                if (currentPost[`${otherType}s`] && currentPost[`${otherType}s`][userId]) {
+                    delete currentPost[`${otherType}s`][userId];
+                }
+
+                // 2. تطبيق التفاعل المطلوب
+                if (isAlreadyActiveInDB) {
+                    delete currentPost[`${type}s`][userId];
+                } else {
+                    currentPost[`${type}s`][userId] = true;
+                }
+
+                return currentPost;
+            }
+            return currentPost;
+        });
+    }
+
+
+    function deletePost(postId, images) {
+        if (!confirm('هل أنت متأكد من حذف هذا المنشور؟ سيتم حذف جميع التعليقات والبيانات المرتبطة.')) return;
+
+        // حذف المنشور
+        database.ref(`posts/${postId}`).remove()
+            .then(() => {
+                // حذف التعليقات المرتبطة
+                return database.ref(`comments/${postId}`).remove();
+            })
+            .then(() => {
+                // تحديث واجهة المستخدم
+                const postEl = document.getElementById(`post-${postId}`);
+                if (postEl) postEl.remove();
+                alert('تم حذف المنشور بنجاح.');
+            })
+            .catch(error => {
+                console.error("Error deleting post:", error);
+                alert("حدث خطأ أثناء حذف المنشور.");
+            });
+    }
+
+
+    // ====== دوال نظام التعليقات ======
+
+    function openCommentModal(postId, postTitle) {
+        currentPostId = postId;
+        lastLoadedCommentScore = null;
+        allCommentsLoaded = false;
+        
+        // عرض تفاصيل المنشور في نافذة التعليقات
+        postDetailForComment.innerHTML = `<p class="comment-post-title">${escapeHTML(postTitle)}</p>`;
+        commentsList.innerHTML = `<p style="text-align:center;color:#666; padding: 1rem 0;">جارٍ تحميل التعليقات...</p>`;
+        commentInput.value = '';
+        adjustTextareaHeight();
+        
+        // تحميل التعليقات
+        loadComments(postId, true);
+        
+        // جلب عدد التعليقات وتحديث العنوان
+        database.ref(`posts/${postId}/commentCount`).on('value', snapshot => {
+            const count = snapshot.val() || 0;
+            commentCountTitle.textContent = `التعليقات (${count})`;
+        });
+        
+        commentModalOverlay.style.display = 'flex';
+        setTimeout(() => { 
+            commentModalOverlay.classList.add('active'); 
+            commentInput.focus();
+        }, 10);
+    }
+    
+    function closeCommentModal() {
+        if (currentPostId) {
+            database.ref(`posts/${currentPostId}/commentCount`).off();
+        }
+        commentModalOverlay.classList.remove('active');
+        setTimeout(() => { commentModalOverlay.style.display = 'none'; }, 300);
+        currentPostId = null;
+    }
+
+    function loadComments(postId, isInitial = false) {
+        if (allCommentsLoaded) return;
+
+        let commentsRef = database.ref(`comments/${postId}`).orderByChild('score');
+
+        if (!isInitial && lastLoadedCommentScore !== null) {
+            // التحميل للتعليقات الأقل تقييماً (score) من آخر تعليق تم تحميله 
+            commentsRef = commentsRef.endAt(lastLoadedCommentScore - 0.0001).limitToLast(COMMENTS_PER_LOAD);
+        } else {
+            // التحميل لـ 10 تعليقات ذات أعلى تقييم
+            commentsRef = commentsRef.limitToLast(COMMENTS_PER_LOAD);
+        }
+
+        commentsRef.once('value', snapshot => {
+            let comments = [];
+            snapshot.forEach(childSnapshot => {
+                comments.push({ id: childSnapshot.key, ...childSnapshot.val() });
+            });
+
+            if (comments.length === 0) {
+                allCommentsLoaded = true;
+                loadMoreCommentsBtn.style.display = 'none';
+                if (isInitial) { commentsList.innerHTML = `<p style="text-align:center;color:#666;">لا توجد تعليقات.</p>`; }
+                return;
+            }
+            
+            // الترتيب من الأعلى تقييماً للأقل
+            comments.reverse();
+
+            // حفظ أقل score تم تحميله (للاستخدام في Load More)
+            if (comments.length > 0) {
+                lastLoadedCommentScore = comments[comments.length - 1].score;
+            }
+
+            if (comments.length < COMMENTS_PER_LOAD) {
+                allCommentsLoaded = true;
+                loadMoreCommentsBtn.style.display = 'none';
+            } else {
+                loadMoreCommentsBtn.style.display = 'inline-flex';
+            }
+
+            renderComments(comments, isInitial);
+        });
+    }
+
+    function renderComments(comments, isInitial) {
+        if (isInitial) commentsList.innerHTML = '';
+        
+        comments.forEach(comment => {
+            const commentEl = createCommentElement(comment);
+            commentsList.appendChild(commentEl);
+        });
+    }
+    
+    function createCommentElement(comment) {
+        const commentEl = document.createElement('div');
+        commentEl.className = 'comment-item';
+        commentEl.id = `comment-${comment.id}`;
+        
+        const likeCount = Object.keys(comment.likes || {}).length;
+        const dislikeCount = Object.keys(comment.dislikes || {}).length;
+        const isLiked = comment.likes && comment.likes[currentUser.id];
+        const isDisliked = comment.dislikes && comment.dislikes[currentUser.id];
+        const isVoice = !!comment.isVoice; // استخدام isVoice بدلاً من voiceUrl
+        const canDelete = comment.userId === currentUser.id;
+        const commentTextContent = isVoice ? `(فويس تم تحويله لـ نص): ${comment.text}` : comment.text;
+
+        commentEl.innerHTML = `
+            <div class="comment-header">
+                <div class="avatar" style="width: 25px; height: 25px; font-size: 0.8rem; background-color: #333; color: ${comment.gender === 'male' ? '#5dade2' : '#f1948a'};">${comment.username.trim()[0].toUpperCase()}</div>
+                <div class="username">${escapeHTML(comment.username)}</div>
+            </div>
+            <div class="comment-text">
+                ${isVoice ? `<i class="fas fa-microphone comment-voice-icon"></i>` : ''}
+                <span>${escapeHTML(commentTextContent)}</span>
+            </div>
+            <div class="comment-actions">
+                <button class="like-btn ${isLiked ? 'active' : ''}" data-comment-id="${comment.id}" data-type="like">
+                    <i class="fas fa-thumbs-up"></i> ${likeCount}
+                </button>
+                <button class="dislike-btn ${isDisliked ? 'active' : ''}" data-comment-id="${comment.id}" data-type="dislike">
+                    <i class="fas fa-thumbs-down"></i> ${dislikeCount}
+                </button>
+                <button class="reply-btn" data-comment-id="${comment.id}">رد</button>
+                ${canDelete ? `<button class="delete-comment-btn" data-comment-id="${comment.id}"><i class="fas fa-trash" style="color:var(--delete-color);"></i></button>` : ''}
+            </div>
+        `;
+        
+        // مستمعي الإعجابات على التعليق
+        commentEl.querySelectorAll('.like-btn, .dislike-btn').forEach(btn => {
+            btn.addEventListener('click', () => handleCommentReaction(currentPostId, comment.id, btn.dataset.type));
+        });
+
+        // مستمع حذف التعليق
+        if(canDelete) {
+            commentEl.querySelector('.delete-comment-btn').addEventListener('click', () => deleteComment(currentPostId, comment.id));
+        }
+
+        return commentEl;
+    }
+
+    function handleCommentReaction(postId, commentId, type) {
+        if (!currentUser || !postId) return;
+
+        const commentRef = database.ref(`comments/${postId}/${commentId}`);
+        const userId = currentUser.id;
+        const otherType = type === 'like' ? 'dislike' : 'like';
+
+        // تحديث Firebase في الخلفية (Transaction لضمان دقة البيانات)
+        commentRef.transaction(currentComment => {
+            if (currentComment) {
+                currentComment.likes = currentComment.likes || {};
+                currentComment.dislikes = currentComment.dislikes || {};
+
+                const isCurrentlyActive = currentComment[`${type}s`] && currentComment[`${type}s`][userId];
+                
+                // 1. إزالة التفاعل المضاد
+                if (currentComment[`${otherType}s`] && currentComment[`${otherType}s`][userId]) {
+                    delete currentComment[`${otherType}s`][userId];
+                }
+
+                // 2. تطبيق التفاعل المطلوب
+                if (isCurrentlyActive) {
+                    delete currentComment[`${type}s`][userId];
+                } else {
+                    currentComment[`${type}s`][userId] = true;
+                }
+                
+                // 3. تحديث score للترتيب
+                const likeCount = Object.keys(currentComment.likes).length;
+                const dislikeCount = Object.keys(currentComment.dislikes).length;
+                currentComment.score = likeCount - dislikeCount + Date.now() / 10000000000; // إضافة التايم ستامب كجزء بسيط للترتيب الزمني عند تساوي الـ Score
+                
+                // إعادة تحميل التعليقات لتطبيق الترتيب الجديد (بعد ثانية واحدة لضمان إرسال الترانزاكشن)
+                setTimeout(() => loadComments(postId, true), 500); 
+
+                return currentComment;
+            }
+            return currentComment;
+        });
+    }
+
+    function deleteComment(postId, commentId) {
+        if (!confirm('هل أنت متأكد من حذف هذا التعليق؟')) return;
+
+        database.ref(`comments/${postId}/${commentId}`).remove()
+            .then(() => {
+                // تحديث عداد التعليقات في المنشور
+                return database.ref(`posts/${postId}/commentCount`).transaction(count => (count || 0) - 1);
+            })
+            .then(() => {
+                //alert('تم حذف التعليق بنجاح.'); // إلغاء التنبيه لتسريع التفاعل
+                loadComments(postId, true); // إعادة تحميل التعليقات
+            })
+            .catch(error => {
+                console.error("Error deleting comment:", error);
+                alert("حدث خطأ أثناء حذف التعليق.");
+            });
+    }
+
+    // ====== دوال الإرسال (نص وفويس) ======
+    
+    // محاكاة تسجيل الفويس (الضغط المطول)
+    sendVoiceBtn.addEventListener('mousedown', (e) => {
+        // إذا كان هناك نص، فسيتم إرساله عند الضغط السريع (mouseup/click)
+        if (commentInput.value.trim() !== '') return;
+        
+        pressTimer = setTimeout(() => {
+            // بعد 500 مللي ثانية، يبدأ التسجيل (وضع الفويس)
+            isRecording = true;
+            sendVoiceBtn.classList.add('recording');
+            sendVoiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+            // alert('بدء التسجيل الصوتي. (تحتاج لإضافة منطق Web Audio API هنا)');
+            commentInput.placeholder = 'جارٍ تسجيل الفويس... (حرر للإرسال)';
+        }, 500);
+    });
+
+    sendVoiceBtn.addEventListener('mouseup', handleSendOrStop);
+    sendVoiceBtn.addEventListener('mouseleave', () => {
+        if(isRecording) {
+            // إذا ترك الزر أثناء التسجيل، يعتبر إيقاف تسجيل
+            handleSendOrStop();
+        } else {
+            // إذا ترك الزر قبل 500 مللي ثانية (إلغاء الضغط المطول)، يتم مسح الـ pressTimer فقط
+            clearTimeout(pressTimer);
+        }
+    });
+
+    function handleSendOrStop() {
+        clearTimeout(pressTimer);
+        const text = commentInput.value.trim();
+
+        if (isRecording) {
+            // حالة إيقاف التسجيل
+            isRecording = false;
+            sendVoiceBtn.classList.remove('recording');
+            sendVoiceBtn.innerHTML = '<i class="fas fa-microphone"></i>'; // يعود للمايك إذا كان النص فارغاً
+            commentInput.placeholder = 'اكتب تعليقك هنا...';
+            
+            // محاكاة إرسال الفويس وتحويله إلى نص (V2T)
+            const voiceText = "مرحباً! هذا التعليق الصوتي تم تحويله تلقائياً إلى نص سريع.";
+            submitComment(voiceText, true);
+
+        } else if (text) {
+            // حالة الإرسال النصي العادي (في حالة ضغط الزر والسهم ظاهر)
+            submitComment(text, false);
+        } else {
+             // حالة الضغط القصير وزر الفويس ظاهر (لا يوجد نص)
+             // alert('اضغط مطولاً للتسجيل الصوتي.'); // يمكن تفعيل هذا للتوضيح
+        }
+    }
+    
+    sendVoiceBtn.addEventListener('click', (e) => {
+        // إذا لم يتم تفعيل وضع التسجيل و كان هناك نص، يتم إرساله
+        if(!isRecording && commentInput.value.trim()) {
+             e.preventDefault();
+             handleSendOrStop();
+        }
+        // إذا لم يكن هناك نص ولم يكن وضع التسجيل مفعلاً، يتم تجاهل الضغطة القصيرة (انتظار الضغط المطول)
+    });
+    
+    // عند تغيير النص، يتم تحديث زر الإرسال للتحول إلى سهم
+    commentInput.addEventListener('input', () => {
+        adjustTextareaHeight();
+        if(commentInput.value.trim() !== '' && !isRecording) {
+            sendVoiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        } else if (!isRecording) {
+            sendVoiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        }
+    });
+
+    function submitComment(text, isVoice = false) {
+        if (!currentPostId || !text) return;
+        
+        // منع الإرسال المزدوج
+        if(sendVoiceBtn.disabled) return;
+        sendVoiceBtn.disabled = true;
+
+        const commentData = {
+            userId: currentUser.id,
+            username: currentUser.username,
+            gender: currentUser.gender,
+            text: text,
+            isVoice: isVoice,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            score: 0 + Date.now() / 10000000000, // إضافة التايم ستامب للترتيب المبدئي
+            likes: {},
+            dislikes: {},
         };
-    </script>
+
+        const commentsPath = `comments/${currentPostId}`;
+        const newCommentRef = database.ref(commentsPath).push();
+        commentData.id = newCommentRef.key;
+
+        // 1. إضافة التعليق
+        newCommentRef.set(commentData)
+            .then(() => {
+                // 2. تحديث عداد التعليقات في المنشور
+                return database.ref(`posts/${currentPostId}/commentCount`).transaction(count => (count || 0) + 1);
+            })
+            .then(() => {
+                commentInput.value = '';
+                adjustTextareaHeight();
+                loadComments(currentPostId, true); // إعادة تحميل التعليقات بالترتيب الجديد
+            })
+            .catch(error => {
+                console.error("Error submitting comment:", error);
+                alert("حدث خطأ أثناء إرسال التعليق.");
+            })
+            .finally(() => {
+                sendVoiceBtn.disabled = false;
+            });
+    }
+
+    // ====== دوال نشر المنشورات والـ UI الأخرى ======
+    
+    function publishPost() {
+      const title = postTitleInput.value.trim();
+      if (publishBtn.disabled || !title) return;
+
+      publishBtn.disabled = true;
+      publishBtn.textContent = 'جاري النشر...';
+
+      const newPost = {
+        userId: currentUser.id,
+        username: currentUser.username,
+        gender: currentUser.gender,
+        title: title,
+        images: selectedImagesBase64, 
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        likes: {},
+        dislikes: {},
+        commentCount: 0 
+      };
+
+      database.ref('posts').push(newPost)
+        .then(() => {
+          closeModal();
+          allPostsLoaded = false;
+          lastLoadedPostTimestamp = null;
+          loadPosts(true); 
+        })
+        .catch(error => {
+          console.error("Error publishing post:", error);
+          alert("حدث خطأ أثناء النشر.");
+        })
+        .finally(() => {
+            publishBtn.disabled = false;
+            publishBtn.textContent = 'نشر';
+        });
+    }
+
+    function openModal() {
+      postTitleInput.value = ''; imagesInput.value = ''; imagesPreview.innerHTML = '';
+      selectedImagesBase64 = []; publishBtn.disabled = true;
+      modalOverlay.style.display = 'flex'; postTitleInput.focus();
+    }
+    function closeModal() { modalOverlay.style.display = 'none'; }
+    
+    function openGalleryViewer(imagesArray, postId) {
+      const galleryContainer = document.getElementById('gallery-container');
+      galleryContainer.innerHTML = '';
+      imagesArray.forEach((imgSrc, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = `صورة ${index + 1}`;
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imgSrc;
+        downloadLink.download = `post-${postId}-image-${index + 1}.png`;
+        downloadLink.className = 'download-btn';
+        downloadLink.innerHTML = `<i class="fas fa-download"></i>`;
+        item.appendChild(img);
+        item.appendChild(downloadLink);
+        galleryContainer.appendChild(item);
+      });
+      galleryViewerOverlay.style.display = 'block';
+    }
+    function closeGalleryViewer() { galleryViewerOverlay.style.display = 'none'; }
+    
+    imagesInput.addEventListener('change', () => {
+      const files = Array.from(imagesInput.files).slice(0, 6); // بحد أقصى 6 صور
+      selectedImagesBase64 = []; imagesPreview.innerHTML = '';
+      if (files.length === 0) { checkPublishEnable(); return; }
+
+      let filesProcessed = 0;
+      files.forEach(file => {
+        if (!file.type.startsWith('image/')) {
+          filesProcessed++;
+          if (filesProcessed === files.length) checkPublishEnable();
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          selectedImagesBase64.push(e.target.result);
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          imagesPreview.appendChild(img);
+          filesProcessed++;
+          if (filesProcessed === files.length) checkPublishEnable();
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+    
+    function checkPublishEnable() {
+      const titleFilled = postTitleInput.value.trim().length > 0;
+      // المنشور يمكن أن يكون نصي فقط (images.length === 0) أو صور مع نص.
+      publishBtn.disabled = !titleFilled;
+    }
+    
+    // ====== دوال الهيكل العظمي (Skeletons) ======
+    function showSkeletons(count) {
+        for (let i = 0; i < count; i++) {
+            const skeletonEl = document.createElement('div');
+            skeletonEl.className = 'skeleton-post';
+            skeletonEl.innerHTML = `
+                <div class="skeleton-header">
+                    <div class="skeleton skeleton-avatar"></div>
+                    <div class="skeleton skeleton-username"></div>
+                </div>
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton-images">
+                    <div class="skeleton skeleton-img"></div>
+                    <div class="skeleton skeleton-img"></div>
+                </div>`;
+            postsContainer.appendChild(skeletonEl);
+        }
+    }
+    function removeSkeletons() {
+        const skeletons = postsContainer.querySelectorAll('.skeleton-post');
+        skeletons.forEach(s => s.remove());
+    }
+    
+    // ====== مستمعي الأحداث الرئيسية ======
+    usernameInput.addEventListener('input', () => { loginBtn.disabled = usernameInput.value.trim().length === 0; });
+    loginBtn.addEventListener('click', createAccount);
+    userIcon.addEventListener('click', () => alert(`ملفك الشخصي:\nالاسم: ${currentUser.username}\nالجنس: ${currentUser.gender}`));
+    addPostBtn.addEventListener('click', openModal);
+    loadMoreBtn.addEventListener('click', () => loadPosts(false));
+    modalOverlay.addEventListener('click', e => (e.target === modalOverlay) && closeModal());
+    galleryViewerOverlay.addEventListener('click', e => (e.target === galleryViewerOverlay) && closeGalleryViewer());
+    closeGalleryBtn.addEventListener('click', closeGalleryViewer);
+    postTitleInput.addEventListener('input', checkPublishEnable);
+    publishBtn.addEventListener('click', publishPost);
+    closeCommentBtn.addEventListener('click', closeCommentModal);
+    commentModalOverlay.addEventListener('click', e => (e.target === commentModalOverlay) && closeCommentModal());
+    loadMoreCommentsBtn.addEventListener('click', () => loadComments(currentPostId, false));
+    commentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { 
+            e.preventDefault(); 
+            handleSendOrStop();
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (modalOverlay.style.display === 'flex') closeModal();
+        if (galleryViewerOverlay.style.display === 'block') closeGalleryViewer();
+        if (commentModalOverlay.style.display === 'flex') closeCommentModal();
+      }
+    });
+
+    // بدء التطبيق
+    init();
+  });
+</script>
 </body>
 </html>
