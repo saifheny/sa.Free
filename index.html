@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-  /* ====== المتغيرات والتنسيقات الأساسية ====== */
+  /* ====== المتغيرات والتنسيارات الأساسية ====== */
   :root {
     --background-color: #000000; /* 2. خلفية سوداء داكنة (مطلوب) */
     --primary-color: #00bcd4; /* سماوي افتراضي */
@@ -440,6 +440,25 @@
   }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 77, 79, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); } }
 
+  /* (جديد) زر إلغاء التسجيل */
+  #cancel-voice-btn {
+    width: 44px; 
+    height: 44px; 
+    border-radius: 50%; 
+    background: var(--glass-bg-dark);
+    color: var(--delete-color);
+    border: none; 
+    font-size: 1.2rem; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-shrink: 0;
+  }
+  #cancel-voice-btn:hover { background: rgba(255, 77, 79, 0.2); }
+
+
   /* ====== الهياكل العظمية (Skeletons) ====== */
   .skeleton-post { background: var(--glass-bg-light); border-radius: var(--border-radius-main); padding: 1rem 1.2rem 1.5rem; }
   .skeleton { background-color: var(--skeleton-bg); border-radius: 0.5rem; animation: shimmer 1.5s infinite linear; }
@@ -489,7 +508,8 @@
   /* 3. تجاوب مع الموبايل (مطلوب) */
   @media (max-width: 600px) {
     #app { padding: 0.5rem 0.5rem 5rem; }
-    header { padding: 1rem 0.5rem; margin: 0 -0.5rem 1.5rem; width: 100%; }
+    /* 3. (تم الإصلاح) لضمان امتداد الشريط العلوي بعرض الشاشة بالكامل */
+    header { padding: 1rem 0.5rem; margin: 0 -0.5rem 1.5rem; width: calc(100% + 1rem); }
     .platform-name { font-size: 1.5rem; padding: 0.4rem 1rem; }
     .post, .skeleton-post { padding: 0.8rem 1rem 1.2rem; }
     
@@ -639,6 +659,10 @@
       <button id="send-voice-btn" title="اضغط للإرسال، اضغط مطولاً للتسجيل الصوتي">
         <i class="fas fa-microphone"></i>
       </button>
+      <!-- (جديد) زر إلغاء التسجيل -->
+      <button id="cancel-voice-btn" title="إلغاء التسجيل" style="display: none;">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
   </div>
 </div>
@@ -752,6 +776,7 @@
     const commentInput = document.getElementById('comment-input');
     const charCount = document.getElementById('char-count');
     const sendVoiceBtn = document.getElementById('send-voice-btn');
+    const cancelVoiceBtn = document.getElementById('cancel-voice-btn'); // (جديد)
     const commentsList = document.getElementById('comments-list');
     const postDetailForComment = document.getElementById('post-detail-for-comment');
     const commentCountTitle = document.getElementById('comment-count-title');
@@ -771,7 +796,7 @@
     let mediaRecorder;
     let audioChunks = [];
     let isRecording = false;
-    let pressTimer = null;
+    // let pressTimer = null; // (تم الحذف) - لا نحتاج للضغطة المطولة
     let postScrollTimer = null;
 
     // ====== دوال المساعدة ======
@@ -1423,8 +1448,9 @@
         
         sendVoiceBtn.classList.add('recording');
         sendVoiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+        cancelVoiceBtn.style.display = 'flex'; // (جديد) إظهار زر الإلغاء
         commentInput.disabled = true;
-        commentInput.placeholder = 'جارٍ تسجيل الصدى... (حرر للإرسال)';
+        commentInput.placeholder = 'جارٍ تسجيل الصدى...'; // (تغيير)
         
       } catch (err) {
         console.error("Error accessing microphone:", err);
@@ -1432,24 +1458,33 @@
       }
     }
     
-    function stopRecording() {
+    // (جديد) تم تعديل الدالة لتقبل متغير
+    function stopRecording(shouldSend = true) {
       if (!isRecording || !mediaRecorder) return;
+      
+      mediaRecorder.shouldSend = shouldSend; // (جديد) تخزين نية الإرسال
       mediaRecorder.stop();
       isRecording = false;
+      
       sendVoiceBtn.classList.remove('recording');
       sendVoiceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; // جاري المعالجة
       sendVoiceBtn.disabled = true; // منع الضغطات المتعددة
+      cancelVoiceBtn.style.display = 'none'; // (جديد) إخفاء زر الإلغاء
     }
     
     async function handleRecordingStop() {
+      const shouldSend = mediaRecorder.shouldSend; // (جديد) جلب النية
       const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
       try {
-        const base64Audio = await blobToBase64(audioBlob);
-        // 8. إرسال الصوت (Base64) كتعليق (مطلوب)
-        submitComment(base64Audio, true);
+        if (shouldSend) { // (جديد) التحقق قبل الإرسال
+          const base64Audio = await blobToBase64(audioBlob);
+          // 8. إرسال الصوت (Base64) كتعليق (مطلوب)
+          submitComment(base64Audio, true);
+        } // إذا كانت false (إلغاء)، لا تفعل شيئاً بالبيانات
       } catch (err) {
         console.error("Error processing audio:", err);
-        alert("حدث خطأ أثناء معالجة الصوت.");
+        if (shouldSend) alert("حدث خطأ أثناء معالجة الصوت.");
       } finally {
         commentInput.disabled = false;
         commentInput.placeholder = 'أضف صدى (نص أو صوت)...';
@@ -1461,63 +1496,33 @@
 
     // ====== 7 & 8. دوال إرسال التعليق (مطلوب) ======
     
-    sendVoiceBtn.addEventListener('mousedown', (e) => {
-        if (commentInput.value.trim() !== '') return; // إذا كان هناك نص، فالزر للإرسال
-        
-        pressTimer = setTimeout(() => {
-            startRecording(); // بدء التسجيل بعد ضغطة مطولة
-            pressTimer = null;
-        }, 300); // 300ms
-    });
-
-    sendVoiceBtn.addEventListener('mouseup', handleSendOrStop);
-    sendVoiceBtn.addEventListener('mouseleave', () => {
-        if(isRecording) {
-            stopRecording(); // إيقاف وإرسال إذا خرج الفأرة
+    // (جديد) مستمع الضغطة الواحدة
+    sendVoiceBtn.addEventListener('click', () => {
+        if (isRecording) {
+            // الضغطة الثانية: إيقاف وإرسال
+            stopRecording(true); 
+        } else if (commentInput.value.trim() !== '') {
+            // إرسال النص
+            submitComment(commentInput.value.trim(), false);
         } else {
-            clearTimeout(pressTimer); // إلغاء الضغطة المطولة
-        }
-    });
-    
-    // دعم اللمس
-    sendVoiceBtn.addEventListener('touchstart', (e) => {
-        if (commentInput.value.trim() !== '') return;
-        e.preventDefault();
-        pressTimer = setTimeout(() => {
+            // الضغطة الأولى: بدء التسجيل
             startRecording();
-            pressTimer = null;
-        }, 300);
-    });
-
-    sendVoiceBtn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        handleSendOrStop();
-    });
-
-    function handleSendOrStop() {
-        if (pressTimer) { // ضغطة قصيرة (أقل من 300ms)
-            clearTimeout(pressTimer);
-            pressTimer = null;
-            // إذا كان الزر للارسال (يحتوي على نص)
-            if (commentInput.value.trim()) {
-                submitComment(commentInput.value.trim(), false);
-            }
-        } else if (isRecording) {
-            // كان يسجل، والآن توقف
-            stopRecording();
         }
-    }
+    });
+
+    // (جديد) مستمع زر الإلغاء
+    cancelVoiceBtn.addEventListener('click', () => {
+        if (isRecording) {
+            stopRecording(false); // إيقاف وإلغاء
+        }
+    });
     
-    sendVoiceBtn.addEventListener('click', (e) => {
-        // هذا للضغطة العادية (النقر)
-        if(!isRecording && commentInput.value.trim()) {
-             e.preventDefault();
-             submitComment(commentInput.value.trim(), false);
-        }
-    });
+    // (تم الحذف) كل مستمعي mousedown/touchstart/mouseup/touchend
     
     commentInput.addEventListener('input', () => {
         updateCharCount();
+        if (isRecording) return; // (جديد) لا تغير الأيقونة أثناء التسجيل
+        
         if(commentInput.value.trim() !== '' && !isRecording) {
             sendVoiceBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
         } else if (!isRecording) {
@@ -1849,10 +1854,14 @@
     closeCommentBtn.addEventListener('click', closeCommentModal);
     commentModalOverlay.addEventListener('click', e => (e.target === commentModalOverlay) && closeCommentModal());
     loadMoreCommentsBtn.addEventListener('click', () => loadComments(currentPostId, false));
+    
+    // (تعديل) مستمع Enter لإرسال النص فقط
     commentInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { 
             e.preventDefault(); 
-            handleSendOrStop();
+            if (!isRecording && commentInput.value.trim()) {
+                submitComment(commentInput.value.trim(), false);
+            }
         }
     });
     
@@ -1891,4 +1900,3 @@
 </script>
 </body>
 </html>
-
